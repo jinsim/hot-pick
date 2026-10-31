@@ -53,7 +53,22 @@ npm run hot-pick -- apply --plan examples/product-extraction/plan.json
 
 This downloads the pinned project, installs it into the example's local `.venv`, extracts the products and runs assertions. See the live example below for the public catalog.
 
-## Precompute skills; route small edits locally
+## Central catalog, no always-on LLM
+
+The operator's scheduled pipeline collects changed GitHub metadata and source files. A separate local agent session reviews newly added or changed skills in finite batches. The published snapshot contains source-backed profiles; the collector and read service make **no LLM API calls**.
+
+Users connect the skill to the published catalog:
+
+```sh
+npm run hot-pick -- catalog-connect --catalog-url https://YOUR_CATALOG_HOST/v1/catalog
+npm run hot-pick -- catalog-route --file task.json
+```
+
+The URL is a deployment placeholder, not a live service. The client downloads metadata once, uses TTL/ETag caching, matches task operations locally and fetches only selected pinned skills. User prompts and selection traces stay local. Cold downloads have a cost; warm lookup does not repeatedly search GitHub. The HTTP catalog endpoint works like a connected knowledge source; a full MCP transport is not implemented.
+
+[Service and deployment guide](service/README.html) · [Catalog schemas and review workflow](skills/hot-pick/references/catalog.md)
+
+## Operator setup and local development
 
 The catalog collector runs outside the request path. It stores commit-pinned SKILL.md instructions, source-backed capability excerpts, optional reviewed intent/output profiles and prepared supporting files. GitHub Trending observations stay separate from seeded skill repositories.
 

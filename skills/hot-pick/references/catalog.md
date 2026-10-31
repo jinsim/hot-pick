@@ -25,3 +25,21 @@ After applying, `catalog-record --file outcome.json` attaches host-reported deci
 ```
 
 Use `rejected` with a reason for unsuitable candidates. Recording is not an independent test execution; use actual task checks or `apply` receipts as evidence. Traces contain sanitized intents and local artifact paths, remain private locally, and are never sent as telemetry. Operators control retention by deleting old trace files. `catalog-status` reports coverage/readiness and the latest errors.
+
+## Central catalog: operator pipeline, lightweight user skill
+
+Operators collect GitHub deltas on a scheduled job and publish a sanitized snapshot. The collector and HTTP service never call an LLM. A separate local agent session can run `catalog-review-queue --limit 20`, read only pending/changed source records, produce evidence-backed profiles, run `catalog-label`, and export again. This is a finite review task, not a continuously running LLM. Unreviewed records remain visibly source-extracted; never label the whole catalog semantically reviewed after one batch.
+
+```sh
+# Operator, after collecting/reviewing:
+node scripts/catalog-export.mjs --cache /persistent/cache --out /published/catalog.json
+# User, using the actual published HTTPS URL:
+npm run hot-pick -- catalog-connect --catalog-url https://YOUR_CATALOG_HOST/v1/catalog
+npm run hot-pick -- catalog-route --file task.json
+```
+
+`catalog-connect` saves the endpoint locally across agent sessions. `--catalog-url URL` and then `HOT_PICK_CATALOG_URL` take precedence over that saved connection. Firebase Hosting can serve the exported JSON at a static URL; the read-only service exposes `/v1/catalog` for Cloud Run or another Node host. This is HTTP catalog synchronization, not a claim of a fully implemented MCP transport. No production URL is bundled before deployment is verified.
+
+The first lookup downloads metadata only. TTL/ETag caching reuses the snapshot for subsequent local matching; `--offline` uses the cache and fails explicitly on a cold miss. HTTP failures may use a checksum-verified stale cache with warnings. Remote profiles cannot provide local entrypoint paths or claim a bundle is installed on the user's machine. Fetch and validate only chosen pinned skill bundles with `prepare`; later reuse them offline. Initial catalog transfer, initial skill preparation and skill execution still cost time.
+
+Queries, private task content, selection traces, local paths and execution outcomes are not uploaded to the read service. The export contains a fixed allowlist of GitHub provenance and capability fields, omits source excerpts containing local home paths, and excludes semantic reviews containing such paths. These omissions do not remove the pinned source link for later inspection. The server has no ingestion/write/execute endpoint. Publication requires the operator's hosting/storage permissions, kept separate from readers.

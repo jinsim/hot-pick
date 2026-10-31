@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hot Pick central catalog — loopback verification</title>
+<style>
+  body { font: 1rem/1.5 system-ui, sans-serif; max-width: 52rem; margin: 3rem auto; padding: 0 1rem; color: #202625; }
+  pre { padding: 1rem; background: #f0f4f2; overflow: auto; border-radius: .35rem; }
+</style>
+<main>
+<h1>Central catalog: loopback verification</h1>
+<p><time>2026-11-07 14:26:03 KST</time> · Node.js v22.23.4 · curl against <code>http://127.0.0.1:59489</code></p>
+<p>The native Node process used a temporary copy of the public snapshot exported from the existing cache. It stayed running throughout all requests and file replacements. The original collector cache was read only. Full response payloads and machine paths are omitted below.</p>
+<p><code>node --test tests/service.test.mjs</code>: 5 passed. <code>node --test tests/*.test.mjs</code>: 48 passed. The one-shot batch test uses a private fixture and no GitHub network calls; it verifies that a failed validation leaves the previously published file intact.</p>
+<p>Neither container nor cloud deployment was exercised. The local Docker daemon was unavailable, and no cloud resources were created or updated. See the <a href="README.html">operator guide</a>.</p>
+<h2>GET /health</h2>
+<pre>HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Downloaded bytes: 11
+{&quot;ok&quot;:true}</pre>
+<h2>GET /v1/catalog (real cache export)</h2>
+<pre>HTTP/1.1 200 OK
+Cache-Control: public, max-age=300, must-revalidate, no-transform
+ETag: &quot;sha256-a6edb4028c33dd7144c39419b957a71b8c56d64824cfb0d1753cea1a3d8c4c6e&quot;
+Content-Type: application/json; charset=utf-8
+Content-Length: 4691695
+Downloaded bytes: 4691695
+Schema: 1; cards: 904; semantic reviews: 1
+SHA-256: a6edb4028c33dd7144c39419b957a71b8c56d64824cfb0d1753cea1a3d8c4c6e</pre>
+<h2>GET /v1/catalog with the matching ETag</h2>
+<pre>HTTP/1.1 304 Not Modified
+Cache-Control: public, max-age=300, must-revalidate, no-transform
+ETag: &quot;sha256-a6edb4028c33dd7144c39419b957a71b8c56d64824cfb0d1753cea1a3d8c4c6e&quot;
+Downloaded bytes: 0</pre>
+<h2>GET with the old ETag after atomically replacing the file</h2>
+<pre>HTTP/1.1 200 OK
+Cache-Control: public, max-age=300, must-revalidate, no-transform
+ETag: &quot;sha256-d3eb8440db24187a253fb911a621145e293c9cff29302934059eb898c03e36d8&quot;
+Content-Type: application/json; charset=utf-8
+Content-Length: 4691695
+Downloaded bytes: 4691695</pre>
+<h2>GET after replacing the file with a private field</h2>
+<pre>HTTP/1.1 503 Service Unavailable
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Downloaded bytes: 31
+{&quot;error&quot;:&quot;catalog_unavailable&quot;}</pre>
+<h2>GET /health with a snapshot one byte over the 32 MiB limit</h2>
+<pre>HTTP/1.1 503 Service Unavailable
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Downloaded bytes: 31
+{&quot;error&quot;:&quot;catalog_unavailable&quot;}</pre>
+<h2>GET after restoring the original file</h2>
+<pre>HTTP/1.1 200 OK
+Cache-Control: public, max-age=300, must-revalidate, no-transform
+ETag: &quot;sha256-a6edb4028c33dd7144c39419b957a71b8c56d64824cfb0d1753cea1a3d8c4c6e&quot;
+Content-Type: application/json; charset=utf-8
+Content-Length: 4691695
+Downloaded bytes: 4691695</pre>
+<h2>POST /v1/catalog</h2>
+<pre>HTTP/1.1 405 Method Not Allowed
+Allow: GET, HEAD
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Downloaded bytes: 30
+{&quot;error&quot;:&quot;method_not_allowed&quot;}</pre>
+<h2>POST /v1/search</h2>
+<pre>HTTP/1.1 404 Not Found
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Downloaded bytes: 21
+{&quot;error&quot;:&quot;not_found&quot;}</pre>
+<h2>GET /v1/catalog?file=/etc/passwd</h2>
+<pre>HTTP/1.1 404 Not Found
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Downloaded bytes: 21
+{&quot;error&quot;:&quot;not_found&quot;}</pre>
+</main>
+</html>

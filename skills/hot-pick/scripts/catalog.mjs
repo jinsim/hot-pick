@@ -1,6 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import {publicSnapshot,catalogURL} from './catalog-snapshot.mjs';
 import { OSS } from './oss.mjs';
 import { parseSource, safePath } from './core.mjs';
 const digest = x => crypto.createHash('sha256').update(x).digest('hex');
@@ -96,8 +97,8 @@ export class Catalog {
     try {const latest=await this.state();for(const label of labels) {if(latest.cards[label.id]?.blob_sha!==label.blob_sha) throw Error('Skill changed during labeling'); latest.cards[label.id].profile.semantic_review=label;} await this.publish(latest);}
     finally {await fd.close();await fs.rm(lock,{force:true});} return {reviewed:labels.length};
   }
-  async route(task) {
-    const start=performance.now(), state=await load(path.join(this.root,'routing.json'),null) || await this.state();
+  async route(task, remoteSnapshot=null, origin=null) {
+    const start=performance.now(), state=remoteSnapshot || await load(path.join(this.root,'routing.json'),null) || await this.state();
     if(!Array.isArray(task.operations)||!task.operations.length||task.operations.length>12) throw Error('Provide 1–12 operations with public keywords');
     const unique=new Map();for(const c of Object.values(state.cards)) {const key=c.repo+':'+c.name;if(!unique.has(key)||(!unique.get(key).ready&&c.ready)) unique.set(key,c);}
     const cards=[...unique.values()];
@@ -115,8 +116,8 @@ export class Catalog {
       }).sort((a,b)=>b.retrieval_score-a.retrieval_score).slice(0,3);
       return {intent:op.intent,constraints:op.constraints || [],candidates:ranked};
     });
-    const result={schema:1,trace_id:crypto.randomUUID(),created_at:new Date().toISOString(),catalog_updated_at:state.updated_at || null,status:'candidates_only',operations,
-      selection_required:'Host must check fit, constraints and expected output, then read full pinned instructions. Scores are retrieval, not success probabilities.',requests:0,elapsed_ms:performance.now()-start};
+    const result={schema:1,trace_id:crypto.randomUUID(),created_at:new Date().toISOString(),catalog_updated_at:state.updated_at || null,status:'candidates_only',catalog_origin:origin,operations,
+      selection_required:'Host must check fit, constraints and expected output, then read full pinned instructions. Scores are retrieval, not success probabilities.',requests:this.client.stats.requests,warnings:this.client.warnings,elapsed_ms:performance.now()-start};
     await save(path.join(this.root,'traces',result.trace_id+'.json'),result); return result;
   }
   async record(file) {
@@ -138,7 +139,26 @@ export async function catalogCommand(command,args,opts) {
     // Product worker, explicitly launched by the operator. Never runs in request path.
     do {try{console.log(JSON.stringify(await c.sync(config)));}catch(e){console.error(e.message);} await new Promise(r=>setTimeout(r,config.interval_seconds*1000));}while(true);
   }
-  if(command==='catalog-route') return c.route(await load(opts.file,null));
+  if(command==='catalog-connect') {
+    const url=catalogURL(opts['catalog-url']);
+    await save(path.join(c.root,'connection.json'),{url});
+    return {catalog_url:url,configured:true,note:'Configuration saved locally. Reachability is checked on the first lookup.'};
+  }
+  if(command==='catalog-route') {
+    const task=await load(opts.file,null), remote=opts['catalog-url']||process.env.HOT_PICK_CATALOG_URL||(await load(path.join(c.root,'connection.json'),{})).url;
+    if(!remote) return c.route(task);
+    const url=catalogURL(remote);
+    // Dedicated client never forwards GitHub credentials to a catalog endpoint.
+    const client=new OSS({...opts,github:'https://catalog.invalid'});
+    const originalFetch=client.fetch;
+    client.fetch=(url,init)=>{const headers={...init.headers};delete headers.Authorization;return originalFetch(url,{...init,headers});};
+    const snapshot=publicSnapshot(await client.cached(url,{stale:true,max:32*1024*1024}));
+    c.client.stats=client.stats;c.client.warnings=client.warnings;
+    return c.route(task,snapshot,url);
+  }
+  if(command==='catalog-review-queue') {
+    const state=await c.state();return {items:Object.values(state.cards).filter(x=>x.profile.semantic_review?.blob_sha!==x.blob_sha).slice(0,opts.limit||20).map(x=>({id:x.id,blob_sha:x.blob_sha,commit:x.commit,source:x.source,instructions:x.instructions,overview:x.overview})),note:'One-shot local host review only; no LLM daemon or API call. Apply validated profiles with catalog-label.'};
+  }
   if(command==='catalog-label') return c.label(opts.file);
   if(command==='catalog-record') return c.record(opts.file);
   const s=await c.state();return {cards:Object.keys(s.cards).length,ready:Object.values(s.cards).filter(x=>x.ready).length,updated_at:s.updated_at,last_sync:await load(path.join(c.root,'last-sync.json'),null)};

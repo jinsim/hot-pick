@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hot Pick central catalog — operator guide</title>
+<style>
+  body { font: 1rem/1.55 system-ui, sans-serif; max-width: 52rem; margin: 3rem auto; padding: 0 1rem; color: #202625; }
+  pre { padding: 1rem; background: #f0f4f2; overflow: auto; border-radius: .35rem; }
+  code { font-size: .9em; }
+  a { color: #15544a; }
+</style>
+<main>
+  <h1>Hot Pick central catalog</h1>
+  <p>The collector fetches public GitHub data in a one-shot batch. It retains the private working cache and publishes a separate JSON snapshot. The Node 22 server reads only the published file. Skills download that file and match the user’s task locally. None of these steps requires an LLM API.</p>
+  <p><strong>Status:</strong> Local verification only. No GCP project has been selected, cloud authentication needs renewal, and no scheduler or production endpoint has been configured. The deployment commands below are examples.</p>
+
+  <h2>HTTP contract</h2>
+  <ul>
+    <li><code>GET /health</code> checks whether a valid snapshot is available. It returns <code>200</code> with <code>{"ok":true}</code>, or <code>503</code> when the file is missing, invalid, unreadable or too large.</li>
+    <li><code>GET /v1/catalog</code> serves schema 1 JSON from <code>CATALOG_FILE</code>. A matching <code>If-None-Match</code> returns <code>304</code> without a body. <code>HEAD</code> is also supported.</li>
+    <li>Catalog responses carry a SHA-256 ETag and <code>Cache-Control: public, max-age=300, must-revalidate, no-transform</code>. Health and errors are <code>no-store</code>. The origin detects replacement on the next request; a client, proxy or storage mount can still cache the earlier version.</li>
+    <li>The reader accepts one regular UTF-8 JSON file, up to 32 MiB. The allowlist covers pinned GitHub metadata, bounded source excerpts and optional evidence-backed semantic reviews. It rejects private fields such as <code>instructions</code>, <code>entrypoint</code> and <code>ready</code>. No search, upload, arbitrary file or execution endpoint is exposed.</li>
+  </ul>
+  <p>Use an atomic rename in the same directory when publishing on disk. Mount the directory rather than the individual file so the reader sees the replacement. A bad replacement fails closed with a generic <code>503</code>; publish the last good snapshot again to recover. See <a href="validation.html">the loopback verification</a>.</p>
+
+  <h2>Run the collector and reader locally</h2>
+  <p>From the repository root, on a Docker host with Node images available:</p>
+  <pre><code>docker build -f service/collector.Dockerfile -t hot-pick-collector .
+docker build -f service/Dockerfile -t hot-pick-catalog service
+
+# Use a mounted persistent POSIX disk for these directories on a worker host.
+STATE="$PWD/.hot-pick"
+mkdir -p "$STATE/private-cache" "$STATE/published"
+chmod 700 "$STATE/private-cache" "$STATE/published"
+
+# One batch; GITHUB_TOKEN is optional and passed only if already exported.
+docker run --rm --init --user "$(id -u):$(id -g)" -e GITHUB_TOKEN \
+  --mount "type=bind,src=$STATE/private-cache,dst=/data/cache" \
+  --mount "type=bind,src=$STATE/published,dst=/snapshots" hot-pick-collector
+
+docker run --rm --init --read-only --user "$(id -u):$(id -g)" \
+  -p 127.0.0.1:8080:8080 \
+  --mount "type=bind,src=$STATE/published,dst=/snapshots,readonly" hot-pick-catalog
+
+# From another shell:
+curl --fail-with-body -i http://127.0.0.1:8080/health
+curl -fsS -D catalog.headers -o catalog.json http://127.0.0.1:8080/v1/catalog</code></pre>
+  <p>Without Docker, use Node 22 and set the same paths explicitly:</p>
+  <pre><code>CATALOG_CACHE="$STATE/private-cache" CATALOG_FILE="$STATE/published/catalog.json" \
+  node service/collect.mjs
+CATALOG_FILE="$STATE/published/catalog.json" PORT=8080 node service/server.mjs
+node --test tests/service.test.mjs</code></pre>
+  <p>The batch reuses the collector’s index, cache and lock. It reads <code>config/catalog.json</code> by default (or <code>CATALOG_CONFIG</code>), disables skill bundle prewarming, and calls <code>node scripts/catalog-export.mjs --cache DIR --out FILE</code>. It validates the staged result before replacing <code>catalog.json</code>. Schedule a single batch at a time and upload only after a successful exit. Inspect sync errors and the catalog’s age; a partial GitHub failure may preserve existing records. If an interrupted writer leaves <code>sync.lock</code>, confirm the writer has stopped before clearing it.</p>
+  <p>Keep pending semantic reviews in the private workflow. Use <code>catalog-review-queue</code> and a separate local session, then apply the labels with <code>catalog-label</code> against the current private index. If the review ran against a private copy, return only the label file to the operator and revalidate its blob pins; do not overwrite the collector’s current index. Re-export the public file after labeling. The review queue, traces, GitHub credentials and collector cache are never mounted on the public reader or uploaded to the publication bucket.</p>
+
+  <h2>Cloud Run with Cloud Storage</h2>
+  <p>Keep the collector on a worker with a persistent POSIX volume, such as an attached Compute Engine disk. Container scratch storage is insufficient, and the collector depends on filesystem locks and atomic renames. Store only the validated snapshot in a separate Cloud Storage bucket. The publisher needs object write permission; the Cloud Run identity needs only <code>roles/storage.objectViewer</code> on that bucket. The bucket can remain private.</p>
+  <p>After selecting an authorized project, renewing auth, and provisioning an Artifact Registry repository, bucket and service account, these are the publication and deployment steps. Choose a unique image tag for each build. The region below is only an example.</p>
+  <pre><code>PROJECT_ID="YOUR_PROJECT_ID"
+REGION="asia-northeast3"
+ARTIFACT_REPO="YOUR_ARTIFACT_REPOSITORY"
+BUCKET="YOUR_SNAPSHOT_BUCKET"
+READER_SA="YOUR_READER_SA@$PROJECT_ID.iam.gserviceaccount.com"
+IMAGE="$REGION-docker.pkg.dev/$PROJECT_ID/$ARTIFACT_REPO/hot-pick-catalog:v1"
+
+# Re-run just this upload after each successful batch or validated re-export.
+gcloud storage cp --content-type=application/json --cache-control=no-store \
+  "$STATE/published/catalog.json" "gs://$BUCKET/catalog.json"
+
+gcloud storage buckets add-iam-policy-binding "gs://$BUCKET" \
+  --member="serviceAccount:$READER_SA" --role=roles/storage.objectViewer
+gcloud auth configure-docker "$REGION-docker.pkg.dev"
+docker build --platform linux/amd64 -f service/Dockerfile -t "$IMAGE" service
+docker push "$IMAGE"
+
+gcloud run deploy hot-pick-catalog --image "$IMAGE" \
+  --project "$PROJECT_ID" --region "$REGION" --execution-environment gen2 \
+  --service-account "$READER_SA" --allow-unauthenticated \
+  --min-instances=0 --max-instances=2 --memory=512Mi --timeout=30s \
+  --set-env-vars=CATALOG_FILE=/snapshots/catalog.json \
+  --add-volume="name=snapshots,type=cloud-storage,bucket=$BUCKET,readonly=true" \
+  --add-volume-mount=volume=snapshots,mount-path=/snapshots
+
+RUN_URL="$(gcloud run services describe hot-pick-catalog \
+  --project "$PROJECT_ID" --region "$REGION" --format='value(status.url)')"
+curl --fail-with-body -i "$RUN_URL/health"
+curl -fsS -D catalog.headers -o catalog.json "$RUN_URL/v1/catalog"</code></pre>
+  <p>Cloud Storage replaces a single object atomically. Verify the first object upload before deployment and allow for the mount’s metadata cache when checking updates. Then verify the live response and a conditional GET using its ETag before publishing the URL. The public reader mounts only the snapshot bucket; it gets no GitHub credential or publisher role.</p>
+  <p>References: <a href="https://docs.cloud.google.com/run/docs/configuring/services/cloud-storage-volume-mounts">Cloud Run storage mounts and IAM</a>, <a href="https://docs.cloud.google.com/sdk/gcloud/reference/run/deploy">gcloud deploy options</a>, <a href="https://docs.cloud.google.com/storage/docs/consistency">Cloud Storage atomic replacement</a>.</p>
+
+  <h2>Firebase Hosting options</h2>
+  <p><strong>Static only:</strong> Upload the validated <code>catalog.json</code> as a static asset. Use a dedicated Hosting site with a document root containing only the snapshot. A new snapshot requires a new Hosting release. Example <code>firebase.json</code> in the staging directory:</p>
+  <pre><code>{
+  "hosting": {
+    "public": "public",
+    "headers": [{
+      "source": "/catalog.json",
+      "headers": [{
+        "key": "Cache-Control", "value": "public, max-age=300, must-revalidate"
+      }]
+    }]
+  }
+}</code></pre>
+  <pre><code>mkdir -p "$HOSTING_STAGE/public"
+cp "$STATE/published/catalog.json" "$HOSTING_STAGE/public/catalog.json"
+(cd "$HOSTING_STAGE" &amp;&amp; firebase deploy --only hosting --project "$PROJECT_ID")</code></pre>
+  <p><strong>With Cloud Run:</strong> On a dedicated Hosting site with no static file at <code>/v1/catalog</code>, use the following Hosting config instead. The worker updates the bucket independently of the Hosting release. Replace the example region with the deployed region.</p>
+  <pre><code>{
+  "hosting": {
+    "public": "public",
+    "rewrites": [{
+      "source": "/v1/catalog",
+      "run": { "serviceId": "hot-pick-catalog", "region": "asia-northeast3" }
+    }]
+  }
+}</code></pre>
+  <p>Set <code>HOSTING_STAGE</code> to the dedicated staging directory and save the chosen configuration there. For the rewrite option, create an empty <code>public</code> directory, then use the same Hosting-only deploy command. Reference: <a href="https://firebase.google.com/docs/hosting/full-config">Firebase Hosting headers and Cloud Run rewrites</a>.</p>
+  <p>After verification, connect clients to the actual static JSON or API URL:</p>
+  <pre><code>node skills/hot-pick/scripts/hot-pick.mjs catalog-connect --catalog-url "$CATALOG_URL"</code></pre>
+</main>
+</html>

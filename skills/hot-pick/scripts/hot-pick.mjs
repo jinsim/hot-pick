@@ -11,7 +11,7 @@ export async function main(argv = process.argv.slice(2)) {
   const command = argv.shift();
   const opts = {}, positional = [];
   const flags = new Set(['offline', 'refresh', 'content']);
-  const values = new Set(['cache', 'ttl', 'timeout', 'limit', 'owner', 'path', 'ref', 'api', 'since', 'language', 'file', 'workspace', 'plan', 'config']);
+  const values = new Set(['cache', 'ttl', 'timeout', 'limit', 'owner', 'path', 'ref', 'api', 'since', 'language', 'file', 'workspace', 'plan', 'config', 'catalog-url']);
   while (argv.length) {
     const x = argv.shift();
     if (!x.startsWith('--')) { positional.push(x); continue; }
@@ -32,7 +32,7 @@ export async function main(argv = process.argv.slice(2)) {
   }
   const c = new HotPick(opts); let result;
   const start = performance.now();
-  if (['catalog-sync','catalog-watch','catalog-route','catalog-label','catalog-record','catalog-status'].includes(command)) {
+  if (['catalog-sync','catalog-watch','catalog-route','catalog-label','catalog-record','catalog-status','catalog-review-queue','catalog-connect'].includes(command)) {
     const { catalogCommand } = await import('./catalog.mjs');
     console.log(JSON.stringify({ok:true,...await catalogCommand(command,positional,opts)})); return;
   }

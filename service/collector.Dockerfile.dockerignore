@@ -1,0 +1,12 @@
+*
+!config/
+!config/catalog.json
+!scripts/
+!scripts/catalog-export.mjs
+!service/
+!service/collect.mjs
+!service/snapshot.mjs
+!skills/
+!skills/hot-pick/
+!skills/hot-pick/scripts/
+!skills/hot-pick/scripts/*.mjs

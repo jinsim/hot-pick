@@ -1,0 +1,145 @@
+{
+  "source": "https://books.toscrape.com/",
+  "books": [
+    {
+      "title": "A Light in the Attic",
+      "url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html",
+      "price_pence": 5177,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "Tipping the Velvet",
+      "url": "https://books.toscrape.com/catalogue/tipping-the-velvet_999/index.html",
+      "price_pence": 5374,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "Soumission",
+      "url": "https://books.toscrape.com/catalogue/soumission_998/index.html",
+      "price_pence": 5010,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "Sharp Objects",
+      "url": "https://books.toscrape.com/catalogue/sharp-objects_997/index.html",
+      "price_pence": 4782,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "Sapiens: A Brief History of Humankind",
+      "url": "https://books.toscrape.com/catalogue/sapiens-a-brief-history-of-humankind_996/index.html",
+      "price_pence": 5423,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "The Requiem Red",
+      "url": "https://books.toscrape.com/catalogue/the-requiem-red_995/index.html",
+      "price_pence": 2265,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "The Dirty Little Secrets of Getting Your Dream Job",
+      "url": "https://books.toscrape.com/catalogue/the-dirty-little-secrets-of-getting-your-dream-job_994/index.html",
+      "price_pence": 3334,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "The Coming Woman: A Novel Based on the Life of the Infamous Feminist, Victoria Woodhull",
+      "url": "https://books.toscrape.com/catalogue/the-coming-woman-a-novel-based-on-the-life-of-the-infamous-feminist-victoria-woodhull_993/index.html",
+      "price_pence": 1793,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "The Boys in the Boat: Nine Americans and Their Epic Quest for Gold at the 1936 Berlin Olympics",
+      "url": "https://books.toscrape.com/catalogue/the-boys-in-the-boat-nine-americans-and-their-epic-quest-for-gold-at-the-1936-berlin-olympics_992/index.html",
+      "price_pence": 2260,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "The Black Maria",
+      "url": "https://books.toscrape.com/catalogue/the-black-maria_991/index.html",
+      "price_pence": 5215,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "Starving Hearts (Triangular Trade Trilogy, #1)",
+      "url": "https://books.toscrape.com/catalogue/starving-hearts-triangular-trade-trilogy-1_990/index.html",
+      "price_pence": 1399,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "Shakespeare's Sonnets",
+      "url": "https://books.toscrape.com/catalogue/shakespeares-sonnets_989/index.html",
+      "price_pence": 2066,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "Set Me Free",
+      "url": "https://books.toscrape.com/catalogue/set-me-free_988/index.html",
+      "price_pence": 1746,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "Scott Pilgrim's Precious Little Life (Scott Pilgrim #1)",
+      "url": "https://books.toscrape.com/catalogue/scott-pilgrims-precious-little-life-scott-pilgrim-1_987/index.html",
+      "price_pence": 5229,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "Rip it Up and Start Again",
+      "url": "https://books.toscrape.com/catalogue/rip-it-up-and-start-again_986/index.html",
+      "price_pence": 3502,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "Our Band Could Be Your Life: Scenes from the American Indie Underground, 1981-1991",
+      "url": "https://books.toscrape.com/catalogue/our-band-could-be-your-life-scenes-from-the-american-indie-underground-1981-1991_985/index.html",
+      "price_pence": 5725,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "Olio",
+      "url": "https://books.toscrape.com/catalogue/olio_984/index.html",
+      "price_pence": 2388,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "Mesaerion: The Best Science Fiction Stories 1800-1849",
+      "url": "https://books.toscrape.com/catalogue/mesaerion-the-best-science-fiction-stories-1800-1849_983/index.html",
+      "price_pence": 3759,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "Libertarianism for Beginners",
+      "url": "https://books.toscrape.com/catalogue/libertarianism-for-beginners_982/index.html",
+      "price_pence": 5133,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    },
+    {
+      "title": "It's Only the Himalayas",
+      "url": "https://books.toscrape.com/catalogue/its-only-the-himalayas_981/index.html",
+      "price_pence": 4517,
+      "currency": "GBP",
+      "stock_text": "In stock"
+    }
+  ]
+}

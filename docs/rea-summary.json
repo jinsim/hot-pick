@@ -1,0 +1,58 @@
+{
+  "artifact": "skills@1.7.4 npm tarball (before dependency setup)",
+  "upstream_commit": "92a9a34ac3bf88e695e468b90c7bf32f163d32c8",
+  "artifact_sha256": "cc5316cf40444857ab8b0637f2a71909490cfc362cff230b739e3288147854af",
+  "evidence_id": "ev_346b53125c0bf35ec72ead5fccbf2323bbd8d850ef6935cfaa47871593c31441",
+  "operation": "analyze_javascript_application",
+  "source_selection": {
+    "requested_paths": [
+      "bin/cli.mjs",
+      "dist/cli.mjs"
+    ],
+    "unselected_files": 13
+  },
+  "statistics": {
+    "findings": 131,
+    "invalid_utf8_files": 0,
+    "modules": 0,
+    "nested_asar_containers": 0,
+    "parse_failures": 0,
+    "parsed_javascript_files": 2,
+    "relevant_files": 15,
+    "skipped_javascript_files": 0,
+    "text_bytes_read": 344231,
+    "visited_ast_nodes": 54525
+  },
+  "limitations": [
+    "Caller-selected source analysis leaves 13 inventoried files outside analysis scope. Inventory identity covers the complete artifact; relationships through unselected sources remain unknown.",
+    "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+    "Graph coverage is incomplete; unavailable facts remain explicit and must not be read as absence.",
+    "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+    "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+    "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+    "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code."
+  ],
+  "graph_coverage": {
+    "limits": [],
+    "omitted_count": null,
+    "status": "partial",
+    "truncated": false
+  },
+  "semantic_coverage": {
+    "limits": [
+      {
+        "name": "semantic_graph_file_node_ceiling",
+        "unit": "items",
+        "value": 10000
+      },
+      {
+        "name": "semantic_graph_node_ceiling",
+        "unit": "items",
+        "value": 10000
+      }
+    ],
+    "status": "partial",
+    "truncated": true
+  },
+  "interpretation": "Static syntax observations, not runtime execution proof. Benchmark data is a separate evidence source."
+}

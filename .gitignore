@@ -1,0 +1,12 @@
+.research/
+.cache/
+node_modules/
+*.tmp
+.DS_Store
+.env
+.env.*
+!.env.example
+.hot-pick/
+.venv/
+__pycache__/
+examples/product-extraction/books.html

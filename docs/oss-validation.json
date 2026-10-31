@@ -1,0 +1,187 @@
+{
+  "date_kst": "2026-11-07",
+  "selection": {
+    "query": "web scraping python",
+    "candidate": {
+      "repo": "D4Vinci/Scrapling",
+      "description": "🕷️ The BEST Web Scraping framework that handles everything from a single request to a full-scale crawl! Don't be shy, join here: https://discord.gg/EMgGbDceNQ and follow here for daily tips and tricks: https://x.com/Scrapling_dev",
+      "rank": 16,
+      "since": "weekly",
+      "language_filter": null,
+      "period_stars": 7487,
+      "total_stars": 98772,
+      "stars": 98772,
+      "trending": {
+        "repo": "D4Vinci/Scrapling",
+        "description": "🕷️ The BEST Web Scraping framework that handles everything from a single request to a full-scale crawl! Don't be shy, join here: https://discord.gg/EMgGbDceNQ and follow here for daily tips and tricks: https://x.com/Scrapling_dev",
+        "rank": 16,
+        "since": "weekly",
+        "language_filter": null,
+        "period_stars": 7487,
+        "total_stars": 98772
+      },
+      "discovery": "trending_lexical_candidate",
+      "github_search_rank": null
+    },
+    "trending_source": "https://github.com/trending?since=weekly",
+    "search_data_checked_at": "2026-11-06T20:20:44.640Z",
+    "reason": "Task needs CSS/XPath parsing of HTML into structured data; README and parsing guide support it; base dependencies suffice, no browser/MCP required.",
+    "commit": "bc602488b44e978da3266841e913af17577ec0fd",
+    "license": "BSD-3-Clause",
+    "documents": [
+      {
+        "path": "LICENSE",
+        "blob_sha": "41615aad07eb42df7f09997f207950098e853a68",
+        "url": "https://github.com/D4Vinci/Scrapling/blob/bc602488b44e978da3266841e913af17577ec0fd/LICENSE"
+      },
+      {
+        "path": "README.md",
+        "blob_sha": "bf5a1eff0137552b0696859e17973e4bbf319406",
+        "url": "https://github.com/D4Vinci/Scrapling/blob/bc602488b44e978da3266841e913af17577ec0fd/README.md"
+      },
+      {
+        "path": "pyproject.toml",
+        "blob_sha": "e670d3149ce6e8d317d238bb0a72c474a3cb759a",
+        "url": "https://github.com/D4Vinci/Scrapling/blob/bc602488b44e978da3266841e913af17577ec0fd/pyproject.toml"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "task": "Extract product names, exact USD prices and stock from two HTML layouts into JSON; reject missing data.",
+      "status": "checks_passed",
+      "source": {
+        "repo": "D4Vinci/Scrapling",
+        "commit": "bc602488b44e978da3266841e913af17577ec0fd"
+      },
+      "plan_sha256": "30f445b2b6a32c8f0eeeedd1f67141cbd8fb9d2e2c5c45d8efe492a505e50863",
+      "started_at": "2026-11-06T20:23:14.998Z",
+      "finished_at": "2026-11-06T20:23:32.210Z",
+      "steps": [
+        {
+          "name": "Create task-local Python environment",
+          "exit_code": 0,
+          "elapsed_ms": 3078
+        },
+        {
+          "name": "Install reviewed pinned source and base dependencies",
+          "exit_code": 0,
+          "elapsed_ms": 11928
+        },
+        {
+          "name": "Extract products using Scrapling",
+          "exit_code": 0,
+          "elapsed_ms": 1711
+        },
+        {
+          "name": "Record resolved dependencies",
+          "exit_code": 0,
+          "elapsed_ms": 355
+        }
+      ],
+      "checks": [
+        {
+          "name": "Exact values and invalid-input rejection",
+          "argv": [
+            "${checkout}/examples/product-extraction/.venv/bin/python",
+            "verify.py"
+          ],
+          "exit_code": 0,
+          "signal": null,
+          "stopped": null,
+          "stdout": "PASS: 4 exact product records; nested text, entities, Korean, price precision, stock and 2 negative cases\n",
+          "stderr": "",
+          "elapsed_ms": 130
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "products.json",
+          "bytes": 493,
+          "sha256": "b0015f45733a0dea7f001ef89205e2c2f50da22d9d18692ce00e5e08e085ac02"
+        },
+        {
+          "path": "resolved-dependencies.txt",
+          "bytes": 264,
+          "sha256": "d05fbb4e367351fd8d1aba24cf99e24febf689ced419765083f33b01d5acec39"
+        }
+      ]
+    },
+    {
+      "task": "Collect the first page of the public Books to Scrape practice catalog as JSON and CSV using the selected GitHub library.",
+      "status": "checks_passed",
+      "source": {
+        "repo": "D4Vinci/Scrapling",
+        "commit": "bc602488b44e978da3266841e913af17577ec0fd"
+      },
+      "plan_sha256": "168ebcd2cb062894bb1a3471e618d634b1d21fc0f268b757587094dae981f773",
+      "started_at": "2026-11-06T20:27:07.061Z",
+      "finished_at": "2026-11-06T20:27:15.994Z",
+      "steps": [
+        {
+          "name": "Create task-local environment",
+          "exit_code": 0,
+          "elapsed_ms": 2652
+        },
+        {
+          "name": "Install pinned source",
+          "exit_code": 0,
+          "elapsed_ms": 4637
+        },
+        {
+          "name": "Fetch public page with verified TLS",
+          "exit_code": 0,
+          "elapsed_ms": 1025
+        },
+        {
+          "name": "Extract real public catalog",
+          "exit_code": 0,
+          "elapsed_ms": 248
+        }
+      ],
+      "checks": [
+        {
+          "name": "Verify complete catalog outputs",
+          "argv": [
+            "${checkout}/examples/product-extraction/.venv/bin/python",
+            "books.py",
+            "--verify"
+          ],
+          "exit_code": 0,
+          "signal": null,
+          "stopped": null,
+          "stdout": "PASS: 20 distinct live-page books, complete fields, positive exact prices, JSON and CSV outputs\n",
+          "stderr": "",
+          "elapsed_ms": 344
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "books.json",
+          "bytes": 5141,
+          "sha256": "fb32327a6696849ea3da2bf701da65cfb74b764a51f6afa83b73209532dbbb1a"
+        },
+        {
+          "path": "books.csv",
+          "bytes": 2907,
+          "sha256": "42df78a258396c3a2b9702e7743643661a79235f525903953812c89713182ae6"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Representative library application, not a blind selection-quality benchmark.",
+    "No browser rendering or protected-site bypass tested.",
+    "Runtime dependencies recorded but not transitively locked.",
+    "Trending is a dated HTML observation, not a permanent rank."
+  ],
+  "publication_note": "Command paths normalized to ${checkout}. The published dependency snapshot replaces its machine-local source URL with the same GitHub commit URL. Original run hashes remain under artifacts; published_exports records the transformed file.",
+  "published_exports": [
+    {
+      "path": "examples/product-extraction/resolved-dependencies.txt",
+      "bytes": 210,
+      "sha256": "f58fbaca1a4c9ee5e4ba6957d88c010a1468b495f44f2dcacc08b67fe0c4bc42",
+      "transformation": "local source URL replaced with equivalent commit-pinned GitHub URL; not a new execution"
+    }
+  ]
+}

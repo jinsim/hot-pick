@@ -1,0 +1,28 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>hot-pick v0.2 — 일반 OSS 실제 적용 검증</title><style>body{font:17px/1.8 system-ui;color:#202328;background:#faf9f6;margin:0}main{max-width:960px;margin:auto;padding:48px 24px 90px}h1{font-size:34px;line-height:1.3}h2{margin-top:38px;font-size:24px}table{border-collapse:collapse;width:100%;font-size:15px}th,td{padding:12px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}th{background:#eeeee9}code{overflow-wrap:anywhere}a{color:#19599c}.note{background:#edf3ef;padding:18px;border-left:4px solid #3e6d65}pre{white-space:pre-wrap;background:#eee;padding:18px}</style></head><body><main>
+<p>2026-11-07 KST · hot-pick v0.2 · 독립 저장소 ~/hot-pick</p>
+<h1>트렌디한 GitHub 오픈소스를 발견하고<br>실제 데이터 추출 작업에 적용했다.</h1>
+<p class="note">문서·검색 결과를 만드는 데서 끝내지 않았다. 일반 Python 라이브러리 Scrapling을 발견하고 고정 커밋의 소스를 설치한 다음, 로컬 상품 HTML과 공개 사이트의 데이터를 추출했다. 결과 검증과 파일 해시가 실행 기록에 남는다. 이 검증은 특정 라이브러리의 실제 적용이며 모든 작업에서 더 좋은 결과를 낸다는 주장은 아니다.</p>
+<p><a href="oss-validation.json">선택·실행 근거 JSON</a> · <a href="../examples/product-extraction/products.json">상품 4개 결과</a> · <a href="../examples/product-extraction/books.json">실제 도서 20개 JSON</a> · <a href="../examples/product-extraction/books.csv">실제 도서 CSV</a></p>
+<h2>실제로 구현한 경로</h2>
+<table><tr><th>명령</th><th>실행하는 일</th></tr><tr><td>discover / trending</td><td>작업 관련 GitHub 검색과 실제 일간·주간·월간 Trending 페이지 관찰. 출처, 기간, 스타와 관련성 순위를 구분.</td></tr><tr><td>repo / read</td><td>커밋 고정 README·라이선스·manifest·문서·코드 확인. Git blob hash 검증과 캐시 재사용.</td></tr><tr><td>acquire</td><td>작업 디렉터리에 해당 커밋의 얕은 Git checkout 획득. origin과 HEAD 및 변경 여부 확인. 다운로드 중 빌드·실행하지 않음.</td></tr><tr><td>apply</td><td>호스트가 작성·검토한 로컬 계획의 설치·작업·검증 실행. 실패 시 중단. 결과물과 해시를 기록.</td></tr><tr><td>기존 skill 명령</td><td>search / inspect / prepare / refresh 호환성 유지.</td></tr></table>
+<h2>무엇을 발견하고 왜 선택했는가</h2>
+<p>입력 키워드는 <code>web scraping python</code>. GitHub 관련 검색과 주간 Trending을 결합했을 때 <a href="https://github.com/D4Vinci/Scrapling">D4Vinci/Scrapling</a>이 후보로 나왔다. 관찰한 주간 페이지에서는 16번째, 해당 기간 7,487 stars, 전체 98,772 stars가 표시됐다. 이 값은 당시 페이지의 관찰값이며 현재 또는 영구 순위를 뜻하지 않는다. 초기 Trending 요청의 Accept 헤더 문제를 실제 요청에서 발견해 text/html로 수정했고 회귀 테스트에 포함했다.</p>
+<p>README의 HTML 파싱 기능, <code>docs/parsing/selection.md</code>의 CSS/XPath 예제, <code>pyproject.toml</code>의 Python ≥3.10과 기본 의존성, BSD-3-Clause 라이선스를 확인했다. 실제 작업은 HTML 구조화이므로 브라우저·우회·MCP 부가 기능을 설치하지 않고 기본 parser를 사용했다. 선택한 commit: <code>bc602488b44e978da3266841e913af17577ec0fd</code>.</p>
+<h2>적용 결과</h2>
+<table><tr><th>작업</th><th>결과</th><th>검증</th></tr><tr><td>서로 다른 두 상품 HTML을 JSON으로 변환</td><td>상품 4개</td><td>SKU·이름·정확한 가격·통화·재고 전체 예상값 일치. 중첩 텍스트, HTML entity, 한글, 품절 처리. 상품 없음과 가격 누락 입력은 실패.</td></tr><tr><td>공개 연습 사이트의 실제 첫 페이지를 JSON·CSV로 수집</td><td>도서 20개</td><td>중복 없는 URL 20개, 제목·가격·재고·링크 필드, 양수의 가격, JSON·CSV 행 수 확인.</td></tr></table>
+<p>두 계획은 실제 Scrapling 패키지를 고정 소스에서 설치하고 import하여 실행했다. 원본·작업·검증 명령과 산출물의 SHA-256을 기록한 상태는 모두 <code>checks_passed</code>다. 도서 데이터는 <a href="https://books.toscrape.com/">Books to Scrape</a>의 공개 연습 페이지에서 실제로 수집했다. 해당 검증은 임의 웹사이트 전체, 동적 렌더링, 방어 우회, 모든 통화·페이지 구조에 대한 보장이 아니다.</p>
+<p>첫 공개 사이트 실행에서는 Python 환경의 CA 인증서 오류가 발생했고 그 실행은 실패로 기록됐다. TLS 검증을 끄지 않고 Node의 정상 HTTPS 수집 단계와 Python/Scrapling 파싱 단계를 분리한 후 성공했다. 실패 receipt도 로컬 .hot-pick/runs에 남아 있다.</p>
+<h2>재현</h2><pre>cd ~/hot-pick
+npm test
+npm run hot-pick -- discover "web scraping python" --since weekly
+npm run hot-pick -- apply --plan examples/product-extraction/plan.json
+npm run hot-pick -- apply --plan examples/product-extraction/live-plan.json</pre>
+<p>Node.js 22+, Git, Python ≥3.10과 공개 네트워크가 필요하다. Python 패키지는 예제의 .venv에 설치된다. 소스 커밋은 고정했고 실제 의존성은 resolved-dependencies.txt에 기록했다. 전이 의존성 전체의 lockfile은 아니므로 후속 설치의 환경이 완전히 동일하다고 보장하지 않는다. 외부 페이지 구조가 바뀌면 검증은 의도적으로 실패한다.</p>
+<h2>자동 검증과 호스트 검증의 경계</h2>
+<p>31개 테스트 통과: 이전 21개 스킬 테스트에 Trending 기간/누적 스타 분리, 실제 헤더, 검색 결합과 캐시, 실패/불완전 검색, 데이터 확인 시각 보존, SKILL.md 없는 일반 저장소, 셸 확장 방지와 프로세스 timeout, 실제 artifact hash, 실패 검증, 없는 결과물, 환경변수 전달 제한 검증을 추가했다. 공식 skill-creator 검사도 통과했다.</p>
+<p>호스트 LLM이 목적을 이해하고 적합성을 판단하며 작업별 코드·계획을 작성한다. CLI 단독으로 자연어의 모든 요구를 이해하거나 모든 패키지를 자동 설정하지 않는다. 명령이 0으로 종료됐다는 사실과 사용자 요구 충족은 다르다. 실제 수용 기준은 호스트가 검토한다. runner는 OS 보안 샌드박스가 아니며 권한 있는 로컬 계획만 실행해야 한다.</p>
+<h2>저장소 분리·보존</h2>
+<p>새 독립 Git 저장소는 <code>&lt;checkout&gt;</code>. 기존 <code>&lt;original-checkout&gt;</code>은 그대로 보존했다. 이름 변경 작업과 Git 이력, 기존 캐시·연구 자료·과거 벤치마크를 복사해 보존하고 새 저장소에서 기준 커밋으로 기록했다. 설치된 스킬 링크는 새 경로를 가리킨다. 원격 origin이 없어 fetch/develop 동기화나 push는 수행하지 않았다. GitHub 원격 공개, PR, CI, 배포는 하지 않았다.</p>
+<h2>남은 한계</h2><p>Trending HTML 변경과 GitHub 할당량에 영향을 받는다. 실패를 표시하며 캐시와 검색으로 제한적으로 계속한다. 수천 개 저장소의 상시 수집 서버·자동 스케줄러는 아직 없다. Git 및 설치 도구의 네트워크는 HTTP cache metrics에 포함되지 않는다. 비공개 소스·LFS·모든 binary release와 MCP 프로비저닝은 범위 밖이다. 과거 v0.1 검색 속도 벤치마크를 이번 전체 작업 속도에 그대로 적용하지 않는다.</p>
+<p><a href="oss-implementation.html">구현 설계</a> · <a href="../skills/hot-pick/SKILL.md">실제 스킬</a> · <a href="../README.md">사용법</a></p>
+</main></body></html>

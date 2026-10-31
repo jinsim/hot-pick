@@ -1,0 +1,9 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>hot-pick 구현 기록</title><style>body{max-width:850px;margin:50px auto;padding:0 24px;font:17px/1.8 system-ui;color:#222}h1{line-height:1.3}code{overflow-wrap:anywhere}a{color:#19599c}</style></head><body>
+<h1>hot-pick 구현 기록</h1><p>2026-11-01 · feat/skill-curator · 독립 로컬 저장소</p>
+<p>기존 전체 시스템 설계에서 이번 릴리스의 범위를 로컬 큐레이터 스킬로 구체화했다. 커뮤니티 스킬 검색, 실제 지침 확인, GitHub 커밋 고정, 검증된 일괄 스냅샷과 파일별 fallback, 영구 설치 없는 지원 파일 준비, TTL/ETag 캐시, 오프라인·오류 구분, 변경분 갱신을 구현했다.</p>
+<p>검증: npm test 21개 통과. 공식 skill-creator 형식 검사 통과. Codex 스킬 디렉터리에서 심볼릭 링크를 통한 CLI 실행 확인. skills@1.7.4 실제 npm 배포물에 대한 REA 정적 분석과 프로세스 단위 비교 측정. 실제 find-skills 및 React 스킬 준비 확인.</p>
+<p>새 저장소에 origin과 develop 브랜치가 없어 origin/develop 동기화는 적용할 수 없다. 원격 push, PR, 공개 배포, CI 실행은 하지 않았다. 기존 Dutying 제품 코드는 수정하지 않았다. 개인 컴퓨터에 주기 실행 데몬을 등록하지 않았다.</p>
+<p>Codex 연결: <code>~/.codex/skills/hot-pick</code> → 이 저장소의 <code>skills/hot-pick</code>. 새 세션에서 <code>$hot-pick</code>로 호출할 수 있다. 현재 세션의 자동 발견은 호스트 갱신 여부에 달려 있다.</p>
+<p>남은 검증: LLM의 실제 선택과 작업 성공률에 대한 독립 블라인드 비교. 미구현 범위: 전역 수천 개 스킬 사전 수집, GitHub Trending 순위·성장 추세 수집, MCP 프로비저닝, 비공개 저장소와 비-GitHub 소스, 캐시 자동 용량 회수.</p>
+<p><a href="evaluation.html">설계 결정·경쟁 분석·측정 보고서</a> · <a href="benchmark-results.json">벤치마크 원본</a> · <a href="rea-summary.json">REA 근거 요약</a> · <a href="live-smoke.json">실제 소스 준비 기록</a></p>
+<h2>2026-11-07 · hot-pick 이름 변경</h2><p>제품·패키지·스킬 이름을 hot-pick으로 통일했다. 저장소 경로는 &lt;original-checkout&gt;, 스킬 호출은 $hot-pick, CLI는 skills/hot-pick/scripts/hot-pick.mjs이다. 테스트 21개, 스킬 검증, 설치된 심볼릭 링크를 통한 CLI 실행을 확인했다. 이전 벤치마크 JSON의 curator 키와 원본 경로, 캐시 manifest 이름은 기록과 캐시 호환성을 위해 보존했다. 원격 저장소는 연결되어 있지 않으며 게시하지 않았다.</p></body></html>

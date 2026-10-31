@@ -1,0 +1,4 @@
+interface:
+  display_name: "hot-pick"
+  short_description: "Find and apply GitHub open source to real tasks"
+  default_prompt: "Use $hot-pick to find and apply suitable GitHub open source to my task."

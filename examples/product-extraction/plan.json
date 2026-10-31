@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "task": "Extract product names, exact USD prices and stock from two HTML layouts into JSON; reject missing data.",
+  "workspace": ".",
+  "source": {"repo": "D4Vinci/Scrapling", "commit": "bc602488b44e978da3266841e913af17577ec0fd"},
+  "steps": [
+    {"name": "Create task-local Python environment", "argv": ["python3", "-m", "venv", ".venv"]},
+    {"name": "Install reviewed pinned source and base dependencies", "argv": ["${workspace}/.venv/bin/python", "-m", "pip", "install", "--disable-pip-version-check", "${source}"], "timeout_ms": 300000},
+    {"name": "Extract products using Scrapling", "argv": ["${workspace}/.venv/bin/python", "extract.py"]},
+    {"name": "Record resolved dependencies", "argv": ["${workspace}/.venv/bin/python", "-c", "import subprocess,pathlib,sys; pathlib.Path('resolved-dependencies.txt').write_bytes(subprocess.check_output([sys.executable,'-m','pip','freeze']))"]}
+  ],
+  "checks": [{"name": "Exact values and invalid-input rejection", "argv": ["${workspace}/.venv/bin/python", "verify.py"]}],
+  "artifacts": ["products.json", "resolved-dependencies.txt"]
+}

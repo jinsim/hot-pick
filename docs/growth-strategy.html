@@ -1,0 +1,76 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>hot-pick 경쟁우위와 출시 전략</title><style>body{font:17px/1.8 system-ui,sans-serif;background:#faf9f6;color:#202328;margin:0}main{max-width:960px;margin:auto;padding:48px 24px 90px}h1{font-size:36px;line-height:1.3}h2{margin-top:42px;font-size:24px}table{border-collapse:collapse;width:100%;font-size:15px}th,td{border-bottom:1px solid #ddd;padding:12px;text-align:left;vertical-align:top}th{background:#efefea}.note{background:#edf3ef;padding:18px 22px;border-left:4px solid #3e6d65}a{color:#19599c}code{overflow-wrap:anywhere}.scroll{overflow:auto}small{color:#61656a}</style></head><body><main>
+<small>2026-11-01 관찰 · hot-pick는 작업용 제품명 · 전략 결정과 미구현 기능을 구분</small>
+<h1>사람은 작업을 말한다.<br>hot-pick가 필요한 스킬을 찾아 적용한다.</h1>
+<p class="note">검색 속도와 캐시는 이미 검증한 기반 기능이다. 더 강한 경쟁우위는 작업별로 어떤 스킬을 언제 적용해야 하는지에 대한 검증 사례, 호스트 호환성, 실제 재사용 경험에서 만든다. 공개 순위의 설치 수를 실제 사용자 수나 작업 성공률로 취급하지 않는다.</p>
+
+<h2>1. 사람들이 설치하는 스킬</h2>
+<p>관찰 시점 skills.sh 전체 순위의 일부다. 숫자는 화면에 반올림되어 표시된 누적 설치 지표이며, 고유 사용자·실행·성공 횟수가 아니다. 아래 목록은 연속된 순위나 전체 시장 점유율 표가 아니다. <a href="https://skills.sh/">전체 순위</a> · <a href="https://skills.sh/docs/faq">집계 정의</a></p>
+<div class="scroll"><table><thead><tr><th>스킬</th><th>표시 설치 수</th><th>분석할 수요</th></tr></thead><tbody>
+<tr><td>find-skills</td><td>4.1M</td><td>적합한 스킬을 찾는 수요</td></tr>
+<tr><td>grill-me</td><td>1.5M</td><td>요구사항·생각을 구체화하는 수요</td></tr>
+<tr><td>hyperframes-cli</td><td>1.4M</td><td>영상 제작 도구 활용</td></tr>
+<tr><td>agent-browser</td><td>1.3M</td><td>브라우저 조작·검증</td></tr>
+<tr><td>frontend-design</td><td>1.1M</td><td>프런트엔드 결과물의 시각 품질</td></tr>
+<tr><td>vercel-react-best-practices</td><td>858.8K</td><td>React 구현 품질·성능</td></tr>
+</tbody></table></div>
+<p>24h Trending 화면에서는 ui-taste 25.3K, design-mobile-apps 16.6K, find-skills 13.6K, agent-browser 8.3K 등이 표시됐다. 디자인·미디어·브라우저 작업을 초기 실험 대상으로 삼을 근거지만, 이 하루만으로 장기 수요를 확정하지 않는다. 같은 저장소의 묶음 설치와 유사 복제 스킬이 있으므로 단순 합산도 피한다. <a href="https://skills.sh/trending">관찰한 Trending 페이지</a></p>
+<p>앞으로 수집할 값은 source, skill 경로, 원본 식별자, 조회 시각, 집계 기간, installs, repository stars다. 같은 원본을 복제한 항목은 원본 관계를 표시하고, 묶음 설치와 개별 실행의 차이를 보존한다. 설치 수나 별의 증가만으로 품질 판정을 하지 않는다.</p>
+
+<h2>2. 유명 프로젝트에서 가져올 것</h2>
+<p>다음은 현재 README와 유통 경로에서 확인한 사실 및 제품적 해석이다. 과거 스타 증가를 특정 홍보 활동이 일으켰다는 인과 분석은 아니다.</p>
+<div class="scroll"><table><thead><tr><th>프로젝트</th><th>확인한 사실</th><th>hot-pick에 적용할 전략</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/obra/superpowers">Superpowers</a></td><td>개발 방법론 전체를 제시하고 자동 스킬 발동 및 여러 마켓플레이스 설치 경로를 제공한다.</td><td>사용자가 스킬 이름을 외울 필요 없는 흐름. 단, 사용자에게 이미 있는 개발 흐름을 강제로 교체하지 않는다.</td></tr>
+<tr><td><a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill">UI UX Pro Max</a></td><td>프로젝트 요구에 따른 디자인 시스템 생성과 구체적인 결과 예시를 전면에 둔다.</td><td>설명보다 같은 입력에서 나온 실제 결과를 보여주는 데모.</td></tr>
+<tr><td><a href="https://github.com/mattpocock/skills">Matt Pocock skills</a></td><td>일상적으로 쓰는 엔지니어링 스킬, 문제별 설명, 약 6만 명 뉴스레터 안내, 복수 설치 경로가 있다.</td><td>기존 독자층의 효과를 인정하고 전문 제작자와 공동 사례를 만든다. 기능만으로 동일한 유통력을 얻었다고 가정하지 않는다.</td></tr>
+<tr><td><a href="https://github.com/vercel-labs/skills">find-skills / skills</a></td><td>검색·설치·설치 없는 사용과 디렉터리를 함께 제공한다.</td><td>기존 생태계를 활용하면서, 사용자 작업 완료와 적용 결과의 검증을 담당한다.</td></tr>
+</tbody></table></div>
+
+<h2>3. 작업에 맞는 GitHub 오픈소스 활용에 집중한다</h2>
+<p><strong>2026-11-07 목적 정정:</strong> 제품의 목적은 지금 하려는 작업에 적합한 트렌디한 GitHub 오픈소스를 찾아 실제로 활용하는 것이다. 디자인·프런트엔드는 데모 사례가 될 수 있지만 제품 범위를 한정하지 않는다. 대상도 스킬뿐 아니라 라이브러리·CLI·프레임워크·에이전트·MCP 등 작업에 적합한 오픈소스 전반이다. 이 문서의 설치 순위와 홍보 제안은 이 목적을 지원하는 참고 자료로 해석한다. <a href="product-purpose.html">최우선 제품 정의</a></p>
+<p>기존에 설치된 적합한 스킬이 있으면 바로 사용한다. 그때 hot-pick의 외부 검색 횟수는 0이어야 한다. 스킬이 필요 없는 작업에서는 사용하지 않는다. 전체 도구 호출 중 hot-pick 호출 수를 늘리는 것이 목표가 아니다.</p>
+
+<h2>4. 더 오래 유지될 경쟁우위</h2>
+<ol>
+<li><strong>작업별 검증 사례:</strong> 작업 유형·모델·호스트·스킬 커밋·입출력 조건·검증 결과를 연결한다. “프런트엔드”처럼 넓은 태그를 넘어 어떤 요청에서 도움이 됐고 안 됐는지 남긴다. 공개 가능한 재현 예제부터 쌓는다.</li>
+<li><strong>동작하는 조합:</strong> 필요한 MCP·스크립트·런타임이 실제 환경에 있는지 확인한다. 이름이 맞지만 실행 불가능한 후보는 건너뛴다. 제작자가 제공하는 호환성 테스트를 받을 수 있게 한다.</li>
+<li><strong>작업을 방해하지 않는 기억:</strong> 프로젝트에서 사용자가 선택한 스킬과 검증된 버전을 로컬에 기억한다. 같은 작업의 후속 수정에서 재검색하지 않는다. 사용자가 명시적으로 바꾸거나 제약·환경이 달라졌을 때 재선택한다.</li>
+</ol>
+<p>캐시와 랭킹 수집은 쉽게 복제된다. 공개 평가 데이터도 누구나 재사용할 수 있다. 오픈소스에서 경쟁우위는 비밀 데이터 독점보다 재현 가능한 평가를 꾸준히 유지하는 능력, 제작자 기여, 호환성, 신뢰에서 기대한다. 아직 이런 우위가 확보됐다고 주장하지 않는다.</p>
+
+<h2>5. 실제 사용을 측정하는 방법</h2>
+<p>설치 수에서 실제 사용량을 추정해 만들지 않는다. 향후 호스트 연동으로 다음 사건을 구분한다: 후보 선택 → 파일 준비 → 지침 적용 → 검증 결과 → 다른 작업에서 재사용. 파일을 읽었다는 사실은 적용이나 성공 증거가 아니다.</p>
+<p>단순 스킬은 모든 실행을 관찰할 수 없으므로, 호스트가 보고한 적용 여부와 테스트 도구가 확인한 결과를 구분한다. 명시적으로 연결된 기록만 집계한다. 결과 기록은 기본 로컬 저장; 원문 프롬프트·코드 업로드 없이, 사용자가 선택한 공개 사례나 동의한 최소 집계만 공유한다. 이번 작업에서는 수집 기능이나 텔레메트리를 활성화하지 않았다.</p>
+<table><thead><tr><th>질문</th><th>측정</th></tr></thead><tbody>
+<tr><td>설치하고 바로 쓸 수 있는가?</td><td>첫 요청부터 실제 스킬 적용까지 걸린 시간, 실패 단계</td></tr>
+<tr><td>선택이 맞았는가?</td><td>작업 수용 기준 통과, 불필요한 스킬 적용, 수동 교체</td></tr>
+<tr><td>계속 가치가 있는가?</td><td>다른 날·다른 작업에서 자발적 재사용한 참가자 비율</td></tr>
+<tr><td>소문이 사용으로 이어지는가?</td><td>동의한 모집 코호트의 유입 → 설치 → 첫 적용 → 재사용</td></tr>
+</tbody></table>
+<p>일반 수행, 사용자가 적절한 스킬을 직접 고른 수행, hot-pick 자동 선택을 동일 작업에서 비교한다. 모델·토큰 예산·프로젝트 상태를 통제하고 결과 평가에서 제품 이름을 가린다. 스킬 자체의 효과와 선택 자동화의 효과를 분리한다. 평가 없는 성공률이나 복잡한 가중 합계는 공개하지 않는다.</p>
+
+<h2>6. 공개할 때 보여줄 세 가지</h2>
+<ol>
+<li><strong>30초 데모:</strong> “이 페이지의 AI 느낌을 줄여줘” → 사용자의 스킬 지정 없이 적합한 지침 선택 → 실제 수정 → 같은 화면 크기의 전후 비교. 추가 대화와 실패도 기록하고 과도하게 편집하지 않는다.</li>
+<li><strong>재현 가능한 비교:</strong> 동일 모델·프롬프트·초기 저장소, hot-pick가 선택한 스킬 및 고정 커밋, 실행 시간, 결과물, 평가 기준을 함께 공개한다. 베스트 샷 하나를 전체 성능으로 주장하지 않는다.</li>
+<li><strong>제작자에게 돌아가는 가치:</strong> 사용한 스킬의 원작자·저장소·라이선스·버전을 명확히 표시한다. 제작자는 자신의 스킬을 발명하지 않은 사용자의 요청에도 연결되는 유통 경로를 얻는다.</li>
+</ol>
+<p>README 첫 문구 제안: <strong>hot-pick — Your agent picks the skills. You keep building.</strong><br>한국어: 필요한 스킬은 에이전트가 고릅니다. 당신은 작업을 이어가세요.</p>
+
+<h2>7. 첫 공개까지의 실행 순서</h2>
+<table><thead><tr><th>순서</th><th>산출물</th><th>판단 기준</th></tr></thead><tbody>
+<tr><td>1. 적용 범위 검증</td><td>디자인·프런트엔드 사례와 호환성 목록. 불필요한 요청도 포함.</td><td>검색에 머무르지 않고 실제 작업을 끝내는지</td></tr>
+<tr><td>2. 소규모 사용자 실험</td><td>개발자 10명 정도가 본인 프로젝트에서 사용. 규모는 모집 목표.</td><td>도움 없이 첫 적용 가능한지, 며칠 뒤 다시 쓰는지</td></tr>
+<tr><td>3. 비교와 데모</td><td>전후 결과, 실패 사례, 재현 명령, 알려진 한계</td><td>사용자가 얻는 이점이 수 초 안에 이해되는지</td></tr>
+<tr><td>4. 생태계 유통</td><td>공개 저장소·skills.sh 경로·클라이언트별 설치 안내. 제작자에게 공동 사례 제안 초안.</td><td>원작자에게도 유입과 명확한 기여 표시가 생기는지</td></tr>
+<tr><td>5. 공개 홍보</td><td>영문 README와 짧은 영상, 개발자 커뮤니티별 실사용 사례</td><td>스타보다 첫 적용과 재사용의 증가</td></tr>
+</tbody></table>
+<p>skills.sh는 CLI를 통한 설치 텔레메트리에 따라 디렉터리에 노출된다고 설명한다. hot-pick 자체의 정상적인 설치 경로는 마련하되, 캐시 로딩을 설치로 가장해 순위에 반영하거나 반복 설치로 숫자를 늘리지 않는다. 텔레메트리 비활성화 선택도 존중한다. 마켓플레이스 등재나 외부 홍보는 이 문서 작성만으로 실행된 것이 아니다. <a href="https://skills.sh/docs/faq">공식 등재 설명</a></p>
+
+<h2>8. 수집 비용과 데이터 출처</h2>
+<p>공식 API 문서는 all-time/trending/hot과 semantic search를 이미 제공한다. 검색 의미 해석이나 인기 목록 자체를 독자 기능으로 주장하지 않는다. 문서화된 v1 API는 Vercel OIDC 인증을 요구하므로 무인 대량 수집을 익명 무료 API라고 가정하지 않는다. 현재 CLI에서 활용한 엔드포인트와 공식 인증 API를 구분하고, 제공자 정책과 할당량에 맞춰 어댑터를 둔다. <a href="https://skills.sh/docs/api">공식 API</a></p>
+<p>10분은 확인 주기이며 모든 항목을 다시 분석하는 주기가 아니다. 인기 메타데이터 스냅샷과 Git 커밋 변경을 분리하고, 내용 해시가 같은 스킬은 재분석하지 않는다. 같은 원본의 중복과 수집 실패를 기록한다. 우선 로컬 카탈로그와 공개 평가 사례에서 시작하고 대규모 서버는 실제 사용 수요가 생긴 뒤 구축한다.</p>
+
+<h2>9. 이번에 바뀐 것과 아직 하지 않은 것</h2>
+<p>이번 산출물은 실제 순위와 경쟁 프로젝트 근거를 바탕으로 한 제품·출시 전략이다. 초기 공략 분야, 차별화할 자산, 측정 정의, 공개 데모와 유통 순서를 구체화했다. 실행 코드, 패키지명, 설치된 스킬 이름은 바꾸지 않았다. 사용자 추적, 서버 구축, 블라인드 평가, 외부 연락·게시·배포는 실행하지 않았다.</p>
+<p><a href="evaluation.html">기존 구현·성능 보고서</a> · <a href="../README.md">현재 구현 사용법</a></p>
+</main></body></html>

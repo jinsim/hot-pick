@@ -1,0 +1,40 @@
+{
+  "note": "Single real-source preparation observations, not comparative task-quality evaluations. Timings exclude process startup. First find-skills preparation reused inspection cache; React snapshot preparation used a fresh cache.",
+  "results": [
+    {
+      "selector": "vercel-labs/skills@find-skills",
+      "commit": "92a9a34ac3bf88e695e468b90c7bf32f163d32c8",
+      "bundle_id": "28a94eaceaf6249b418139096846bbc692e7ed8fe371beeef1a3795788f0aa95",
+      "files": 1,
+      "reused": false,
+      "global_install": false,
+      "executed": false,
+      "warnings": [],
+      "metrics": {
+        "requests": 0,
+        "bytes": 0,
+        "cache_hits": 5,
+        "revalidated": 0,
+        "elapsed_ms": 11.05
+      }
+    },
+    {
+      "selector": "vercel-labs/agent-skills@vercel-react-best-practices",
+      "commit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "bundle_id": "f8fb512bc59ae4decd1e03064d251130c35f7fc697e2bd33e43a9c688aa7cebd",
+      "files": 76,
+      "reused": false,
+      "global_install": false,
+      "executed": false,
+      "warnings": [],
+      "metrics": {
+        "requests": 5,
+        "bytes": 394834,
+        "cache_hits": 76,
+        "revalidated": 0,
+        "snapshot_files": 75,
+        "elapsed_ms": 788.11
+      }
+    }
+  ]
+}

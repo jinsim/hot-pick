@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "task": "Collect the first page of the public Books to Scrape practice catalog as JSON and CSV using the selected GitHub library.",
+  "workspace": ".",
+  "source": {"repo": "D4Vinci/Scrapling", "commit": "bc602488b44e978da3266841e913af17577ec0fd"},
+  "steps": [
+    {"name": "Create task-local environment", "argv": ["python3", "-m", "venv", ".venv"]},
+    {"name": "Install pinned source", "argv": ["${workspace}/.venv/bin/python", "-m", "pip", "install", "--disable-pip-version-check", "${source}"], "timeout_ms": 300000},
+    {"name": "Fetch public page with verified TLS", "argv": ["node", "fetch-books.mjs"]},
+    {"name": "Extract real public catalog", "argv": ["${workspace}/.venv/bin/python", "books.py"]}
+  ],
+  "checks": [{"name": "Verify complete catalog outputs", "argv": ["${workspace}/.venv/bin/python", "books.py", "--verify"]}],
+  "artifacts": ["books.json", "books.csv"]
+}

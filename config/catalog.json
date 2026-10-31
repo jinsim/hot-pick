@@ -1,0 +1,8 @@
+{
+  "interval_seconds": 1800,
+  "max_repositories_per_sync": 12,
+  "max_skills_per_repository": 500,
+  "prewarm": true,
+  "repositories": ["nextlevelbuilder/ui-ux-pro-max-skill", "anthropics/skills", "vercel-labs/agent-skills", "github/awesome-copilot", "obra/superpowers"],
+  "trending": [{"since":"daily"},{"since":"weekly"},{"since":"monthly"}]
+}

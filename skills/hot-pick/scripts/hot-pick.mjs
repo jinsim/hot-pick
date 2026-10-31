@@ -11,7 +11,7 @@ export async function main(argv = process.argv.slice(2)) {
   const command = argv.shift();
   const opts = {}, positional = [];
   const flags = new Set(['offline', 'refresh', 'content']);
-  const values = new Set(['cache', 'ttl', 'timeout', 'limit', 'owner', 'path', 'ref', 'api', 'since', 'language', 'file', 'workspace', 'plan']);
+  const values = new Set(['cache', 'ttl', 'timeout', 'limit', 'owner', 'path', 'ref', 'api', 'since', 'language', 'file', 'workspace', 'plan', 'config']);
   while (argv.length) {
     const x = argv.shift();
     if (!x.startsWith('--')) { positional.push(x); continue; }
@@ -32,6 +32,10 @@ export async function main(argv = process.argv.slice(2)) {
   }
   const c = new HotPick(opts); let result;
   const start = performance.now();
+  if (['catalog-sync','catalog-watch','catalog-route','catalog-label','catalog-record','catalog-status'].includes(command)) {
+    const { catalogCommand } = await import('./catalog.mjs');
+    console.log(JSON.stringify({ok:true,...await catalogCommand(command,positional,opts)})); return;
+  }
   if (['discover', 'trending', 'repo', 'read', 'acquire', 'apply'].includes(command)) {
     const { ossCommand } = await import('./oss.mjs');
     const output = await ossCommand(command, positional, opts);

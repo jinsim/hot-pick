@@ -1,0 +1,51 @@
+{
+  "date_kst": "2026-11-07",
+  "initial_sync": {
+    "cards": 564,
+    "ready": 562,
+    "elapsed_ms": 315634,
+    "metrics": {
+      "requests": 1617,
+      "bytes": 64391458,
+      "cache_hits": 4162,
+      "revalidated": 0,
+      "snapshot_files": 990
+    },
+    "errors": [
+      {
+        "repo": "rust-lang/rust",
+        "message": "Repository tree is incomplete. Use a smaller upstream skill repository."
+      }
+    ]
+  },
+  "local_route": {
+    "runs": 10,
+    "catalog_cards": 564,
+    "median_with_trace_ms": 66.12160449999999,
+    "min_ms": 65.17870800000003,
+    "max_ms": 73.49379199999998,
+    "requests": 0,
+    "first_candidate": "ui-ux-pro-max",
+    "scope": "Single button keyboard focus query; same-process warm OS cache; not end-to-end LLM/task latency"
+  },
+  "unchanged_repository_recheck": {
+    "changed": [],
+    "errors": [],
+    "metrics": {
+      "requests": 0,
+      "bytes": 0,
+      "cache_hits": 4,
+      "revalidated": 0
+    }
+  },
+  "classification": {
+    "source_extracted_cards": 564,
+    "host_reviewed_profiles": 1
+  },
+  "limitations": [
+    "Two bundles were not prepared; ready means materialized files, not all skill runtimes verified.",
+    "Trending repository membership is separate from seed repository inventory.",
+    "No universal semantic selection accuracy or zero task overhead claim.",
+    "No new webpage modification was performed in this catalog validation; downloaded UI/UX guidance search was executed."
+  ]
+}

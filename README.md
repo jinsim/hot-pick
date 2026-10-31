@@ -53,6 +53,21 @@ npm run hot-pick -- apply --plan examples/product-extraction/plan.json
 
 This downloads the pinned project, installs it into the example's local `.venv`, extracts the products and runs assertions. See the live example below for the public catalog.
 
+## Precompute skills; route small edits locally
+
+The catalog collector runs outside the request path. It stores commit-pinned SKILL.md instructions, source-backed capability excerpts, optional reviewed intent/output profiles and prepared supporting files. GitHub Trending observations stay separate from seeded skill repositories.
+
+```sh
+npm run hot-pick -- catalog-sync --config config/catalog.json
+npm run hot-pick -- catalog-watch --config config/catalog.json
+# In the agent's task, using a small operation description:
+npm run hot-pick -- catalog-route --file task.json
+```
+
+The default interval is 30 minutes; 10 and 60 minutes are supported. `catalog-watch` is an explicitly launched foreground worker, not a login service. Local routing performs no remote search, installation or LLM API call. The host agent still judges fit and applies selected instructions. A small button fix should load relevant UI guidance, not choose a whole new framework.
+
+See [catalog configuration, classification, offline application and audit traces](skills/hot-pick/references/catalog.md). No claim of zero overhead or autonomous semantic understanding is made: extracted passages are distinguished from host-reviewed profiles. Cold indexing and bundle preparation can be expensive; readiness and errors are reported.
+
 ## General GitHub workflow
 
 ```sh
@@ -99,9 +114,9 @@ Supporting files and relative paths are preserved without globally installing ea
 
 ## Cache, provenance and scope
 
-Mutable HTTP data has a 600-second TTL, conditional requests and explicit stale/offline indicators. Commit trees and verified file blobs are reused. `data_checked_at` is the actual data-check time; reading a cache does not fabricate a newer observation of upstream state. HTTP request metrics exclude Git transfer and subprocess package installation. No telemetry or background scheduler is enabled.
+Mutable HTTP data has a 600-second TTL, conditional requests and explicit stale/offline indicators. Commit trees and verified file blobs are reused. `data_checked_at` is the actual data-check time; reading a cache does not fabricate a newer observation of upstream state. HTTP request metrics exclude Git transfer and subprocess package installation. No telemetry is sent. Request commands never start a scheduler; the optional catalog worker runs separately.
 
-The Trending adapter reads GitHub's public HTML, which may change or become unavailable. It reports failure instead of inventing ranks. This is demand-driven discovery, not a constantly running global index. Public GitHub sources are supported; private credentials, binary release installation, LFS hydration, automatic MCP provisioning and arbitrary dependency resolution remain host-specific. Tree/file limits are explicit. Source preparation, successful commands and successful user outcomes are different states.
+The Trending adapter reads GitHub's public HTML, which may change or become unavailable. It reports failure instead of inventing ranks. The discover command is demand-driven; the optional collector maintains a bounded local catalog, not a complete global index. Public GitHub sources are supported; private credentials, binary release installation, LFS hydration, automatic MCP provisioning and arbitrary dependency resolution remain host-specific. Tree/file limits are explicit. Source preparation, successful commands and successful user outcomes are different states.
 
 ## Development and evidence
 

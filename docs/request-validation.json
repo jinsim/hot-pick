@@ -1,0 +1,95 @@
+{
+  "task": {
+    "operations": [
+      {
+        "intent": "Fix keyboard accessibility of an existing web page action button",
+        "keywords": [
+          "accessibility",
+          "keyboard",
+          "focus",
+          "button"
+        ],
+        "constraints": [
+          "Preserve appearance, use native HTML and CSS, no runtime dependencies"
+        ]
+      }
+    ]
+  },
+  "catalog_updated_at": "2026-11-08T00:31:30.792Z",
+  "selected": {
+    "id": "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+    "name": "better-accessibility",
+    "commit": "f41f027797f77cb1594a5c718aeee3e6a7fe99ba",
+    "license": "MIT",
+    "description": "Reviews and fixes keyboard and focus behavior, ARIA, accessible names, forms, screen-reader announcements, motion and zoom against WCAG 2.2.",
+    "trending": {
+      "since": "weekly",
+      "rank": 11
+    },
+    "matched_terms": [
+      "accessibility",
+      "keyboard",
+      "focus",
+      "button"
+    ],
+    "retrieval_score": 8.262328368812856
+  },
+  "browser": {
+    "cases": [
+      {
+        "variant": "before",
+        "checks": {
+          "tab_reachable": false,
+          "visible_focus": false,
+          "enter_activates": false,
+          "space_activates": false,
+          "native_button": false,
+          "persistent_status_region": false
+        },
+        "passed": 0,
+        "total": 6
+      },
+      {
+        "variant": "after",
+        "checks": {
+          "tab_reachable": true,
+          "visible_focus": true,
+          "enter_activates": true,
+          "space_activates": true,
+          "native_button": true,
+          "persistent_status_region": true
+        },
+        "passed": 6,
+        "total": 6
+      }
+    ],
+    "limitations": [
+      "Constructed fixture; not independent no-skill agent comparison",
+      "Screen reader speech not verified"
+    ]
+  },
+  "timing": {
+    "cold_default_timeout_failures": 2,
+    "default_timeout_ms": 8000,
+    "cold_success_wall_seconds": 33.234,
+    "warm_offline_wall_seconds": 0.316,
+    "warm_requests": 0,
+    "note": "Single samples; excludes authoring/verification. Initial failures are additional overhead."
+  },
+  "context_bytes": {
+    "route.json": 2062,
+    "detail.json": 11636,
+    "skill.txt": 10949
+  },
+  "tokens": {
+    "measured": false,
+    "reason": "No full-session token accounting available; tokenizer installation did not finish. Byte counts are not tokens."
+  },
+  "comparison": {
+    "independent_no_skill_baseline": false,
+    "quality_superiority_proven": false,
+    "speed_superiority_proven": false,
+    "token_savings_proven": false
+  },
+  "tests_passed": 65
+}

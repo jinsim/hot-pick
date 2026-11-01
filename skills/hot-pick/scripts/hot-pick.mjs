@@ -34,7 +34,8 @@ export async function main(argv = process.argv.slice(2)) {
   const start = performance.now();
   if (['catalog-sync','catalog-watch','catalog-route','catalog-detail','catalog-label','catalog-record','catalog-status','catalog-review-queue','catalog-connect'].includes(command)) {
     const { catalogCommand } = await import('./catalog.mjs');
-    console.log(JSON.stringify({ok:true,...await catalogCommand(command,positional,opts)})); return;
+    const output = await catalogCommand(command,positional,opts);
+    console.log(JSON.stringify({ok:true,...output,elapsed_ms:performance.now()-start})); return;
   }
   if (['discover', 'trending', 'repo', 'read', 'acquire', 'apply'].includes(command)) {
     const { ossCommand } = await import('./oss.mjs');

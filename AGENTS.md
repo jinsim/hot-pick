@@ -31,3 +31,9 @@ See docs/product-purpose.html for the canonical product definition.
 - The operator pipeline collects and stores data without LLM calls. Any semantic review is a finite task in an authorized local agent session, keyed to source evidence/version.
 - Default tool responses should be small decision packets. Retrieve detailed evidence and supporting instructions only for candidates the caller needs; preserve source/version and explicit detail retrieval.
 - Measure output tokens on the same catalog and multiple tasks before claiming savings. Tokenizer counts are estimates for a particular encoding, not the caller's billed tokens or proof of better task outcomes.
+
+## Free-only operator pipeline
+
+- User requirement (2026-11-08): operate the collector and public catalog without charges. Keep standard GitHub-hosted runners in this public repository and Firebase billing disabled.
+- Do not link billing, enable paid fallback services, add larger runners, or increase paid storage allowances without explicit new authorization. Accept free-quota interruption rather than automatically upgrading.
+- Distinguish a configured schedule from observed execution. Verify actual `schedule` events, cache restoration, and live publication; manual dispatch does not establish automatic refresh. GitHub cron does not guarantee the configured interval.

@@ -1,5 +1,5 @@
 {
-  "verified_at": "2026-11-08 KST",
+  "verified_at": "2026-11-08T02:03:53.775Z",
   "project": "jinsim-hot-pick",
   "billing_enabled": false,
   "workflow": ".github/workflows/catalog.yml",
@@ -63,14 +63,134 @@
     }
   },
   "scheduled_run": {
-    "status": "not_observed",
-    "checked_at": "2026-11-07T18:11:06Z",
-    "expected_ticks": [
-      "2026-11-07T17:37:00Z",
-      "2026-11-07T18:07:00Z"
+    "status": "verified",
+    "checked_at": "2026-11-08T02:03:53.775Z",
+    "observed_schedule_runs": 2,
+    "previous_observation": {
+      "status": "not_observed",
+      "checked_at": "2026-11-07T18:11:06Z",
+      "expected_ticks": [
+        "2026-11-07T17:37:00Z",
+        "2026-11-07T18:07:00Z"
+      ],
+      "observed_schedule_runs": 0,
+      "note": "The workflow is active on main. Manual cloud execution succeeded, but no schedule-event run existed at this observation time. This is not proof that a future scheduled run will never occur."
+    },
+    "runs": [
+      {
+        "id": 42414046867,
+        "url": "https://github.com/jinsim/hot-pick/actions/runs/42414046867",
+        "event": "schedule",
+        "conclusion": "success",
+        "created_at": "2026-11-07T21:03:58Z",
+        "cache_restored_from": "hot-pick-state-v1-42396318481-1",
+        "bootstrap": {
+          "seeded": false
+        },
+        "collection": {
+          "updated_at": "2026-11-07T21:04:20.835Z",
+          "cards": 1600,
+          "ready": 0,
+          "errors": [],
+          "deferred": [],
+          "processed": 54,
+          "unchanged_repositories": 0,
+          "repositories_synced": 8,
+          "warnings": [],
+          "metrics": {
+            "requests": 88,
+            "bytes": 11801896,
+            "cache_hits": 0,
+            "revalidated": 0
+          },
+          "elapsed_ms": 16275,
+          "initialized_or_changed_fingerprints": 54
+        },
+        "cache": {
+          "bytes": 43241547,
+          "removed": 0,
+          "limit": 268435456
+        },
+        "publication": {
+          "status": "published",
+          "url": "https://jinsim-hot-pick.web.app/catalog.json",
+          "version": "sites/jinsim-hot-pick/versions/b3e30c4d39db51d2",
+          "bytes": 8346959,
+          "upload_bytes": 1844735,
+          "sha256": "5643e5fef89d4cda189981a0744a326a41445845f20eb8706a8efc6ef53db35d"
+        },
+        "verification": {
+          "verified": true,
+          "url": "https://jinsim-hot-pick.web.app/catalog.json",
+          "sha256": "5643e5fef89d4cda189981a0744a326a41445845f20eb8706a8efc6ef53db35d",
+          "cards": 1600,
+          "updated_at": "2026-11-07T21:04:20.835Z",
+          "conditional_status": 304
+        }
+      },
+      {
+        "id": 42430095575,
+        "url": "https://github.com/jinsim/hot-pick/actions/runs/42430095575",
+        "event": "schedule",
+        "conclusion": "success",
+        "created_at": "2026-11-08T00:30:56Z",
+        "cache_restored_from": "hot-pick-state-v1-42414046867-1",
+        "bootstrap": {
+          "seeded": false
+        },
+        "collection": {
+          "updated_at": "2026-11-08T00:31:30.792Z",
+          "cards": 1651,
+          "ready": 0,
+          "errors": [],
+          "deferred": [
+            {
+              "repo": "thedotmack/claude-mem",
+              "reason": "skill_batch_limit"
+            },
+            {
+              "repo": "Donchitos/Claude-Code-Game-Studios",
+              "reason": "skill_batch_limit"
+            }
+          ],
+          "processed": 122,
+          "unchanged_repositories": 0,
+          "repositories_synced": 8,
+          "warnings": [],
+          "metrics": {
+            "requests": 152,
+            "bytes": 18986236,
+            "cache_hits": 5,
+            "revalidated": 0
+          },
+          "elapsed_ms": 28261,
+          "initialized_or_changed_fingerprints": 122
+        },
+        "cache": {
+          "bytes": 64920928,
+          "removed": 0,
+          "limit": 268435456
+        },
+        "publication": {
+          "status": "published",
+          "url": "https://jinsim-hot-pick.web.app/catalog.json",
+          "version": "sites/jinsim-hot-pick/versions/386570e4b2fa6124",
+          "bytes": 8577980,
+          "upload_bytes": 1902162,
+          "sha256": "fd8e812a1fca3cdb593c45abd9629e2580fc3e035e8163e501be163342acbfea"
+        },
+        "verification": {
+          "verified": true,
+          "url": "https://jinsim-hot-pick.web.app/catalog.json",
+          "sha256": "fd8e812a1fca3cdb593c45abd9629e2580fc3e035e8163e501be163342acbfea",
+          "cards": 1651,
+          "updated_at": "2026-11-08T00:31:30.792Z",
+          "conditional_status": 304
+        }
+      }
     ],
-    "observed_schedule_runs": 0,
-    "note": "The workflow is active on main. Manual cloud execution succeeded, but no schedule-event run existed at this observation time. This is not proof that a future scheduled run will never occur."
+    "observed_run_gap_seconds": 12418,
+    "note": "Both runs were emitted by GitHub schedule, without manual dispatch or a workflow configuration change. Cache restored across runs and publication verified. The 30-minute cadence was not delivered in the observed interval; GitHub exposes no per-missed-tick reason, so the exact cause remains unconfirmed. No paid fallback was provisioned."
   },
   "limits": {
     "timeout_minutes": 12,
@@ -83,5 +203,23 @@
   "local_tests": {
     "passed": 65,
     "failed": 0
+  },
+  "live_recheck": {
+    "checked_at": "2026-11-08T02:03:53.775Z",
+    "verified": true,
+    "url": "https://jinsim-hot-pick.web.app/catalog.json",
+    "sha256": "fd8e812a1fca3cdb593c45abd9629e2580fc3e035e8163e501be163342acbfea",
+    "cards": 1651,
+    "updated_at": "2026-11-08T00:31:30.792Z",
+    "conditional_status": 304
+  },
+  "free_operation": {
+    "billing_enabled": false,
+    "public_repository": true,
+    "runner": "ubuntu-latest (standard)",
+    "retained_caches": 3,
+    "compressed_cache_bytes": 22961614,
+    "paid_fallback": false,
+    "quota_policy": "Keep billing disabled; accept quota-related publication or serving interruption instead of enabling paid overage."
   }
 }

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>hot-pick catalog token benchmark</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 1rem/1.6 system-ui, sans-serif; margin: 0; }
+  main { margin: 3rem auto; max-width: 70rem; padding: 0 1.25rem 3rem; }
+  h1 { font-size: clamp(2rem, 5vw, 3.3rem); line-height: 1.1; margin: 0 0 1rem; }
+  h2 { margin-top: 2.5rem; }
+  p { max-width: 78ch; }
+  .table { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+  caption { text-align: left; margin: .25rem 0 .75rem; font-weight: 650; }
+  th, td { border-bottom: 1px solid GrayText; padding: .55rem .7rem; text-align: left; white-space: nowrap; }
+  td { text-align: right; }
+  td small { display: block; }
+  tbody th { font-weight: 550; }
+  pre { overflow-x: auto; padding: .9rem; border: 1px solid GrayText; border-radius: .4rem; }
+  code { overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<main>
+<header>
+<p>Validation on 2026-11-08 KST</p>
+<h1>hot-pick catalog token benchmark</h1>
+<p>Same 904-card snapshot, 17 repositories, and 12 Korean and English task cases. Each route used a warm cache with network fetch disabled.</p>
+</header>
+
+<section>
+<h2>Measured response tokens</h2>
+<div class="table" tabindex="0" role="region" aria-label="Token totals by encoding">
+<table>
+<caption>Sum of CLI responses across 12 cases</caption>
+<thead><tr><th scope="col">Encoding</th><th scope="col">Previous route</th><th scope="col">Compact route</th><th scope="col">Compact + first details</th><th scope="col">+ All details separately</th><th scope="col">+ All details in batch</th></tr></thead>
+<tbody><tr><th scope="row"><code>cl100k_base</code></th><td>63,177</td><td>5,366<small>-91.51%</small></td><td>28,475<small>-54.93%</small></td><td>67,868<small>+7.43%</small></td><td>54,996<small>-12.95%</small></td></tr>
+<tr><th scope="row"><code>o200k_base</code></th><td>63,131</td><td>5,386<small>-91.47%</small></td><td>28,382<small>-55.04%</small></td><td>67,851<small>+7.48%</small></td><td>54,798<small>-13.20%</small></td></tr>
+</tbody>
+</table>
+</div>
+<p>The all-candidate comparison includes the same compact route output on both sides. Batching reduced detail calls from 29 to 11 and reduced the combined <code>o200k_base</code> total by 19.24% compared with individual detail calls. The first-detail stage opens the highest-ranked candidate for each matched operation in one request. Single-candidate and zero-candidate cases use the same paths as before.</p>
+<p>The skill entrypoint uses 571 tokens under <code>o200k_base</code> and 576 under <code>cl100k_base</code>.</p>
+
+<div class="table" tabindex="0" role="region" aria-label="Per-case token counts">
+<table>
+<caption>Per-case counts under o200k_base</caption>
+<thead><tr><th scope="col">Case</th><th scope="col">Intent language</th><th scope="col">Unique candidates</th><th scope="col">Previous</th><th scope="col">Compact</th><th scope="col">+ First details</th><th scope="col">+ All separately</th><th scope="col">+ All in batch</th></tr></thead>
+<tbody><tr><th scope="row">keyboard-focus</th><td>ko</td><td>3</td><td>9,081</td><td>570</td><td>3,942</td><td>9,624</td><td>7,859</td></tr>
+<tr><th scope="row">react-performance</th><td>en</td><td>1</td><td>1,662</td><td>240</td><td>1,784</td><td>1,784</td><td>1,784</td></tr>
+<tr><th scope="row">postgres-migration</th><td>ko</td><td>3</td><td>2,915</td><td>605</td><td>1,652</td><td>3,476</td><td>2,903</td></tr>
+<tr><th scope="row">spreadsheet</th><td>en</td><td>1</td><td>1,959</td><td>273</td><td>2,123</td><td>2,123</td><td>2,123</td></tr>
+<tr><th scope="row">python-lint</th><td>ko</td><td>3</td><td>9,439</td><td>523</td><td>2,419</td><td>9,933</td><td>7,855</td></tr>
+<tr><th scope="row">kubernetes</th><td>en</td><td>3</td><td>3,538</td><td>417</td><td>1,180</td><td>3,937</td><td>3,232</td></tr>
+<tr><th scope="row">incident-response</th><td>en</td><td>3</td><td>5,923</td><td>477</td><td>3,501</td><td>6,377</td><td>5,359</td></tr>
+<tr><th scope="row">cloudflare-security</th><td>ko</td><td>2</td><td>2,482</td><td>383</td><td>1,954</td><td>2,784</td><td>2,341</td></tr>
+<tr><th scope="row">pdf-tables</th><td>ko</td><td>3</td><td>5,081</td><td>557</td><td>2,414</td><td>5,608</td><td>4,224</td></tr>
+<tr><th scope="row">two-operations</th><td>en</td><td>6</td><td>17,400</td><td>916</td><td>3,621</td><td>18,413</td><td>13,326</td></tr>
+<tr><th scope="row">native-korean</th><td>ko</td><td>1</td><td>3,489</td><td>287</td><td>3,654</td><td>3,654</td><td>3,654</td></tr>
+<tr><th scope="row">out-of-catalog</th><td>en</td><td>0</td><td>162</td><td>138</td><td>138</td><td>138</td><td>138</td></tr>
+</tbody>
+</table>
+</div>
+<p>The benchmark counts exact CLI stdout with the two public BPE encodings in <code>tiktoken 0.14.0</code>. A staged count sums each response independently. Request wrappers, conversation context, reasoning and selected source files are outside the measurement. IDs and timings vary between runs. Actual billing for any model or agent session was not measured. <a href="https://github.com/openai/tiktoken">Tokenizer source</a></p>
+</section>
+
+<section>
+<h2>Information retained</h2>
+<ul>
+<li>The shortlist keeps task constraints, candidate identity, commit, license, retrieval terms and scores, and any observed Trending period, rank and language filter. It labels a shortened description.</li>
+<li>Batch detail stores each distinct excerpt as one <code>[line, text]</code> pair per profile. Category arrays use zero-based indices into the pairs. The benchmark expanded the batch and verified that its candidates exactly matched the saved profiles and metadata, including source URL, commit, Git blob hash, conditions, semantic review, and Trending observations.</li>
+<li>Candidate order and retrieval scores matched exactly. Some lexical matches were weak, such as the Excel-to-Markdown candidate for formula auditing. The caller checks semantic fit.</li>
+<li>All 59 repository tests passed. The CLI test covers a batch in request order, repeated IDs, rejection of an unknown ID, and the original single-candidate response. The skill validator passed.</li>
+</ul>
+</section>
+
+<section>
+<h2>Observed offline caller workflow</h2>
+<p>The caller took a Korean request to document a Node CLI test workflow and mapped it once to <code>github actions workflow specification</code>. The shortlist returned three candidates with zero requests. The caller used one offline detail request for all three candidate IDs and verified the selected candidate’s pins and conditions against the earlier single response. It used the pinned entrypoint to write a behavioral specification for a local YAML fixture. It declined issue planning and VS Code session guidance. <a href="https://github.com/github/awesome-copilot/blob/797337f33f73e35d08d82f840e21c4b8c4932d88/skills/create-github-action-workflow-specification/SKILL.md">Selected skill at its verified commit</a></p>
+<pre><code>node "$CLI" catalog-route --catalog-url https://catalog.example/v1/catalog \
+  --file task.json --cache "$CACHE" --offline
+node "$CLI" catalog-detail --trace "$TRACE" \
+  'github/awesome-copilot:skills/create-github-action-workflow-specification/SKILL.md' \
+  'github/awesome-copilot:skills/gen-specs-as-issues/SKILL.md' \
+  'microsoft/vscode:.github/skills/sessions/SKILL.md' \
+  --cache "$CACHE" --offline
+node "$CLI" read github/awesome-copilot \
+  --ref 797337f33f73e35d08d82f840e21c4b8c4932d88 \
+  --file skills/create-github-action-workflow-specification/SKILL.md \
+  --text --cache "$CACHE" --offline
+node "$CLI" catalog-record --file outcome.json --cache "$CACHE" --offline</code></pre>
+<p>The cache already contained the catalog, the Git tree and the selected file. Each command ran with an environment containing only <code>PATH</code> and a Node import that disabled fetch. The caller checked the generated specification against fixture triggers, path filters, permissions, concurrency, timeout and failure flow. The trace recorded the used and rejected candidates. The selected skill needed no supporting file for this fixture. A separate CLI test demonstrated fetching one supporting file from cache only when requested.</p>
+</section>
+
+<section>
+<h2>Reproduction</h2>
+<p>Run from the repository root. Set <code>SNAPSHOT</code> to the exported catalog used in this report. Its SHA-256 is <code>a6edb4028c33dd7144c39419b957a71b8c56d64824cfb0d1753cea1a3d8c4c6e</code>. Python and the tokenizer are only used by the benchmark.</p>
+<pre><code>scratch=$(mktemp -d)
+git archive c3a40bd4782b2098b5c85cf72b7077b1e071fa85 skills/hot-pick \
+  | tar -xf - -C "$scratch"
+python3 -m venv "$scratch/venv"
+"$scratch/venv/bin/python" -m pip install tiktoken==0.14.0
+TIKTOKEN_CACHE_DIR="$scratch/tokenizer-cache" \
+  node benchmarks/token-catalog.mjs "$SNAPSHOT" \
+  "$scratch/skills/hot-pick/scripts/hot-pick.mjs" "$scratch/venv/bin/python"</code></pre>
+<p>The first tokenizer run may download its vocabulary files. Catalog routes and detail calls run offline. <a href="token-validation.json">Raw counts and checks</a></p>
+</section>
+</main>
+</body>
+</html>

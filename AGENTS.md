@@ -24,3 +24,10 @@ and actually use them to improve the task's result.
   task-quality superiority.
 
 See docs/product-purpose.html for the canonical product definition.
+
+## Caller-owned reasoning and token budget
+
+- Intent interpretation, semantic matching, final skill selection, and synthesis belong to the calling agent's existing conversation. Do not add an internal LLM client, request the caller's API key, or forward a session/OAuth credential to the catalog service.
+- The operator pipeline collects and stores data without LLM calls. Any semantic review is a finite task in an authorized local agent session, keyed to source evidence/version.
+- Default tool responses should be small decision packets. Retrieve detailed evidence and supporting instructions only for candidates the caller needs; preserve source/version and explicit detail retrieval.
+- Measure output tokens on the same catalog and multiple tasks before claiming savings. Tokenizer counts are estimates for a particular encoding, not the caller's billed tokens or proof of better task outcomes.

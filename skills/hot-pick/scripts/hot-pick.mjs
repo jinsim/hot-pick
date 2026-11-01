@@ -10,8 +10,8 @@ function fail(code, message) { throw new HotPickError(code, message); }
 export async function main(argv = process.argv.slice(2)) {
   const command = argv.shift();
   const opts = {}, positional = [];
-  const flags = new Set(['offline', 'refresh', 'content']);
-  const values = new Set(['cache', 'ttl', 'timeout', 'limit', 'owner', 'path', 'ref', 'api', 'since', 'language', 'file', 'workspace', 'plan', 'config', 'catalog-url']);
+  const flags = new Set(['offline', 'refresh', 'content', 'details', 'text']);
+  const values = new Set(['cache', 'ttl', 'timeout', 'limit', 'owner', 'path', 'ref', 'api', 'since', 'language', 'file', 'workspace', 'plan', 'config', 'catalog-url', 'trace']);
   while (argv.length) {
     const x = argv.shift();
     if (!x.startsWith('--')) { positional.push(x); continue; }
@@ -32,13 +32,17 @@ export async function main(argv = process.argv.slice(2)) {
   }
   const c = new HotPick(opts); let result;
   const start = performance.now();
-  if (['catalog-sync','catalog-watch','catalog-route','catalog-label','catalog-record','catalog-status','catalog-review-queue','catalog-connect'].includes(command)) {
+  if (['catalog-sync','catalog-watch','catalog-route','catalog-detail','catalog-label','catalog-record','catalog-status','catalog-review-queue','catalog-connect'].includes(command)) {
     const { catalogCommand } = await import('./catalog.mjs');
     console.log(JSON.stringify({ok:true,...await catalogCommand(command,positional,opts)})); return;
   }
   if (['discover', 'trending', 'repo', 'read', 'acquire', 'apply'].includes(command)) {
     const { ossCommand } = await import('./oss.mjs');
     const output = await ossCommand(command, positional, opts);
+    if (command === 'read' && opts.text) {
+      process.stdout.write(output.text);
+      return;
+    }
     const ok = output.status !== 'failed';
     console.log(JSON.stringify({ ok, ...output, elapsed_ms: Math.round(performance.now() - start) }));
     if (!ok) process.exitCode = 1;
@@ -58,7 +62,7 @@ export async function main(argv = process.argv.slice(2)) {
   else if (command === 'refresh') result = await c.refreshTracked(opts.limit ?? 10);
   else if (command === 'status') result = { cache: c.dir, tracked_skills: (await c.records()).length };
   else if (command === '--version') result = { version: VERSION };
-  else result = { usage: ['discover "public task keywords" [--since weekly] [--language python]', 'trending [--since daily|weekly|monthly]', 'repo owner/repo [--ref SHA]', 'read owner/repo --ref SHA --file README.md', 'acquire owner/repo --ref SHA --workspace DIR', 'apply --plan task-plan.json', 'search "skill keywords" [--owner org]', 'inspect owner/repo@skill', 'prepare owner/repo@skill', 'refresh [--limit 10]', 'status'], options: '--cache DIR --offline --refresh --ttl 600 --timeout 8000', note: 'Host interprets task and reviews source; apply executes a host-authored local plan and records verification evidence.' };
+  else result = { usage: ['catalog-route --file task.json [--details]', 'catalog-detail --trace TRACE_ID CANDIDATE_ID [CANDIDATE_ID ...]', 'discover "public task keywords" [--since weekly] [--language python]', 'trending [--since daily|weekly|monthly]', 'repo owner/repo [--ref SHA]', 'read owner/repo --ref SHA --file README.md [--text]', 'acquire owner/repo --ref SHA --workspace DIR', 'apply --plan task-plan.json', 'search "skill keywords" [--owner org]', 'inspect owner/repo@skill', 'prepare owner/repo@skill', 'refresh [--limit 10]', 'status'], options: '--cache DIR --offline --refresh --ttl 600 --timeout 8000', note: 'Host interprets task and reviews source; apply executes a host-authored local plan and records verification evidence.' };
   console.log(JSON.stringify({ ok: true, ...result, warnings: c.warnings, metrics: { ...c.stats, elapsed_ms: Math.round((performance.now() - start) * 100) / 100 } }));
 }
 if (process.argv[1] && (import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href || import.meta.url === pathToFileURL(await fs.realpath(process.argv[1])).href)) {

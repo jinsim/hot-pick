@@ -60,11 +60,15 @@ The operator's scheduled pipeline collects changed GitHub metadata and source fi
 Users connect the skill to the published catalog:
 
 ```sh
-npm run hot-pick -- catalog-connect --catalog-url https://YOUR_CATALOG_HOST/v1/catalog
+npm run hot-pick -- catalog-connect --catalog-url https://jinsim-hot-pick.web.app/catalog.json
 npm run hot-pick -- catalog-route --file task.json
 ```
 
-The URL is a deployment placeholder, not a live service. The client downloads metadata once, uses TTL/ETag caching, matches task operations locally and fetches only selected pinned skills. User prompts and selection traces stay local. Cold downloads have a cost; warm lookup does not repeatedly search GitHub. The HTTP catalog endpoint works like a connected knowledge source; a full MCP transport is not implemented.
+Use the URL for your deployment. The client downloads metadata, reuses it with TTL/ETag caching and matches task operations locally. The current agent summarizes the task once, checks fit and selects candidates. User prompts and selection traces stay local.
+
+The public catalog above is live on Firebase Hosting. Its operator currently collects and publishes every 30 minutes from a local Mac; refresh pauses while that machine is offline or its operator login needs renewal. The last published catalog stays available. This is not yet a cloud-hosted collector. Neither collection nor publication calls an LLM.
+
+The default shortlist omits inline profiles. Use `catalog-detail --trace TRACE_ID ID [ID ...]` to retrieve pinned evidence for the candidates you need in one call, or `catalog-route --details --file task.json` for inline profiles. After choosing, use `read REPO --ref COMMIT --file PATH --text` to load the entrypoint and read individual supporting files as needed. Warm routing and trace detail work offline.
 
 [Service and deployment guide](service/README.html) · [Catalog schemas and review workflow](skills/hot-pick/references/catalog.md)
 
@@ -141,6 +145,7 @@ npm test
 
 - [Product purpose](docs/product-purpose.html)
 - [v0.2 design](docs/oss-implementation.html) and [validation](docs/oss-validation.html)
+- [Catalog token benchmark](docs/token-validation.html) and [measurements](docs/token-validation.json)
 - [Historical v0.1 benchmark](docs/evaluation.html) and [raw measurements](docs/benchmark-results.json)
 - [REA evidence summary](docs/rea-summary.json)
 

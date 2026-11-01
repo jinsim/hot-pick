@@ -3,9 +3,10 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {publicSnapshot,catalogURL} from './catalog-snapshot.mjs';
 import { OSS } from './oss.mjs';
-import { parseSource, safePath } from './core.mjs';
+import { parseSource } from './core.mjs';
 const digest = x => crypto.createHash('sha256').update(x).digest('hex');
 const words = s => String(s).toLowerCase().match(/[\p{L}\p{N}]+/gu) || [];
+const traceID = /^[a-f0-9-]{36}$/;
 const load = async (p, fallback) => { try { return JSON.parse(await fs.readFile(p, 'utf8')); } catch(e) { if(e.code === 'ENOENT') return fallback; throw e; } };
 async function save(p, data) { await fs.mkdir(path.dirname(p), {recursive:true,mode:0o700}); const tmp = `${p}.${crypto.randomUUID()}.tmp`; await fs.writeFile(tmp, JSON.stringify(data,null,2),{mode:0o600}); await fs.rename(tmp,p); }
 export function describe(text) {
@@ -17,6 +18,25 @@ export function describe(text) {
     inputs:excerpts(/input|require|prerequisite|dependenc/i), outputs:excerpts(/output|produce|deliver|generat/i),
     constraints:excerpts(/do not|don't|never|avoid|only|not use/i), headings:excerpts(/^#{1,4} /), method:'source_excerpts', semantic_review:null};
 }
+
+function indexExcerpts(profile) {
+  const excerpts = [], indices = new Map();
+  const indexed = {...profile, excerpts};
+  for (const group of ['situations', 'inputs', 'outputs', 'constraints', 'headings']) {
+    if (!Array.isArray(profile[group])) continue;
+    indexed[group] = profile[group].map(({line, text}) => {
+      const excerpt = [line, text];
+      const key = JSON.stringify(excerpt);
+      if (!indices.has(key)) {
+        indices.set(key, excerpts.length);
+        excerpts.push(excerpt);
+      }
+      return indices.get(key);
+    });
+  }
+  return indexed;
+}
+
 export class Catalog {
   constructor(options={}) { this.client=options.client || new OSS(options); this.root=path.join(this.client.dir,'task-catalog'); }
   async state() { return load(path.join(this.root,'index.json'),{schema:1,repositories:{},cards:{},trends:{}}); }
@@ -97,13 +117,15 @@ export class Catalog {
     try {const latest=await this.state();for(const label of labels) {if(latest.cards[label.id]?.blob_sha!==label.blob_sha) throw Error('Skill changed during labeling'); latest.cards[label.id].profile.semantic_review=label;} await this.publish(latest);}
     finally {await fd.close();await fs.rm(lock,{force:true});} return {reviewed:labels.length};
   }
-  async route(task, remoteSnapshot=null, origin=null) {
+  async route(task, remoteSnapshot=null, origin=null, details=false) {
     const start=performance.now(), state=remoteSnapshot || await load(path.join(this.root,'routing.json'),null) || await this.state();
-    if(!Array.isArray(task.operations)||!task.operations.length||task.operations.length>12) throw Error('Provide 1–12 operations with public keywords');
+    if(!Array.isArray(task?.operations)||!task.operations.length||task.operations.length>12) throw Error('Provide 1–12 operations with public keywords');
     const unique=new Map();for(const c of Object.values(state.cards)) {const key=c.repo+':'+c.name;if(!unique.has(key)||(!unique.get(key).ready&&c.ready)) unique.set(key,c);}
     const cards=[...unique.values()];
     const docs=cards.map(c=>{const p=c.profile.semantic_review;return {c,terms:words([c.name,c.profile.description,...(p?.situations||[]),...(p?.outputs||[]),...c.profile.situations.map(x=>x.text),...c.profile.outputs.map(x=>x.text),...c.profile.headings.map(x=>x.text)].join(' '))};});
     const df=new Map();for(const d of docs) for(const term of new Set(d.terms)) df.set(term,(df.get(term)||0)+1);
+    const evidence = new Map();
+    const shortlist = new Map();
     const operations=task.operations.map(op=>{
       if(typeof op.intent!=='string'||!Array.isArray(op.keywords)||!op.keywords.length) throw Error('Each operation needs intent and keywords');
       const query=[...new Set(words(op.keywords.join(' ')))];
@@ -111,18 +133,66 @@ export class Catalog {
         if(c.license===null || c.license==='NOASSERTION') return [];
         const matches=query.filter(w=>terms.includes(w));if(matches.length < Math.min(2,query.length)) return [];
         const score=matches.reduce((s,w)=>s+Math.log(1+cards.length/(1+df.get(w))),0)/Math.sqrt(query.length);
-        const trend=Object.entries(state.trends).flatMap(([source,t])=>t.repositories.filter(r=>r.repo===c.repo).map(r=>({...r,source,checked_at:t.checked_at})));
-        return [{id:c.id,name:c.name,repo:c.repo,commit:c.commit,path:c.skill_path,ready:c.ready,entrypoint:c.entrypoint,profile:c.profile,source:c.source,stars:c.stars,trending:trend,matched_terms:matches,retrieval_score:score,checked_at:c.checked_at}];
+        return [{card:c,matched_terms:matches,retrieval_score:score}];
       }).sort((a,b)=>b.retrieval_score-a.retrieval_score).slice(0,3);
-      return {intent:op.intent,constraints:op.constraints || [],candidates:ranked};
+      const candidates = ranked.map(({card:c, ...match}) => {
+        if (!evidence.has(c.id)) {
+          const trending = Object.entries(state.trends).flatMap(([source,t]) =>
+            t.repositories.filter(r=>r.repo===c.repo).map(r=>({...r,source,checked_at:t.checked_at})));
+          evidence.set(c.id, {
+            id:c.id, name:c.name, repo:c.repo, commit:c.commit, path:c.skill_path, blob_sha:c.blob_sha,
+            license:c.license, ready:c.ready, entrypoint:c.entrypoint, profile:c.profile, source:c.source,
+            stars:c.stars, trending, checked_at:c.checked_at
+          });
+          const description = String(c.profile.description || '').replace(/\s+/g,' ').trim();
+          const characters = [...description];
+          const summary = {id:c.id, name:c.name, commit:c.commit, license:c.license, ready:c.ready};
+          if (description) summary.description = characters.slice(0,240).join('');
+          if (characters.length > 240) summary.description_truncated = true;
+          if (c.profile.semantic_review && c.profile.semantic_review.blob_sha === c.blob_sha) summary.reviewed = true;
+          if (trending.length) {
+            const latest = trending.reduce((a,b)=>(b.checked_at || '') > (a.checked_at || '') ? b : a);
+            const {since,rank,language_filter} = latest;
+            summary.trending = {since,rank,...(language_filter && {language_filter})};
+          }
+          shortlist.set(c.id, summary);
+        }
+        return {...shortlist.get(c.id), ...match};
+      });
+      return {intent:op.intent,constraints:op.constraints || [],candidates};
     });
-    const result={schema:1,trace_id:crypto.randomUUID(),created_at:new Date().toISOString(),catalog_updated_at:state.updated_at || null,status:'candidates_only',catalog_origin:origin,operations,
-      selection_required:'Host must check fit, constraints and expected output, then read full pinned instructions. Scores are retrieval, not success probabilities.',requests:this.client.stats.requests,warnings:this.client.warnings,elapsed_ms:performance.now()-start};
-    await save(path.join(this.root,'traces',result.trace_id+'.json'),result); return result;
+    const status = !cards.length ? 'empty_catalog' : evidence.size ? 'candidates_only' : 'no_matches';
+    const result={schema:1,trace_id:crypto.randomUUID(),created_at:new Date().toISOString(),catalog_updated_at:state.updated_at || null,status,catalog_origin:origin,operations,
+      requests:this.client.stats.requests,warnings:this.client.warnings,elapsed_ms:performance.now()-start};
+    await save(path.join(this.root,'traces',result.trace_id+'.json'), {...result,evidence:Object.fromEntries(evidence)});
+    if (!details) return result;
+    return {...result, operations:operations.map(op=>({...op,candidates:op.candidates.map(({id,matched_terms,retrieval_score}) =>
+      ({...evidence.get(id),matched_terms,retrieval_score}))})),
+      selection_required:'Host must check fit, constraints and expected output, then read full pinned instructions. Scores are retrieval, not success probabilities.'};
+  }
+  async detail(trace, ...ids) {
+    if (!traceID.test(trace || '') || !ids.length || ids.some(id => !id)) {
+      throw Error('Provide --trace TRACE_ID and one or more candidate IDs');
+    }
+    const saved = await load(path.join(this.root,'traces',trace+'.json'),null);
+    if (!saved) throw Error('Catalog trace not found in this cache');
+    // Older traces stored evidence inline and lacked a license and blob hash.
+    const evidence = saved.evidence ?? Object.fromEntries(
+      saved.operations.flatMap(op => op.candidates).filter(c => c.profile).reverse().map(c => [c.id, c])
+    );
+    const candidates = [...new Set(ids)].map(id => {
+      if (!Object.hasOwn(evidence,id)) throw Error(`Candidate not found in this catalog trace: ${id}`);
+      return evidence[id];
+    });
+    if (ids.length === 1) return {trace_id:trace, candidate:candidates[0]};
+    return {
+      trace_id:trace, profile_format:'indexed_excerpts',
+      candidates:candidates.map(c => ({...c, profile:indexExcerpts(c.profile)}))
+    };
   }
   async record(file) {
     const event=await load(file,null);
-    if(!/^[a-f0-9-]{36}$/.test(event?.trace_id||'')) throw Error('Invalid trace_id');
+    if(!traceID.test(event?.trace_id||'')) throw Error('Invalid trace_id');
     const p=path.join(this.root,'traces',event.trace_id+'.json'),trace=await load(p,null);
     const ids=new Set(trace?.operations.flatMap(o=>o.candidates.map(c=>c.id)) || []);
     if(!Array.isArray(event.decisions)||!event.decisions.length) throw Error('Decisions required');
@@ -144,9 +214,10 @@ export async function catalogCommand(command,args,opts) {
     await save(path.join(c.root,'connection.json'),{url});
     return {catalog_url:url,configured:true,note:'Configuration saved locally. Reachability is checked on the first lookup.'};
   }
+  if(command==='catalog-detail') return c.detail(opts.trace,...args);
   if(command==='catalog-route') {
     const task=await load(opts.file,null), remote=opts['catalog-url']||process.env.HOT_PICK_CATALOG_URL||(await load(path.join(c.root,'connection.json'),{})).url;
-    if(!remote) return c.route(task);
+    if(!remote) return c.route(task,null,null,opts.details);
     const url=catalogURL(remote);
     // Dedicated client never forwards GitHub credentials to a catalog endpoint.
     const client=new OSS({...opts,github:'https://catalog.invalid'});
@@ -154,7 +225,7 @@ export async function catalogCommand(command,args,opts) {
     client.fetch=(url,init)=>{const headers={...init.headers};delete headers.Authorization;return originalFetch(url,{...init,headers});};
     const snapshot=publicSnapshot(await client.cached(url,{stale:true,max:32*1024*1024}));
     c.client.stats=client.stats;c.client.warnings=client.warnings;
-    return c.route(task,snapshot,url);
+    return c.route(task,snapshot,url,opts.details);
   }
   if(command==='catalog-review-queue') {
     const state=await c.state();return {items:Object.values(state.cards).filter(x=>x.profile.semantic_review?.blob_sha!==x.blob_sha).slice(0,opts.limit||20).map(x=>({id:x.id,blob_sha:x.blob_sha,commit:x.commit,source:x.source,instructions:x.instructions,overview:x.overview})),note:'One-shot local host review only; no LLM daemon or API call. Apply validated profiles with catalog-label.'};

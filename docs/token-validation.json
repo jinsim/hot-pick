@@ -1,0 +1,924 @@
+{
+  "method": "Exact CLI stdout with trailing newline, counted per response. Staged counts sum each response independently.",
+  "tokenizer": {
+    "name": "tiktoken",
+    "version": "0.14.0",
+    "source": "https://github.com/openai/tiktoken"
+  },
+  "scope": "Counts are exact for these public encodings and sampled stdout. Model-specific billing, tool wrappers, calling context, reasoning and selected file contents are outside the route comparison.",
+  "baseline": {
+    "cli_sha256": "55d910f4e49fc20698867f0adb68ab3a8f863cbf3daf6503c74e66294e239b15",
+    "catalog_module_sha256": "1aebbc555f44b92073a203dcd4c5ca898fdd1623913be1b932c4bcbb42f2b613",
+    "git_commit": "c3a40bd4782b2098b5c85cf72b7077b1e071fa85"
+  },
+  "snapshot": {
+    "sha256": "a6edb4028c33dd7144c39419b957a71b8c56d64824cfb0d1753cea1a3d8c4c6e",
+    "updated_at": "2026-11-07T05:00:12.808Z",
+    "cards": 904,
+    "repositories": 17
+  },
+  "skill_entrypoint_tokens": {
+    "cl100k_base": {
+      "before": 1361,
+      "compact": 576
+    },
+    "o200k_base": {
+      "before": 1353,
+      "compact": 571
+    }
+  },
+  "total": {
+    "cl100k_base": {
+      "before": 63177,
+      "compact": 5366,
+      "with_first_detail": 28475,
+      "with_all_details": 67868,
+      "with_all_batched_details": 54996
+    },
+    "o200k_base": {
+      "before": 63131,
+      "compact": 5386,
+      "with_first_detail": 28382,
+      "with_all_details": 67851,
+      "with_all_batched_details": 54798
+    }
+  },
+  "cases": [
+    {
+      "id": "keyboard-focus",
+      "language": "ko",
+      "operations": [
+        {
+          "intent": "버튼의 키보드 포커스 수정",
+          "keywords": [
+            "accessibility",
+            "keyboard",
+            "focus"
+          ],
+          "constraints": [
+            "현재 CSS 구조 유지"
+          ]
+        }
+      ],
+      "status": "candidates_only",
+      "unique_candidate_count": 3,
+      "candidate_ids": [
+        [
+          "nextlevelbuilder/ui-ux-pro-max-skill:.claude/skills/ui-ux-pro-max/SKILL.md",
+          "microsoft/vscode:.github/skills/accessibility/SKILL.md",
+          "microsoft/vscode:.github/skills/design-philosophy/SKILL.md"
+        ]
+      ],
+      "first_detail_ids": [
+        "nextlevelbuilder/ui-ux-pro-max-skill:.claude/skills/ui-ux-pro-max/SKILL.md"
+      ],
+      "all_detail_calls": {
+        "separate": 3,
+        "batched": 1
+      },
+      "verified": {
+        "rank_and_matches": true,
+        "task_constraints": true,
+        "all_legacy_evidence_retrievable": true,
+        "batch_round_trip": true,
+        "pins_and_licenses": true,
+        "trending_observations": true,
+        "http_requests": 0
+      },
+      "bytes": {
+        "before": 38342,
+        "compact": 2116,
+        "with_first_detail": 16291,
+        "with_all_details": 40056,
+        "with_all_batched_details": 31401
+      },
+      "tokens": {
+        "cl100k_base": {
+          "before": 9196,
+          "compact": 577,
+          "with_first_detail": 4036,
+          "with_all_details": 9741,
+          "with_all_batched_details": 7993
+        },
+        "o200k_base": {
+          "before": 9081,
+          "compact": 570,
+          "with_first_detail": 3942,
+          "with_all_details": 9624,
+          "with_all_batched_details": 7859
+        }
+      }
+    },
+    {
+      "id": "react-performance",
+      "language": "en",
+      "operations": [
+        {
+          "intent": "Reduce React rerenders",
+          "keywords": [
+            "react",
+            "performance",
+            "rerender"
+          ],
+          "constraints": [
+            "Preserve component API"
+          ]
+        }
+      ],
+      "status": "candidates_only",
+      "unique_candidate_count": 1,
+      "candidate_ids": [
+        [
+          "github/awesome-copilot:skills/premium-frontend-ui/SKILL.md"
+        ]
+      ],
+      "first_detail_ids": [
+        "github/awesome-copilot:skills/premium-frontend-ui/SKILL.md"
+      ],
+      "all_detail_calls": {
+        "separate": 1,
+        "batched": 1
+      },
+      "verified": {
+        "rank_and_matches": true,
+        "task_constraints": true,
+        "all_legacy_evidence_retrievable": true,
+        "batch_round_trip": true,
+        "pins_and_licenses": true,
+        "trending_observations": true,
+        "http_requests": 0
+      },
+      "bytes": {
+        "before": 7153,
+        "compact": 819,
+        "with_first_detail": 7470,
+        "with_all_details": 7470,
+        "with_all_batched_details": 7470
+      },
+      "tokens": {
+        "cl100k_base": {
+          "before": 1644,
+          "compact": 234,
+          "with_first_detail": 1764,
+          "with_all_details": 1764,
+          "with_all_batched_details": 1764
+        },
+        "o200k_base": {
+          "before": 1662,
+          "compact": 240,
+          "with_first_detail": 1784,
+          "with_all_details": 1784,
+          "with_all_batched_details": 1784
+        }
+      }
+    },
+    {
+      "id": "postgres-migration",
+      "language": "ko",
+      "operations": [
+        {
+          "intent": "PostgreSQL 스키마 마이그레이션 검토",
+          "keywords": [
+            "postgres",
+            "database",
+            "migration"
+          ],
+          "constraints": [
+            "데이터를 유지하고 롤백 가능해야 함"
+          ]
+        }
+      ],
+      "status": "candidates_only",
+      "unique_candidate_count": 3,
+      "candidate_ids": [
+        [
+          "github/awesome-copilot:skills/migrating-oracle-to-postgres-data-access-code/SKILL.md",
+          "github/awesome-copilot:skills/migrating-oracle-to-postgres-stored-procedures/SKILL.md",
+          "github/awesome-copilot:skills/planning-oracle-to-postgres-migration-integration-testing/SKILL.md"
+        ]
+      ],
+      "first_detail_ids": [
+        "github/awesome-copilot:skills/migrating-oracle-to-postgres-data-access-code/SKILL.md"
+      ],
+      "all_detail_calls": {
+        "separate": 3,
+        "batched": 1
+      },
+      "verified": {
+        "rank_and_matches": true,
+        "task_constraints": true,
+        "all_legacy_evidence_retrievable": true,
+        "batch_round_trip": true,
+        "pins_and_licenses": true,
+        "trending_observations": true,
+        "http_requests": 0
+      },
+      "bytes": {
+        "before": 12189,
+        "compact": 2249,
+        "with_first_detail": 6369,
+        "with_all_details": 13994,
+        "with_all_batched_details": 11294
+      },
+      "tokens": {
+        "cl100k_base": {
+          "before": 2872,
+          "compact": 603,
+          "with_first_detail": 1625,
+          "with_all_details": 3420,
+          "with_all_batched_details": 2876
+        },
+        "o200k_base": {
+          "before": 2915,
+          "compact": 605,
+          "with_first_detail": 1652,
+          "with_all_details": 3476,
+          "with_all_batched_details": 2903
+        }
+      }
+    },
+    {
+      "id": "spreadsheet",
+      "language": "en",
+      "operations": [
+        {
+          "intent": "Audit spreadsheet formulas",
+          "keywords": [
+            "spreadsheet",
+            "xlsx",
+            "formulas"
+          ],
+          "constraints": [
+            "Keep existing workbook layout"
+          ]
+        }
+      ],
+      "status": "candidates_only",
+      "unique_candidate_count": 1,
+      "candidate_ids": [
+        [
+          "github/awesome-copilot:skills/convert-excel-to-md/SKILL.md"
+        ]
+      ],
+      "first_detail_ids": [
+        "github/awesome-copilot:skills/convert-excel-to-md/SKILL.md"
+      ],
+      "all_detail_calls": {
+        "separate": 1,
+        "batched": 1
+      },
+      "verified": {
+        "rank_and_matches": true,
+        "task_constraints": true,
+        "all_legacy_evidence_retrievable": true,
+        "batch_round_trip": true,
+        "pins_and_licenses": true,
+        "trending_observations": true,
+        "http_requests": 0
+      },
+      "bytes": {
+        "before": 8061,
+        "compact": 938,
+        "with_first_detail": 8496,
+        "with_all_details": 8496,
+        "with_all_batched_details": 8496
+      },
+      "tokens": {
+        "cl100k_base": {
+          "before": 1945,
+          "compact": 268,
+          "with_first_detail": 2108,
+          "with_all_details": 2108,
+          "with_all_batched_details": 2108
+        },
+        "o200k_base": {
+          "before": 1959,
+          "compact": 273,
+          "with_first_detail": 2123,
+          "with_all_details": 2123,
+          "with_all_batched_details": 2123
+        }
+      }
+    },
+    {
+      "id": "python-lint",
+      "language": "ko",
+      "operations": [
+        {
+          "intent": "Python 저장소의 lint 설정 검토",
+          "keywords": [
+            "python",
+            "ruff",
+            "linting"
+          ],
+          "constraints": [
+            "의존성을 추가하지 않음"
+          ]
+        }
+      ],
+      "status": "candidates_only",
+      "unique_candidate_count": 3,
+      "candidate_ids": [
+        [
+          "github/awesome-copilot:skills/python-pypi-package-builder/SKILL.md",
+          "google/skills:skills/cloud/managed-airflow-dag-authoring/SKILL.md",
+          "github/awesome-copilot:skills/quality-playbook/SKILL.md"
+        ]
+      ],
+      "first_detail_ids": [
+        "github/awesome-copilot:skills/python-pypi-package-builder/SKILL.md"
+      ],
+      "all_detail_calls": {
+        "separate": 3,
+        "batched": 1
+      },
+      "verified": {
+        "rank_and_matches": true,
+        "task_constraints": true,
+        "all_legacy_evidence_retrievable": true,
+        "batch_round_trip": true,
+        "pins_and_licenses": true,
+        "trending_observations": true,
+        "http_requests": 0
+      },
+      "bytes": {
+        "before": 38935,
+        "compact": 1807,
+        "with_first_detail": 8642,
+        "with_all_details": 40372,
+        "with_all_batched_details": 30499
+      },
+      "tokens": {
+        "cl100k_base": {
+          "before": 9417,
+          "compact": 522,
+          "with_first_detail": 2405,
+          "with_all_details": 9908,
+          "with_all_batched_details": 7850
+        },
+        "o200k_base": {
+          "before": 9439,
+          "compact": 523,
+          "with_first_detail": 2419,
+          "with_all_details": 9933,
+          "with_all_batched_details": 7855
+        }
+      }
+    },
+    {
+      "id": "kubernetes",
+      "language": "en",
+      "operations": [
+        {
+          "intent": "Check Kubernetes deployment manifests",
+          "keywords": [
+            "kubernetes",
+            "deployment",
+            "manifest"
+          ],
+          "constraints": [
+            "Keep rollout semantics"
+          ]
+        }
+      ],
+      "status": "candidates_only",
+      "unique_candidate_count": 3,
+      "candidate_ids": [
+        [
+          "google/skills:skills/cloud/gke-app-onboarding/SKILL.md",
+          "google/skills:skills/cloud/gke-basics/SKILL.md",
+          "google/skills:skills/cloud/gke-manifest-generation/SKILL.md"
+        ]
+      ],
+      "first_detail_ids": [
+        "google/skills:skills/cloud/gke-app-onboarding/SKILL.md"
+      ],
+      "all_detail_calls": {
+        "separate": 3,
+        "batched": 1
+      },
+      "verified": {
+        "rank_and_matches": true,
+        "task_constraints": true,
+        "all_legacy_evidence_retrievable": true,
+        "batch_round_trip": true,
+        "pins_and_licenses": true,
+        "trending_observations": true,
+        "http_requests": 0
+      },
+      "bytes": {
+        "before": 13803,
+        "compact": 1364,
+        "with_first_detail": 4051,
+        "with_all_details": 14771,
+        "with_all_batched_details": 11179
+      },
+      "tokens": {
+        "cl100k_base": {
+          "before": 3531,
+          "compact": 412,
+          "with_first_detail": 1175,
+          "with_all_details": 3927,
+          "with_all_batched_details": 3235
+        },
+        "o200k_base": {
+          "before": 3538,
+          "compact": 417,
+          "with_first_detail": 1180,
+          "with_all_details": 3937,
+          "with_all_batched_details": 3232
+        }
+      }
+    },
+    {
+      "id": "incident-response",
+      "language": "en",
+      "operations": [
+        {
+          "intent": "Draft an incident response runbook",
+          "keywords": [
+            "incident",
+            "runbook",
+            "response"
+          ],
+          "constraints": [
+            "Include operator steps"
+          ]
+        }
+      ],
+      "status": "candidates_only",
+      "unique_candidate_count": 3,
+      "candidate_ids": [
+        [
+          "google/skills:skills/cloud/gke-upgrades/SKILL.md",
+          "github/awesome-copilot:skills/bug-receipt/SKILL.md",
+          "github/awesome-copilot:skills/gtm-ai-gtm/SKILL.md"
+        ]
+      ],
+      "first_detail_ids": [
+        "google/skills:skills/cloud/gke-upgrades/SKILL.md"
+      ],
+      "all_detail_calls": {
+        "separate": 3,
+        "batched": 1
+      },
+      "verified": {
+        "rank_and_matches": true,
+        "task_constraints": true,
+        "all_legacy_evidence_retrievable": true,
+        "batch_round_trip": true,
+        "pins_and_licenses": true,
+        "trending_observations": true,
+        "http_requests": 0
+      },
+      "bytes": {
+        "before": 25120,
+        "compact": 1582,
+        "with_first_detail": 14787,
+        "with_all_details": 26338,
+        "with_all_batched_details": 21217
+      },
+      "tokens": {
+        "cl100k_base": {
+          "before": 5935,
+          "compact": 471,
+          "with_first_detail": 3504,
+          "with_all_details": 6388,
+          "with_all_batched_details": 5388
+        },
+        "o200k_base": {
+          "before": 5923,
+          "compact": 477,
+          "with_first_detail": 3501,
+          "with_all_details": 6377,
+          "with_all_batched_details": 5359
+        }
+      }
+    },
+    {
+      "id": "cloudflare-security",
+      "language": "ko",
+      "operations": [
+        {
+          "intent": "Cloudflare Workers 보안 점검",
+          "keywords": [
+            "cloudflare",
+            "workers",
+            "security"
+          ],
+          "constraints": [
+            "읽기 전용 감사"
+          ]
+        }
+      ],
+      "status": "candidates_only",
+      "unique_candidate_count": 2,
+      "candidate_ids": [
+        [
+          "github/awesome-copilot:skills/server-side-conversion-tracking/SKILL.md",
+          "github/awesome-copilot:skills/entra-agent-user/SKILL.md"
+        ]
+      ],
+      "first_detail_ids": [
+        "github/awesome-copilot:skills/server-side-conversion-tracking/SKILL.md"
+      ],
+      "all_detail_calls": {
+        "separate": 2,
+        "batched": 1
+      },
+      "verified": {
+        "rank_and_matches": true,
+        "task_constraints": true,
+        "all_legacy_evidence_retrievable": true,
+        "batch_round_trip": true,
+        "pins_and_licenses": true,
+        "trending_observations": true,
+        "http_requests": 0
+      },
+      "bytes": {
+        "before": 10198,
+        "compact": 1393,
+        "with_first_detail": 7976,
+        "with_all_details": 11150,
+        "with_all_batched_details": 8921
+      },
+      "tokens": {
+        "cl100k_base": {
+          "before": 2464,
+          "compact": 381,
+          "with_first_detail": 1934,
+          "with_all_details": 2761,
+          "with_all_batched_details": 2335
+        },
+        "o200k_base": {
+          "before": 2482,
+          "compact": 383,
+          "with_first_detail": 1954,
+          "with_all_details": 2784,
+          "with_all_batched_details": 2341
+        }
+      }
+    },
+    {
+      "id": "pdf-tables",
+      "language": "ko",
+      "operations": [
+        {
+          "intent": "PDF 표를 CSV로 추출",
+          "keywords": [
+            "pdf",
+            "extract",
+            "tables",
+            "csv"
+          ],
+          "constraints": [
+            "원본 파일 변경 금지"
+          ]
+        }
+      ],
+      "status": "candidates_only",
+      "unique_candidate_count": 3,
+      "candidate_ids": [
+        [
+          "github/awesome-copilot:skills/convert-pdf-to-md/SKILL.md",
+          "github/awesome-copilot:skills/data-breach-blast-radius/SKILL.md",
+          "github/awesome-copilot:skills/sql-server-table-reconciliation/SKILL.md"
+        ]
+      ],
+      "first_detail_ids": [
+        "github/awesome-copilot:skills/convert-pdf-to-md/SKILL.md"
+      ],
+      "all_detail_calls": {
+        "separate": 3,
+        "batched": 1
+      },
+      "verified": {
+        "rank_and_matches": true,
+        "task_constraints": true,
+        "all_legacy_evidence_retrievable": true,
+        "batch_round_trip": true,
+        "pins_and_licenses": true,
+        "trending_observations": true,
+        "http_requests": 0
+      },
+      "bytes": {
+        "before": 20902,
+        "compact": 2016,
+        "with_first_detail": 9586,
+        "with_all_details": 22568,
+        "with_all_batched_details": 16100
+      },
+      "tokens": {
+        "cl100k_base": {
+          "before": 5071,
+          "compact": 555,
+          "with_first_detail": 2400,
+          "with_all_details": 5600,
+          "with_all_batched_details": 4234
+        },
+        "o200k_base": {
+          "before": 5081,
+          "compact": 557,
+          "with_first_detail": 2414,
+          "with_all_details": 5608,
+          "with_all_batched_details": 4224
+        }
+      }
+    },
+    {
+      "id": "two-operations",
+      "language": "en",
+      "operations": [
+        {
+          "intent": "Set up GitHub Actions for unit tests",
+          "keywords": [
+            "github",
+            "actions",
+            "workflow",
+            "test"
+          ],
+          "constraints": [
+            "Local checks first"
+          ]
+        },
+        {
+          "intent": "Review API design for a REST endpoint",
+          "keywords": [
+            "api",
+            "rest",
+            "design"
+          ],
+          "constraints": [
+            "Keep existing public contracts"
+          ]
+        }
+      ],
+      "status": "candidates_only",
+      "unique_candidate_count": 6,
+      "candidate_ids": [
+        [
+          "github/awesome-copilot:skills/azure-static-web-apps/SKILL.md",
+          "github/awesome-copilot:skills/create-github-action-workflow-specification/SKILL.md",
+          "github/awesome-copilot:skills/foundry-agentic-loop/SKILL.md"
+        ],
+        [
+          "github/awesome-copilot:skills/power-platform-architect/SKILL.md",
+          "github/awesome-copilot:skills/roslyn-analyzers/SKILL.md",
+          "google/skills:skills/cloud/application-integration-basics/SKILL.md"
+        ]
+      ],
+      "first_detail_ids": [
+        "github/awesome-copilot:skills/azure-static-web-apps/SKILL.md",
+        "github/awesome-copilot:skills/power-platform-architect/SKILL.md"
+      ],
+      "all_detail_calls": {
+        "separate": 6,
+        "batched": 1
+      },
+      "verified": {
+        "rank_and_matches": true,
+        "task_constraints": true,
+        "all_legacy_evidence_retrievable": true,
+        "batch_round_trip": true,
+        "pins_and_licenses": true,
+        "trending_observations": true,
+        "http_requests": 0
+      },
+      "bytes": {
+        "before": 78225,
+        "compact": 3408,
+        "with_first_detail": 14174,
+        "with_all_details": 81317,
+        "with_all_batched_details": 55973
+      },
+      "tokens": {
+        "cl100k_base": {
+          "before": 17353,
+          "compact": 906,
+          "with_first_detail": 3632,
+          "with_all_details": 18359,
+          "with_all_batched_details": 13321
+        },
+        "o200k_base": {
+          "before": 17400,
+          "compact": 916,
+          "with_first_detail": 3621,
+          "with_all_details": 18413,
+          "with_all_batched_details": 13326
+        }
+      }
+    },
+    {
+      "id": "native-korean",
+      "language": "ko",
+      "operations": [
+        {
+          "intent": "키보드 포커스 접근성",
+          "keywords": [
+            "키보드",
+            "포커스"
+          ],
+          "constraints": [
+            "기존 버튼 스타일 유지"
+          ]
+        }
+      ],
+      "status": "candidates_only",
+      "unique_candidate_count": 1,
+      "candidate_ids": [
+        [
+          "nextlevelbuilder/ui-ux-pro-max-skill:.claude/skills/ui-ux-pro-max/SKILL.md"
+        ]
+      ],
+      "first_detail_ids": [
+        "nextlevelbuilder/ui-ux-pro-max-skill:.claude/skills/ui-ux-pro-max/SKILL.md"
+      ],
+      "all_detail_calls": {
+        "separate": 1,
+        "batched": 1
+      },
+      "verified": {
+        "rank_and_matches": true,
+        "task_constraints": true,
+        "all_legacy_evidence_retrievable": true,
+        "batch_round_trip": true,
+        "pins_and_licenses": true,
+        "trending_observations": true,
+        "http_requests": 0
+      },
+      "bytes": {
+        "before": 14693,
+        "compact": 978,
+        "with_first_detail": 15153,
+        "with_all_details": 15153,
+        "with_all_batched_details": 15153
+      },
+      "tokens": {
+        "cl100k_base": {
+          "before": 3591,
+          "compact": 302,
+          "with_first_detail": 3757,
+          "with_all_details": 3757,
+          "with_all_batched_details": 3757
+        },
+        "o200k_base": {
+          "before": 3489,
+          "compact": 287,
+          "with_first_detail": 3654,
+          "with_all_details": 3654,
+          "with_all_batched_details": 3654
+        }
+      }
+    },
+    {
+      "id": "out-of-catalog",
+      "language": "en",
+      "operations": [
+        {
+          "intent": "Restore a 17th-century astrolabe",
+          "keywords": [
+            "astrolabe",
+            "verdigris",
+            "engraving"
+          ],
+          "constraints": [
+            "Preserve the patina"
+          ]
+        }
+      ],
+      "status": "no_matches",
+      "unique_candidate_count": 0,
+      "candidate_ids": [
+        []
+      ],
+      "first_detail_ids": [],
+      "all_detail_calls": {
+        "separate": 0,
+        "batched": 0
+      },
+      "verified": {
+        "rank_and_matches": true,
+        "task_constraints": true,
+        "all_legacy_evidence_retrievable": true,
+        "batch_round_trip": true,
+        "pins_and_licenses": true,
+        "trending_observations": true,
+        "http_requests": 0
+      },
+      "bytes": {
+        "before": 569,
+        "compact": 410,
+        "with_first_detail": 410,
+        "with_all_details": 410,
+        "with_all_batched_details": 410
+      },
+      "tokens": {
+        "cl100k_base": {
+          "before": 158,
+          "compact": 135,
+          "with_first_detail": 135,
+          "with_all_details": 135,
+          "with_all_batched_details": 135
+        },
+        "o200k_base": {
+          "before": 162,
+          "compact": 138,
+          "with_first_detail": 138,
+          "with_all_details": 138,
+          "with_all_batched_details": 138
+        }
+      }
+    }
+  ],
+  "validation_date_kst": "2026-11-08",
+  "local_tests": {
+    "original": 48,
+    "passed": 59,
+    "failed": 0,
+    "skill_validator": "passed"
+  },
+  "caller_demo": {
+    "task": {
+      "operations": [
+        {
+          "intent": "기존 Node CLI의 단위 테스트용 GitHub Actions 워크플로 명세 작성",
+          "keywords": [
+            "github",
+            "actions",
+            "workflow",
+            "specification"
+          ],
+          "constraints": [
+            "Run focused tests locally first",
+            "Do not trigger GitHub Actions or deploy"
+          ]
+        }
+      ]
+    },
+    "cache": "Pinned Git tree and selected blob from an existing local cache. Remote metadata was seeded into a scratch client cache.",
+    "offline": true,
+    "environment": "Empty except PATH. JavaScript fetch replaced by a guard.",
+    "route_requests": 0,
+    "batched_detail": {
+      "calls": 1,
+      "candidate_ids": [
+        "github/awesome-copilot:skills/create-github-action-workflow-specification/SKILL.md",
+        "github/awesome-copilot:skills/gen-specs-as-issues/SKILL.md",
+        "microsoft/vscode:.github/skills/sessions/SKILL.md"
+      ],
+      "profile_format": "indexed_excerpts",
+      "selected_pins_and_constraints_verified": true
+    },
+    "candidate_ids": [
+      "github/awesome-copilot:skills/create-github-action-workflow-specification/SKILL.md",
+      "github/awesome-copilot:skills/gen-specs-as-issues/SKILL.md",
+      "microsoft/vscode:.github/skills/sessions/SKILL.md"
+    ],
+    "selected": {
+      "id": "github/awesome-copilot:skills/create-github-action-workflow-specification/SKILL.md",
+      "repo": "github/awesome-copilot",
+      "path": "skills/create-github-action-workflow-specification/SKILL.md",
+      "commit": "797337f33f73e35d08d82f840e21c4b8c4932d88",
+      "blob_sha": "cfd4bf2e6c82a92c7c9e73769749f248719f6827",
+      "source": "https://github.com/github/awesome-copilot/blob/797337f33f73e35d08d82f840e21c4b8c4932d88/skills/create-github-action-workflow-specification/SKILL.md",
+      "license": "MIT"
+    },
+    "decisions": [
+      {
+        "id": "github/awesome-copilot:skills/create-github-action-workflow-specification/SKILL.md",
+        "status": "used",
+        "reason": "Pinned instructions cover behavioral documentation of an existing CI workflow.",
+        "artifacts": [
+          "spec/spec-process-cicd-node-cli-tests.md"
+        ],
+        "checks": [
+          "Compared triggers, paths, permissions, timeout, concurrency and failure flow against the YAML fixture"
+        ]
+      },
+      {
+        "id": "github/awesome-copilot:skills/gen-specs-as-issues/SKILL.md",
+        "status": "rejected",
+        "reason": "Describes planning new issues instead of an existing CI workflow."
+      },
+      {
+        "id": "microsoft/vscode:.github/skills/sessions/SKILL.md",
+        "status": "rejected",
+        "reason": "Scoped to the VS Code Agents Window."
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "workflow-input.yaml",
+        "sha256": "138c78fbb474a482f1ba90f3dab0ca8eab5ed72c3f3d810be3589315f900a312",
+        "text": "name: Node CLI tests\non:\n  pull_request:\n    paths:\n      - 'skills/**'\n      - 'tests/**'\n      - 'package.json'\n  workflow_dispatch:\npermissions:\n  contents: read\nconcurrency:\n  group: node-cli-tests-${{ github.ref }}\n  cancel-in-progress: true\njobs:\n  test:\n    runs-on: ubuntu-latest\n    timeout-minutes: 5\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: '22'\n      - run: npm test\n"
+      },
+      {
+        "path": "spec/spec-process-cicd-node-cli-tests.md",
+        "sha256": "ba041878609f856cf1940bc847c2efc5a9e6860422a84a21afae233bfffe8931",
+        "text": "---\ntitle: Node CLI test workflow specification\nversion: 1.0\ndate_created: 2026-11-08\ntags: [node, unit-tests, github-actions]\n---\n\n## Workflow behavior\n\nThe validation job runs the Node CLI regression suite for pull requests touching `skills/**`, `tests/**` or `package.json`. Maintainers may also dispatch it manually. Each run tests one checkout with Node.js 22 on a GitHub-hosted Linux runner.\n\n```mermaid\nflowchart TD\n    A[Matching PR or manual dispatch] --> B[Prepare checkout and runtime]\n    B --> C{Regression suite passes}\n    C -->|Yes| D[Success]\n    C -->|No| E[Failure]\n```\n\n| Requirement | Acceptance check |\n| --- | --- |\n| Trigger scope | A docs-only pull request does not start validation. A test change qualifies. |\n| Token access | The job has repository contents read access. It consumes no configured secrets. |\n| Runtime | The job times out after 5 minutes. A newer run for the same ref cancels a superseded validation. |\n| Result | The test exit status determines the job result. The workflow defines no build artifacts or deployment. |\n\nUse failing test names and logs to diagnose the run locally before any retry. The fixture defines no automatic retry or deployment job.\n"
+      }
+    ],
+    "verification": "Compared the YAML fixture with the generated specification for triggers, paths, permissions, concurrency, timeout, scope and failure flow.",
+    "recorded": true
+  }
+}

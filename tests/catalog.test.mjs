@@ -13,3 +13,97 @@ test('incremental sync reuses unchanged descriptions and removes deleted skills'
 test('success cannot be recorded without artifact and check evidence',async t=>{const c=await fixture(t);await fs.writeFile(path.join(c.root,'index.json'),JSON.stringify({cards:{ui:card('ui','description: keyboard')},trends:{}}));const r=await c.route({operations:[{intent:'fix',keywords:['keyboard']}]});const f=path.join(c.root,'outcome.json');await fs.writeFile(f,JSON.stringify({trace_id:r.trace_id,decisions:[{id:'ui',status:'used',reason:'fit'}]}));await assert.rejects(c.record(f),/artifacts/);});
 test('support-file changes invalidate prepared readiness without inventing semantic changes',async t=>{const c=await fixture(t);let sha='c'.repeat(40);Object.assign(c.client,{resolve:async()=>({commit:'a'.repeat(40),license:'MIT'}),tree:async()=>[{type:'blob',mode:'100644',path:'s/SKILL.md',sha:'b'.repeat(40)},{type:'blob',mode:'100644',path:'s/reference.md',sha}],blob:async()=>Buffer.from('---\nname: s\ndescription: focus\n---'),prepare:async()=>({entrypoint:'/prepared/SKILL.md'})});const cfg={interval_seconds:600,repositories:['a/b'],trending:[],prewarm:true};await c.sync(cfg);assert.equal((await c.state()).cards['a/b:s/SKILL.md'].ready,true);sha='d'.repeat(40);await c.sync({...cfg,prewarm:false});assert.equal((await c.state()).cards['a/b:s/SKILL.md'].ready,false);});
 test('duplicate copies do not consume multiple candidate slots',async t=>{const c=await fixture(t);const a=card('a','description: keyboard focus'),b={...a,id:'b'};await c.publish({cards:{a,b},trends:{}});const r=await c.route({operations:[{intent:'focus',keywords:['keyboard','focus']}]});assert.equal(r.operations[0].candidates.length,1);});
+
+test('compact routing saves one pinned evidence record across operations', async t => {
+  const c = await fixture(t);
+  const a = {
+    ...card('a/b:focus/SKILL.md', 'description: keyboard focus ' + '한'.repeat(250) +
+      '\nUse only with native buttons.\n# Focus\nFull instructions are private to the cache.'),
+    skill_path: 'focus/SKILL.md',
+    entrypoint: '/prepared/focus/SKILL.md',
+    source: 'https://github.com/a/b/blob/' + 'a'.repeat(40) + '/focus/SKILL.md',
+    checked_at: '2026-11-07T00:00:00Z',
+    stars: 200,
+  };
+  a.profile.semantic_review = {
+    blob_sha: a.blob_sha, situations: ['키보드 포커스'], inputs: [], outputs: [],
+    constraints: ['Native buttons only'], evidence: ['Use only with native buttons.'],
+  };
+  const trend = 'https://github.com/trending?since=weekly';
+  const state = {cards: {[a.id]: a}, trends: {[trend]: {checked_at:a.checked_at, repositories:[
+    {repo:a.repo, since:'weekly', rank:1, language_filter:'javascript'}
+  ]}}};
+  await c.publish(state);
+  const task = {operations: [
+    {intent:'키보드 포커스', keywords:['키보드','포커스'], constraints:['Keep the existing stack']},
+    {intent:'focus', keywords:['keyboard','focus']},
+  ]};
+  const compact = await c.route(task);
+  const candidate = compact.operations[0].candidates[0];
+  assert.equal(candidate.id, a.id);
+  assert.equal(candidate.commit, a.commit);
+  assert.equal(candidate.license, a.license);
+  assert.equal(candidate.ready, true);
+  assert.equal(candidate.reviewed, true);
+  assert.equal(candidate.description_truncated, true);
+  assert.equal([...candidate.description].length, 240);
+  assert.deepEqual(candidate.matched_terms, ['키보드','포커스']);
+  assert.deepEqual(compact.operations[0].constraints, ['Keep the existing stack']);
+  assert.deepEqual(candidate.trending,{since:'weekly',rank:1,language_filter:'javascript'});
+  for (const field of ['profile','entrypoint','stars','instructions']) assert.ok(!Object.hasOwn(candidate, field));
+  const expanded = await c.route(task, null, null, true);
+  const tracePath = path.join(c.root,'traces',compact.trace_id+'.json');
+  const trace = await fs.readFile(tracePath,'utf8');
+  assert.deepEqual(Object.keys(JSON.parse(trace).evidence), [a.id]);
+  assert.ok(!trace.includes('Full instructions are private'));
+
+  await c.publish({cards: {}, trends: {}});
+  const {candidate: detail} = await c.detail(compact.trace_id, a.id);
+  assert.deepEqual(detail.profile, a.profile);
+  assert.equal(detail.source, a.source);
+  assert.equal(detail.blob_sha, a.blob_sha);
+  assert.equal(detail.path, a.skill_path);
+  assert.equal(detail.entrypoint, a.entrypoint);
+  assert.deepEqual(detail.trending, [
+    {repo:a.repo, since:'weekly', rank:1, language_filter:'javascript', source:trend, checked_at:a.checked_at}
+  ]);
+  assert.deepEqual(expanded.operations[0].candidates[0], {
+    ...detail, matched_terms:candidate.matched_terms, retrieval_score:candidate.retrieval_score
+  });
+  await assert.rejects(c.detail(compact.trace_id,'__proto__'),/Candidate not found/);
+  await assert.rejects(c.detail('../index.json',a.id),/TRACE_ID/);
+  await assert.rejects(c.detail('b'.repeat(36),a.id),/trace not found/);
+
+  const outcome = path.join(c.root,'outcome.json');
+  await fs.writeFile(outcome, JSON.stringify({trace_id:compact.trace_id, decisions:[
+    {id:a.id, status:'used', reason:'Checked pinned source', artifacts:['index.html'], checks:['Focus test passed']}
+  ]}));
+  assert.equal((await c.record(outcome)).recorded, true);
+  assert.deepEqual((await c.detail(compact.trace_id,a.id)).candidate, detail);
+});
+
+test('missing catalog and catalog without matches are distinct', async t => {
+  const c = await fixture(t);
+  const task = {operations:[{intent:'focus',keywords:['keyboard','focus']}]};
+  assert.equal((await c.route(task)).status, 'empty_catalog');
+  const a = card('a','description: postgres');
+  await c.publish({cards:{a},trends:{}});
+  assert.equal((await c.route(task)).status, 'no_matches');
+});
+
+test('detail reads legacy inline profiles without inventing pins', async t => {
+  const c = await fixture(t);
+  const trace = 'b'.repeat(36);
+  const candidate = {id:'a/b:SKILL.md',commit:'a'.repeat(40),profile:describe('description: keyboard')};
+  const alternate = {id:'a/b:alt/SKILL.md',commit:'c'.repeat(40),profile:describe('Use this only with keyboard input.')};
+  const tracePath = path.join(c.root,'traces',trace+'.json');
+  await fs.mkdir(path.dirname(tracePath));
+  await fs.writeFile(tracePath,JSON.stringify({operations:[{candidates:[candidate,alternate]}]}));
+  assert.deepEqual((await c.detail(trace,candidate.id)).candidate, candidate);
+  const batch = await c.detail(trace,alternate.id,candidate.id);
+  assert.deepEqual(batch.candidates.map(c=>[c.id,c.commit]),[
+    [alternate.id,alternate.commit], [candidate.id,candidate.commit],
+  ]);
+  assert.deepEqual(batch.candidates[0].profile.excerpts,[[1,'Use this only with keyboard input.']]);
+  assert.ok(batch.candidates.every(c=>!Object.hasOwn(c,'blob_sha')));
+});

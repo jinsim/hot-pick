@@ -9,6 +9,30 @@
 </style>
 <main>
 <h1>Central catalog: loopback verification</h1>
+<h2>2026-11-08 readiness check</h2>
+<p>A fresh export of the local collector contained 1,600 cards and one semantic review. A native Node loopback server returned health 200 and catalog 200; a conditional request returned 304 with zero body bytes. This checks the real published snapshot and HTTP cache contract, not a cloud deployment.</p>
+<pre>Snapshot bytes: 8,346,128
+SHA-256: 25d016caae04ad0e303fd9be0f70f7afb80f8b32e1a9cd6103b2212e5fd04bcf
+Service tests: 5 passed
+Google Cloud authentication: renewed
+Deployment project: jinsim-hot-pick (billingEnabled=false)
+Docker build: failed — failed to create lease: read-only file system
+Production endpoint: https://jinsim-hot-pick.web.app/catalog.json
+Cloud scheduler: not deployed; operator uses local launchd at 1,800 seconds</pre>
+<p>Firebase Hosting returned HTTP 200 with the same 1,600-card SHA-256 above, and a conditional GET returned 304 with zero body bytes. The initial gzip upload was 1,848,705 bytes. A subsequent identical publication returned <code>unchanged</code> without creating a version. Live release retention is capped at ten. The public site exposes only the allowlisted JSON plus Hosting-managed reserved assets.</p>
+<p>A fresh client connected to this actual endpoint used one HTTP request. Repeating the same Korean keyboard-accessibility task offline used zero requests and returned identical candidate IDs and commits, including UI UX Pro Max. The selected candidate's detail came from the saved trace without a network request. This verifies retrieval and pin preservation, not UI quality.</p>
+<h2>Scheduled worker end-to-end run</h2>
+<p>The existing <code>dev.hot-pick.catalog</code> launchd job was configured with <code>HOT_PICK_FIREBASE_PROJECT=jinsim-hot-pick</code> and started through launchd. It completed collection, public export and Firebase release with exit code 0. The subsequent public HTTP response matched the new exported hash. No interactive agent or model call ran in this job.</p>
+<pre>Catalog updated_at: 2026-11-07T17:16:08.354Z
+Cards: 1,600; reviewed: 1
+Changed card IDs: 4 (design-system and ui-styling copies in UI UX Pro Max)
+GitHub requests: 29; HTTP cache hits: 21; revalidations: 10
+Collector elapsed: 310,610 ms; errors: 0
+Firebase version: sites/jinsim-hot-pick/versions/e66e812e312f241e
+Public snapshot SHA-256: 52d3c8784adb19885577baba2e15051f30f4ed9917302629e94a24426652271f
+Schedule: 1,800 seconds on the operator's Mac
+Full local suite after token and publisher changes: 59 passed, 0 failed</pre>
+<h2>Earlier verification</h2>
 <p><time>2026-11-07 14:26:03 KST</time> · Node.js v22.23.4 · curl against <code>http://127.0.0.1:59489</code></p>
 <p>The native Node process used a temporary copy of the public snapshot exported from the existing cache. It stayed running throughout all requests and file replacements. The original collector cache was read only. Full response payloads and machine paths are omitted below.</p>
 <p><code>node --test tests/service.test.mjs</code>: 5 passed. <code>node --test tests/*.test.mjs</code>: 48 passed. The one-shot batch test uses a private fixture and no GitHub network calls; it verifies that a failed validation leaves the previously published file intact.</p>

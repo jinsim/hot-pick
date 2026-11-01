@@ -12,3 +12,29 @@ test('remote catalog is fetched once, routes locally, then works offline without
 const a=await catalogCommand('catalog-route',[],opts);assert.equal(a.requests,1);assert.equal(a.operations[0].candidates[0].name,'ui');assert.equal(a.operations[0].candidates[0].entrypoint,undefined);const b=await catalogCommand('catalog-route',[],opts);assert.equal(b.requests,0);await catalogCommand('catalog-route',[],{...opts,offline:true,fetch:()=>{throw Error('network forbidden');}});assert.equal(count,1);});
 test('expiry revalidates with ETag and 304 reuses snapshot',async t=>{const cache=await fs.mkdtemp(path.join(os.tmpdir(),'hot-pick-etag-'));t.after(()=>fs.rm(cache,{recursive:true,force:true}));const file=path.join(cache,'task.json');await fs.writeFile(file,JSON.stringify({operations:[{intent:'focus',keywords:['focus']}]}));let count=0,now=1000;const opts={cache,file,ttl:1,now:()=>now,'catalog-url':'https://catalog.example/v1/catalog',fetch:async(url,init)=>{if(count++===0)return new Response(JSON.stringify(publicSnapshot(source())),{headers:{etag:'"v1"'}});assert.equal(init.headers['If-None-Match'],'"v1"');return new Response(null,{status:304});}};await catalogCommand('catalog-route',[],opts);now+=2000;const r=await catalogCommand('catalog-route',[],opts);assert.equal(r.requests,1);assert.equal(r.operations[0].candidates[0].name,'ui');});
 test('connection survives a fresh client instance without environment setup',async t=>{const cache=await fs.mkdtemp(path.join(os.tmpdir(),'hot-pick-connected-'));t.after(()=>fs.rm(cache,{recursive:true,force:true}));const file=path.join(cache,'task.json');await fs.writeFile(file,JSON.stringify({operations:[{intent:'focus',keywords:['focus']}]}));await catalogCommand('catalog-connect',[],{cache,'catalog-url':'https://catalog.example/catalog.json'});const result=await catalogCommand('catalog-route',[],{cache,file,fetch:async url=>{assert.equal(url,'https://catalog.example/catalog.json');return new Response(JSON.stringify(publicSnapshot(source())));}});assert.equal(result.operations[0].candidates[0].name,'ui');});
+
+test('remote detail needs only the saved trace and exposes no private snapshot fields', async t => {
+  const cache = await fs.mkdtemp(path.join(os.tmpdir(),'hot-pick-detail-'));
+  t.after(()=>fs.rm(cache,{recursive:true,force:true}));
+  const file = path.join(cache,'task.json');
+  await fs.writeFile(file,JSON.stringify({operations:[{intent:'focus',keywords:['focus']}]}));
+  const snapshot = source();
+  snapshot.cards.a.profile.constraints = [
+    {line:5,text:'Do not change keyboard behavior.'},
+    {line:6,text:'Use /Users/private/a'},
+  ];
+  const route = await catalogCommand('catalog-route',[],{
+    cache,file,'catalog-url':'https://catalog.example/catalog.json',
+    fetch:async()=>new Response(JSON.stringify(snapshot))
+  });
+  await fs.rm(path.join(cache,'http'),{recursive:true});
+  const {candidate} = await catalogCommand('catalog-detail',['example/ui:SKILL.md'],{
+    cache,trace:route.trace_id,offline:true,
+    fetch:()=>assert.fail('Detail fetched a remote resource')
+  });
+  assert.deepEqual(candidate.profile.constraints,[{line:5,text:'Do not change keyboard behavior.'}]);
+  assert.equal(candidate.blob_sha,snapshot.cards.a.blob_sha);
+  assert.equal(candidate.entrypoint,undefined);
+  assert.equal(candidate.ready,undefined);
+  assert.equal(candidate.instructions,undefined);
+});

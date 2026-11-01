@@ -70,6 +70,8 @@ The public catalog is served by Firebase Hosting and updated by a [cloud collect
 
 The collector uses free standard runners in this public repository; the Firebase project has no linked billing account. Cache storage is bounded, and old caches and Hosting releases are retained only briefly. GitHub may delay scheduled jobs or disable schedules after prolonged repository inactivity; the last good catalog remains available during collection failures. See the [cloud operator guide and verification](docs/cloud-collector.html).
 
+**Verification status (2026-11-08 03:11 KST):** Cloud collection and publication passed by manual dispatch. The schedule is enabled, but no scheduler-triggered run had been observed after two configured ticks. Automatic refresh is therefore not yet verified; the local collector is disabled.
+
 The default shortlist omits inline profiles. Use `catalog-detail --trace TRACE_ID ID [ID ...]` to retrieve pinned evidence for the candidates you need in one call, or `catalog-route --details --file task.json` for inline profiles. After choosing, use `read REPO --ref COMMIT --file PATH --text` to load the entrypoint and read individual supporting files as needed. Warm routing and trace detail work offline.
 
 [Service and deployment guide](service/README.html) · [Catalog schemas and review workflow](skills/hot-pick/references/catalog.md)

@@ -12,9 +12,9 @@
 <main>
   <h1>Hot Pick central catalog</h1>
   <p>The collector fetches public GitHub data in a one-shot batch. It retains the private working cache and publishes a separate JSON snapshot. The Node 22 server reads only the published file. Skills download that file and match the user’s task locally. None of these steps requires an LLM API.</p>
-  <p><strong>Status (2026-11-08):</strong> The dedicated <code>jinsim-hot-pick</code> project serves a live <a href="https://jinsim-hot-pick.web.app/catalog.json">Firebase catalog</a>. Billing is not enabled. The existing local operator job collects and publishes every 1,800 seconds; it pauses when the Mac is offline or operator authentication expires. There is no cloud scheduler. Docker storage reported a read-only filesystem, so this deployment uses the Hosting REST API directly. Cloud Run instructions below remain examples.</p>
+  <p><strong>Status (2026-11-08):</strong> The dedicated <code>jinsim-hot-pick</code> project serves a live <a href="https://jinsim-hot-pick.web.app/catalog.json">Firebase catalog</a>. Billing is not enabled. Collection and publication run in GitHub Actions, scheduled at minutes 7 and 37 of each hour. The local launchd collector is disabled. The pipeline uses the Hosting REST API and short-lived Workload Identity Federation credentials. See the <a href="../docs/cloud-collector.html">cloud configuration and validation</a>. Cloud Run and local-worker instructions below are optional alternatives.</p>
 
-  <h2>Current publication pipeline</h2>
+  <h2>Optional local publication pipeline</h2>
   <p><code>scripts/catalog-worker.mjs</code> runs the incremental sync, exports an allowlisted snapshot, and calls <code>service/firebase-publish.mjs</code> only after a successful sync/export. Set <code>HOT_PICK_FIREBASE_PROJECT</code> in the operator job environment to opt in. The publisher validates the snapshot before authentication, uses the operator’s existing <code>gcloud</code> login in memory, uploads only the compressed public JSON, then finalizes and releases it. User skills need no Google credentials.</p>
   <pre><code>node scripts/catalog-export.mjs --out /published/catalog.json
 node service/firebase-publish.mjs YOUR_DEDICATED_PROJECT /published/catalog.json
@@ -23,7 +23,7 @@ node service/firebase-publish.mjs YOUR_DEDICATED_PROJECT /published/catalog.json
 HOT_PICK_FIREBASE_PROJECT=YOUR_DEDICATED_PROJECT \
   node scripts/catalog-worker.mjs /absolute/config/catalog.json</code></pre>
   <p>Use a dedicated catalog-only Hosting site, with the same ID as the project by default. A release replaces that site's content. Identical public file hashes skip a new release; Hosting's automatically injected Firebase files are excluded from this comparison. The publisher caps prior live releases at ten for rollback and storage control. API/upload failures stop before release; existing content remains served. A crash after release but before recording success can still leave the new version live; the next run checks the live hash.</p>
-  <p>Public Hosting is subject to its free-plan quotas. No billing account was linked and no service-account key was generated. Operator refresh failures require renewed login; the pipeline never bypasses them. The current automated schedule belongs to the operator, not every person installing the skill. See <a href="https://firebase.google.com/docs/hosting/api-deploy">Firebase's publication protocol</a> and <a href="validation.html">verified results</a>.</p>
+  <p>Public Hosting is subject to its free-plan quotas. No billing account was linked and no service-account key was generated. Local publication uses the operator's gcloud login; cloud publication passes an ephemeral access token to the publisher step only. The automated schedule belongs to the operator, not every person installing the skill. See <a href="https://firebase.google.com/docs/hosting/api-deploy">Firebase's publication protocol</a> and <a href="validation.html">earlier local verification</a>.</p>
 
   <h2>HTTP contract</h2>
   <ul>

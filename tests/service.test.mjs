@@ -188,3 +188,18 @@ test('one-shot collector retains private cache, exports a public snapshot, and d
   assert.match(failed.stderr, /Invalid public snapshot/);
   assert.equal(await fs.readFile(out, 'utf8'), exported);
 });
+
+test('a seeded catalog is not republished as fresh when all GitHub checks fail', async t => {
+  const dir=await fixture(t),cache=path.join(dir,'cache'),out=path.join(dir,'catalog.json');
+  const config=path.join(dir,'config.json'),guard=path.join(dir,'offline.mjs');
+  await fs.mkdir(path.join(cache,'task-catalog'),{recursive:true});
+  await fs.writeFile(path.join(cache,'task-catalog/index.json'),JSON.stringify({...snapshot,repositories:{}}));
+  await fs.writeFile(out,JSON.stringify(snapshot));
+  await fs.writeFile(config,JSON.stringify({interval_seconds:1800,repositories:['example/skills'],trending:[],include_observed:false}));
+  await fs.writeFile(guard,'globalThis.fetch=async()=>{throw Error("Simulated outage");};');
+  const result=spawnSync(process.execPath,['--import',guard,fileURLToPath(new URL('../service/collect.mjs',import.meta.url))],{
+    env:{CATALOG_CACHE:cache,CATALOG_CONFIG:config,CATALOG_FILE:out},encoding:'utf8',timeout:5000
+  });
+  assert.notEqual(result.status,0);assert.match(result.stderr,/All repository checks failed/);
+  assert.equal(await fs.readFile(out,'utf8'),JSON.stringify(snapshot));
+});

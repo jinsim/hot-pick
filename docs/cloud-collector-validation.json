@@ -1,0 +1,76 @@
+{
+  "verified_at": "2026-11-08 KST",
+  "project": "jinsim-hot-pick",
+  "billing_enabled": false,
+  "workflow": ".github/workflows/catalog.yml",
+  "schedule_utc": "7,37 * * * *",
+  "local_collector": "unloaded and disabled",
+  "manual_run": {
+    "id": 42396318481,
+    "url": "https://github.com/jinsim/hot-pick/actions/runs/42396318481",
+    "event": "workflow_dispatch",
+    "conclusion": "success",
+    "bootstrap": {
+      "seeded": true,
+      "cards": 1600
+    },
+    "collection": {
+      "updated_at": "2026-11-07T17:27:02.654Z",
+      "cards": 1600,
+      "processed": 149,
+      "repositories_synced": 8,
+      "unchanged_repositories": 0,
+      "initialized_or_changed_fingerprints": 149,
+      "errors": [],
+      "deferred": [
+        {
+          "repo": "github/awesome-copilot",
+          "reason": "skill_batch_limit"
+        },
+        {
+          "repo": "google/skills",
+          "reason": "skill_batch_limit"
+        }
+      ],
+      "metrics": {
+        "requests": 178,
+        "bytes": 6842850,
+        "cache_hits": 6,
+        "revalidated": 0
+      },
+      "elapsed_ms": 24755
+    },
+    "cache": {
+      "bytes": 31205709,
+      "removed": 0,
+      "limit": 268435456
+    },
+    "publication": {
+      "status": "published",
+      "url": "https://jinsim-hot-pick.web.app/catalog.json",
+      "version": "sites/jinsim-hot-pick/versions/5be6681e57b2c9c8",
+      "bytes": 8346128,
+      "upload_bytes": 1844639,
+      "sha256": "4a27ee6e9f78ecb380380e55fe020ba8bd630b83c0d6f4d113aaa5d1e36ec6bd"
+    },
+    "verification": {
+      "verified": true,
+      "url": "https://jinsim-hot-pick.web.app/catalog.json",
+      "sha256": "4a27ee6e9f78ecb380380e55fe020ba8bd630b83c0d6f4d113aaa5d1e36ec6bd",
+      "cards": 1600,
+      "updated_at": "2026-11-07T17:27:02.654Z",
+      "conditional_status": 304
+    }
+  },
+  "scheduled_run": {
+    "status": "pending"
+  },
+  "limits": {
+    "timeout_minutes": 12,
+    "collection_budget_seconds": 360,
+    "cache_bytes": 268435456,
+    "retained_caches": 3,
+    "hosting_releases": 10,
+    "actions_retention_days": 7
+  }
+}

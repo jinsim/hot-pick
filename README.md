@@ -66,7 +66,9 @@ npm run hot-pick -- catalog-route --file task.json
 
 Use the URL for your deployment. The client downloads metadata, reuses it with TTL/ETag caching and matches task operations locally. The current agent summarizes the task once, checks fit and selects candidates. User prompts and selection traces stay local.
 
-The public catalog above is live on Firebase Hosting. Its operator currently collects and publishes every 30 minutes from a local Mac; refresh pauses while that machine is offline or its operator login needs renewal. The last published catalog stays available. This is not yet a cloud-hosted collector. Neither collection nor publication calls an LLM.
+The public catalog is served by Firebase Hosting and updated by a [cloud collector](.github/workflows/catalog.yml) on standard GitHub Actions runners. It is scheduled at minutes 7 and 37 of each hour and works while the operator's computer is off. It restores cached GitHub data, checks commit changes, fetches missing blobs and publishes a validated snapshot. Neither collection nor publication calls an LLM. Google access uses short-lived workload identity credentials, not a saved service-account key.
+
+The collector uses free standard runners in this public repository; the Firebase project has no linked billing account. Cache storage is bounded, and old caches and Hosting releases are retained only briefly. GitHub may delay scheduled jobs or disable schedules after prolonged repository inactivity; the last good catalog remains available during collection failures. See the [cloud operator guide and verification](docs/cloud-collector.html).
 
 The default shortlist omits inline profiles. Use `catalog-detail --trace TRACE_ID ID [ID ...]` to retrieve pinned evidence for the candidates you need in one call, or `catalog-route --details --file task.json` for inline profiles. After choosing, use `read REPO --ref COMMIT --file PATH --text` to load the entrypoint and read individual supporting files as needed. Warm routing and trace detail work offline.
 

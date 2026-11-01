@@ -1,0 +1,99 @@
+name: Collect and publish catalog
+on:
+  schedule:
+    - cron: '7,37 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hot-pick-catalog-publisher
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    if: github.repository == 'jinsim/hot-pick' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+      id-token: write
+      actions: write # Remove only superseded collector caches.
+    env:
+      CATALOG_CACHE: ${{ github.workspace }}/.hot-pick/cache
+      CATALOG_FILE: ${{ github.workspace }}/.hot-pick/published/catalog.json
+      CATALOG_CONFIG: ${{ github.workspace }}/config/catalog-cloud.json
+      CATALOG_URL: https://jinsim-hot-pick.web.app/catalog.json
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+      - name: Restore public collector state
+        id: state
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: |
+            .hot-pick/cache/http
+            .hot-pick/cache/blobs
+            .hot-pick/cache/task-catalog/index.json
+          key: hot-pick-state-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: hot-pick-state-v1-
+      - name: Seed metadata only when cache is absent
+        run: node service/cloud-state.mjs bootstrap "$CATALOG_CACHE" "$CATALOG_URL"
+      - name: Collect GitHub changes without an LLM
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node service/collect.mjs
+      - name: Bound cached data
+        run: node service/cloud-state.mjs prune "$CATALOG_CACHE"
+      - name: Save public collector state
+        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: |
+            .hot-pick/cache/http
+            .hot-pick/cache/blobs
+            .hot-pick/cache/task-catalog/index.json
+          key: hot-pick-state-v1-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Keep three collector caches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --paginate "repos/$GITHUB_REPOSITORY/actions/caches?key=hot-pick-state-v1-&ref=refs/heads/main&per_page=100" \
+            --jq '.actions_caches[] | [.created_at, .id] | @tsv' \
+            | sort -r | tail -n +4 | cut -f2 \
+            | while read -r cache_id; do
+                gh api --method DELETE "repos/$GITHUB_REPOSITORY/actions/caches/$cache_id"
+              done
+      - name: Obtain short-lived Google credential
+        id: auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          workload_identity_provider: projects/166875007187/locations/global/workloadIdentityPools/hot-pick-github/providers/github
+          service_account: hot-pick-publisher@jinsim-hot-pick.iam.gserviceaccount.com
+          project_id: jinsim-hot-pick
+          token_format: access_token
+          access_token_lifetime: 600s
+          create_credentials_file: false
+          export_environment_variables: false
+      - name: Publish validated public catalog
+        env:
+          HOT_PICK_GOOGLE_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+        run: node service/firebase-publish.mjs jinsim-hot-pick "$CATALOG_FILE"
+      - name: Verify live hash and HTTP caching
+        run: node service/verify-publication.mjs "$CATALOG_FILE" "$CATALOG_URL"
+      - name: Record collection evidence
+        if: always()
+        run: |
+          node --input-type=module <<'JS'
+          import {promises as fs} from 'node:fs';
+          const file=process.env.CATALOG_CACHE+'/task-catalog/last-sync.json';
+          try {
+            const r=JSON.parse(await fs.readFile(file));
+            await fs.appendFile(process.env.GITHUB_STEP_SUMMARY,
+              '\n### Incremental collection\n\n```json\n'+JSON.stringify(r,null,2)+'\n```\n');
+          } catch { console.log('No completed collection summary'); }
+          JS

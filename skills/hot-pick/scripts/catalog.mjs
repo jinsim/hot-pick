@@ -51,7 +51,9 @@ export class Catalog {
     const lock=path.join(this.root,'sync.lock');
     const fd=await fs.open(lock,'wx').catch(e=>{if(e.code==='EEXIST') throw Error('Another sync owns sync.lock; remove only after confirming its process ended');throw e;});
     await fd.writeFile(String(process.pid));
-    const start=Date.now(), changed=[], errors=[];
+    const start=Date.now(), changed=[], errors=[], deferred=[];
+    const deadline=start+(config.max_seconds_per_sync || 3600)*1000;
+    let processed=0, unchangedRepositories=0, repositoriesSynced=0;
     try {
       const state=await this.state();
       for (const scope of config.trending || []) {
@@ -64,22 +66,35 @@ export class Catalog {
       // Least recently inspected first prevents starvation when the budget is small.
       repos.sort((a,b)=>(state.repositories[a]?.last_attempt_at || state.repositories[a]?.checked_at || '').localeCompare(state.repositories[b]?.last_attempt_at || state.repositories[b]?.checked_at || ''));
       for (const repo of repos.slice(0,config.max_repositories_per_sync || 12)) {
+        if(Date.now()>=deadline) {deferred.push({repo,reason:'time_budget'});break;}
         try {
           const meta=await this.client.resolve(repo);
-          if(meta.archived) {for(const [id,c] of Object.entries(state.cards)) if(c.repo===repo) delete state.cards[id];state.repositories[repo]={...meta,checked_at:new Date().toISOString()};continue;}
+          if(meta.archived) {for(const [id,c] of Object.entries(state.cards)) if(c.repo===repo) delete state.cards[id];state.repositories[repo]={...meta,checked_at:new Date().toISOString()};repositoriesSynced++;continue;}
+          const previous=state.repositories[repo];
+          if(previous?.inventory_complete && previous.commit===meta.commit) {
+            for(const c of Object.values(state.cards)) if(c.repo===repo) {
+              c.stars=meta.stars;c.license=meta.license;c.checked_at=new Date().toISOString();
+            }
+            state.repositories[repo]={...previous,...meta,checked_at:new Date().toISOString(),last_attempt_at:new Date().toISOString()};
+            unchangedRepositories++;
+            repositoriesSynced++;
+            await this.publish(state);
+            continue;
+          }
           const tree=await this.client.tree(repo,meta.commit);
-          const entries=tree.filter(f=>f.type==='blob' && /(^|\/)SKILL\.md$/.test(f.path));
+          const entries=tree.filter(f=>f.type==='blob' && ['100644','100755'].includes(f.mode) && /(^|\/)SKILL\.md$/.test(f.path));
           const keep=new Set(entries.map(e=>`${repo}:${e.path}`));
           for(const [id,c] of Object.entries(state.cards)) if(c.repo===repo && !keep.has(id)) delete state.cards[id];
           const readme=tree.find(f=>/^readme\.md$/i.test(f.path));
           const overview=readme ? (await this.client.blob(repo,meta.commit,readme)).toString('utf8') : '';
           entries.sort((a,b)=>(state.cards[`${repo}:${a.path}`]?.checked_at||'').localeCompare(state.cards[`${repo}:${b.path}`]?.checked_at||''));
           for (const entry of entries.slice(0,config.max_skills_per_repository || 500)) {
+            if(Date.now()>=deadline) {deferred.push({repo,reason:'time_budget'});break;}
             const id=`${repo}:${entry.path}`, old=state.cards[id];
             const parent=path.posix.dirname(entry.path);
             const files=tree.filter(f=>f.type!=='tree' && (parent==='.' || f.path.startsWith(parent+'/')));
             const fingerprint=digest(JSON.stringify(files.map(f=>[f.path,f.sha,f.mode])));
-            const text=old?.blob_sha===entry.sha ? old.instructions : (await this.client.blob(repo,meta.commit,entry)).toString('utf8');
+            const text=old?.blob_sha===entry.sha && typeof old.instructions==='string' ? old.instructions : (await this.client.blob(repo,meta.commit,entry)).toString('utf8');
             let card={...old,id,repo,commit:meta.commit,skill_path:entry.path,blob_sha:entry.sha,fingerprint,
               name:/^name:\s*["']?([\w.-]+)/m.exec(text)?.[1] || path.posix.basename(parent),
               license:meta.license,stars:meta.stars,instructions:text,overview:overview.slice(0,16000),
@@ -91,16 +106,21 @@ export class Catalog {
               catch(e) { card.preparation_error=e.message; }
             }
             state.cards[id]=card;
-            if(Object.keys(state.cards).length % 10 === 0) await this.publish(state);
+            if(++processed % 25 === 0) await this.publish(state);
           }
-          if(entries.length>(config.max_skills_per_repository || 500)) errors.push({repo,message:'Skill inventory capped; remaining entries deferred'});
-          state.repositories[repo]={...meta,checked_at:new Date().toISOString(),skills:entries.length};
+          const complete=entries.every(entry=>{
+            const c=state.cards[`${repo}:${entry.path}`];
+            return c?.commit===meta.commit && c.blob_sha===entry.sha && typeof c.instructions==='string' && c.fingerprint;
+          });
+          if(!complete) deferred.push({repo,reason:'skill_batch_limit'});
+          state.repositories[repo]={...meta,checked_at:new Date().toISOString(),skills:entries.length,inventory_complete:complete};
+          repositoriesSynced++;
         } catch(e) { errors.push({repo,message:e.message}); }
         state.repositories[repo]={...state.repositories[repo],last_attempt_at:new Date().toISOString()};
         await this.publish(state);
       }
       state.updated_at=new Date().toISOString(); await this.publish(state);
-      const result={updated_at:state.updated_at,cards:Object.keys(state.cards).length,ready:Object.values(state.cards).filter(c=>c.ready).length,changed,errors,warnings:this.client.warnings,metrics:this.client.stats,elapsed_ms:Date.now()-start};
+      const result={updated_at:state.updated_at,cards:Object.keys(state.cards).length,ready:Object.values(state.cards).filter(c=>c.ready).length,changed,errors,deferred,processed,unchanged_repositories:unchangedRepositories,repositories_synced:repositoriesSynced,warnings:this.client.warnings,metrics:this.client.stats,elapsed_ms:Date.now()-start};
       await save(path.join(this.root,'last-sync.json'),result); return result;
     } finally {await fd.close();await fs.rm(lock,{force:true});}
   }

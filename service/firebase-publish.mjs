@@ -11,7 +11,7 @@ const identifier = /^[a-z][a-z0-9-]{4,28}[a-z0-9]$/;
 const digest = body => createHash('sha256').update(body).digest('hex');
 
 export async function publishCatalog({file, project, site = project, fetchImpl = fetch,
-  getToken = () => execFileSync('gcloud', ['auth','print-access-token'],
+  getToken = () => process.env.HOT_PICK_GOOGLE_ACCESS_TOKEN || execFileSync('gcloud', ['auth','print-access-token'],
     {encoding:'utf8',stdio:['ignore','pipe','pipe'],timeout:30000}).trim()} = {}) {
   if (!identifier.test(project || '') || !identifier.test(site || '')) throw Error('Valid project and dedicated site IDs required');
   // Validate before obtaining a credential or contacting any external endpoint.

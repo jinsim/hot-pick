@@ -19,6 +19,7 @@ const config = JSON.parse(await fs.readFile(configFile, 'utf8'));
 const result = await new Catalog({ cache }).sync({ ...config, prewarm: false });
 console.log(JSON.stringify(result));
 if (!result.cards && result.errors.length) throw Error('Collection failed without any usable cards');
+if (result.errors.length && !result.repositories_synced) throw Error('All repository checks failed; retain the last published catalog');
 
 await fs.mkdir(path.dirname(output), { recursive: true });
 const stage = await fs.mkdtemp(path.join(path.dirname(output), '.catalog-export-'));

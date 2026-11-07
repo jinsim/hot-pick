@@ -53,3 +53,11 @@ Queries, private task content, selection traces, local paths and execution outco
 ### Popularity correction
 
 Candidates are ordered by retrieval relevance first. Equal scores use a bounded popularity tie-break: log-compressed cumulative stars (20%), smoothed recent growth rate (60%), and Trending rank (20%), with observation-age decay. Weekly evidence is preferred; overlapping daily/weekly/monthly gains are never added. Missing evidence contributes zero. Each candidate exposes `popularity` components and provenance. These are provisional policy weights, not success probabilities or fitted quality estimates. See `docs/ranking-calibration.html` in the repository for formulas and limitations.
+
+### Explicit task filters
+
+The host may supply `required_keywords` (all normalized terms must appear), `exclude_repos` (case-insensitive exact owner/repo), `min_coverage` (0–1 fraction of normalized query terms matched), and `max_per_repo` (1–3 candidates per repository). Defaults preserve existing behavior: no required/excluded terms, zero extra coverage threshold, and three per repository. Set `max_per_repo: 1` for a diverse shortlist. These controls constrain lexical evidence, not semantic truth or runtime compatibility. No-match results never silently relax filters; the host may reformulate or use `discover` after inspecting the mismatch. Applied filters and the eligible candidate count are returned and retained in the trace.
+
+```json
+{"operations":[{"intent":"Find statistical ranking guidance","keywords":["ranking","scoring","statistics"],"required_keywords":["statistics"],"exclude_repos":[],"min_coverage":0.6,"max_per_repo":1}]}
+```

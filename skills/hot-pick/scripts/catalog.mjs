@@ -151,13 +151,22 @@ export class Catalog {
     const operations=task.operations.map(op=>{
       if(typeof op.intent!=='string'||!Array.isArray(op.keywords)||!op.keywords.length) throw Error('Each operation needs intent and keywords');
       const query=[...new Set(words(op.keywords.join(' ')))];
+      for(const key of ['required_keywords','exclude_repos']) if(op[key]!==undefined && (!Array.isArray(op[key]) || op[key].some(x=>typeof x!=='string'||!x.trim()))) throw Error(`${key} must be an array of nonempty strings`);
+      const required=[...new Set(words((op.required_keywords||[]).join(' ')))];
+      const excluded=new Set((op.exclude_repos||[]).map(x=>x.toLowerCase()));
+      const coverage=op.min_coverage??0;
+      if(typeof coverage!=='number'||!Number.isFinite(coverage)||coverage<0||coverage>1) throw Error('min_coverage must be between 0 and 1');
+      const maxPerRepo=op.max_per_repo??3;
+      if(!Number.isInteger(maxPerRepo)||maxPerRepo<1||maxPerRepo>3) throw Error('max_per_repo must be 1, 2 or 3');
       const ranked=docs.flatMap(({c,terms})=>{
-        if(c.license===null || c.license==='NOASSERTION') return [];
-        const matches=query.filter(w=>terms.includes(w));if(matches.length < Math.min(2,query.length)) return [];
+        if(c.license===null || c.license==='NOASSERTION' || excluded.has(c.repo.toLowerCase()) || required.some(w=>!terms.includes(w))) return [];
+        const matches=query.filter(w=>terms.includes(w));if(matches.length < Math.min(2,query.length) || matches.length/query.length<coverage) return [];
         const score=matches.reduce((s,w)=>s+Math.log(1+cards.length/(1+df.get(w))),0)/Math.sqrt(query.length);
         return [{card:c,matched_terms:matches,retrieval_score:score,popularity:popularity(c,state.trends,rankingNow)}];
-      }).sort((a,b)=>b.retrieval_score-a.retrieval_score || b.popularity.score-a.popularity.score || a.card.id.localeCompare(b.card.id)).slice(0,3);
-      const candidates = ranked.map(({card:c, ...match}) => {
+      }).sort((a,b)=>b.retrieval_score-a.retrieval_score || b.popularity.score-a.popularity.score || a.card.id.localeCompare(b.card.id));
+      const repoCounts=new Map();
+      const selected=ranked.filter(x=>{const repo=x.card.repo.toLowerCase();const n=repoCounts.get(repo)||0;if(n>=maxPerRepo)return false;repoCounts.set(repo,n+1);return true;}).slice(0,3);
+      const candidates = selected.map(({card:c, ...match}) => {
         if (!evidence.has(c.id)) {
           const trending = Object.entries(state.trends).flatMap(([source,t]) =>
             t.repositories.filter(r=>r.repo===c.repo).map(r=>({...r,source,checked_at:t.checked_at})));
@@ -181,7 +190,7 @@ export class Catalog {
         }
         return {...shortlist.get(c.id), ...match};
       });
-      return {intent:op.intent,constraints:op.constraints || [],candidates};
+      return {intent:op.intent,constraints:op.constraints || [],candidates,...((required.length||excluded.size||coverage||maxPerRepo!==3)?{filters:{required_keywords:required,exclude_repos:[...excluded],min_coverage:coverage,max_per_repo:maxPerRepo},eligible_candidates:ranked.length}:{})};
     });
     const status = !cards.length ? 'empty_catalog' : evidence.size ? 'candidates_only' : 'no_matches';
     const result={schema:1,trace_id:crypto.randomUUID(),created_at:new Date().toISOString(),catalog_updated_at:state.updated_at || null,status,catalog_origin:origin,operations,

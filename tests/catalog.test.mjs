@@ -120,3 +120,15 @@ test('popularity breaks relevance ties but cannot promote weaker matches',async 
  const r=await c.route({operations:[{intent:'keyboard fix',keywords:['keyboard','focus','accessibility']}]});
  assert.deepEqual(r.operations[0].candidates.map(x=>x.id),['strong','hot','cold']);
 });
+test('explicit task filters reject domain mismatch and diversify repositories',async t=>{
+ const c=await fixture(t);
+ const a={...card('a','description: ranking scoring ads'),repo:'ads/one'};
+ const b={...card('b','description: ranking scoring statistics'),repo:'stats/one'};
+ const d={...card('d','description: ranking scoring statistics'),repo:'stats/one'};
+ const e={...card('e','description: ranking scoring statistics'),repo:'stats/two'};
+ await fs.writeFile(path.join(c.root,'index.json'),JSON.stringify({cards:{a,b,d,e},trends:{}}));
+ const task={operations:[{intent:'rank statistically',keywords:['ranking','scoring','statistics'],required_keywords:['statistics'],min_coverage:1,max_per_repo:1,exclude_repos:['STATS/TWO']}]};
+ const r=await c.route(task);assert.equal(r.operations[0].candidates.length,1);assert.equal(r.operations[0].candidates[0].id,'b');assert.equal(r.operations[0].eligible_candidates,2);
+ task.operations[0].required_keywords=['nonexistent'];assert.equal((await c.route(task)).status,'no_matches');
+});
+test('invalid routing controls fail explicitly',async t=>{const c=await fixture(t);for(const bad of [{min_coverage:2},{min_coverage:'1'},{max_per_repo:0},{required_keywords:'python'},{exclude_repos:[null]}])await assert.rejects(c.route({operations:[{intent:'x',keywords:['x'],...bad}]}));});

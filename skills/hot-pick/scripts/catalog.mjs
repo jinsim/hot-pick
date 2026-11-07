@@ -1,3 +1,4 @@
+import {popularity} from './popularity.mjs';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -144,6 +145,7 @@ export class Catalog {
     const cards=[...unique.values()];
     const docs=cards.map(c=>{const p=c.profile.semantic_review;return {c,terms:words([c.name,c.profile.description,...(p?.situations||[]),...(p?.outputs||[]),...c.profile.situations.map(x=>x.text),...c.profile.outputs.map(x=>x.text),...c.profile.headings.map(x=>x.text)].join(' '))};});
     const df=new Map();for(const d of docs) for(const term of new Set(d.terms)) df.set(term,(df.get(term)||0)+1);
+    const rankingNow=Date.now();
     const evidence = new Map();
     const shortlist = new Map();
     const operations=task.operations.map(op=>{
@@ -153,8 +155,8 @@ export class Catalog {
         if(c.license===null || c.license==='NOASSERTION') return [];
         const matches=query.filter(w=>terms.includes(w));if(matches.length < Math.min(2,query.length)) return [];
         const score=matches.reduce((s,w)=>s+Math.log(1+cards.length/(1+df.get(w))),0)/Math.sqrt(query.length);
-        return [{card:c,matched_terms:matches,retrieval_score:score}];
-      }).sort((a,b)=>b.retrieval_score-a.retrieval_score).slice(0,3);
+        return [{card:c,matched_terms:matches,retrieval_score:score,popularity:popularity(c,state.trends,rankingNow)}];
+      }).sort((a,b)=>b.retrieval_score-a.retrieval_score || b.popularity.score-a.popularity.score || a.card.id.localeCompare(b.card.id)).slice(0,3);
       const candidates = ranked.map(({card:c, ...match}) => {
         if (!evidence.has(c.id)) {
           const trending = Object.entries(state.trends).flatMap(([source,t]) =>
@@ -186,8 +188,8 @@ export class Catalog {
       requests:this.client.stats.requests,warnings:this.client.warnings,elapsed_ms:performance.now()-start};
     await save(path.join(this.root,'traces',result.trace_id+'.json'), {...result,evidence:Object.fromEntries(evidence)});
     if (!details) return result;
-    return {...result, operations:operations.map(op=>({...op,candidates:op.candidates.map(({id,matched_terms,retrieval_score}) =>
-      ({...evidence.get(id),matched_terms,retrieval_score}))})),
+    return {...result, operations:operations.map(op=>({...op,candidates:op.candidates.map(({id,matched_terms,retrieval_score,popularity}) =>
+      ({...evidence.get(id),matched_terms,retrieval_score,popularity}))})),
       selection_required:'Host must check fit, constraints and expected output, then read full pinned instructions. Scores are retrieval, not success probabilities.'};
   }
   async detail(trace, ...ids) {

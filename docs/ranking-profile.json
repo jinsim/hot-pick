@@ -1,0 +1,13 @@
+{
+  "updated_at": "2026-11-11T00:37:40.385Z",
+  "cards": 1843,
+  "repositories": 49,
+  "missing_stars": 0,
+  "stars": {
+    "min": 821,
+    "median": 55742,
+    "max": 446599
+  },
+  "trend_observations": 40,
+  "method": "Repository-level descriptive profiling; no independence, normality or causal quality assumptions"
+}

@@ -67,7 +67,10 @@ test('compact routing saves one pinned evidence record across operations', async
   assert.deepEqual(detail.trending, [
     {repo:a.repo, since:'weekly', rank:1, language_filter:'javascript', source:trend, checked_at:a.checked_at}
   ]);
-  assert.deepEqual(expanded.operations[0].candidates[0], {
+  const {popularity: expandedPopularity, ...expandedCandidate}=expanded.operations[0].candidates[0];
+  assert.equal(expandedPopularity.policy,candidate.popularity.policy);
+  assert.ok(Math.abs(expandedPopularity.score-candidate.popularity.score)<0.001);
+  assert.deepEqual(expandedCandidate, {
     ...detail, matched_terms:candidate.matched_terms, retrieval_score:candidate.retrieval_score
   });
   await assert.rejects(c.detail(compact.trace_id,'__proto__'),/Candidate not found/);
@@ -106,4 +109,14 @@ test('detail reads legacy inline profiles without inventing pins', async t => {
   ]);
   assert.deepEqual(batch.candidates[0].profile.excerpts,[[1,'Use this only with keyboard input.']]);
   assert.ok(batch.candidates.every(c=>!Object.hasOwn(c,'blob_sha')));
+});
+test('popularity breaks relevance ties but cannot promote weaker matches',async t=>{
+ const c=await fixture(t);const date=new Date().toISOString();
+ const make=(id,text,stars)=>({...card(id,text),repo:id+'/repo',stars,checked_at:date});
+ const strong=make('strong','description: keyboard focus accessibility',1);
+ const hot=make('hot','description: keyboard focus',10000);
+ const cold=make('cold','description: keyboard focus',10000);
+ await fs.writeFile(path.join(c.root,'index.json'),JSON.stringify({cards:{strong,hot,cold},trends:{weekly:{checked_at:date,repositories:[{repo:hot.repo,since:'weekly',rank:1,period_stars:1000,total_stars:10000}]}}}));
+ const r=await c.route({operations:[{intent:'keyboard fix',keywords:['keyboard','focus','accessibility']}]});
+ assert.deepEqual(r.operations[0].candidates.map(x=>x.id),['strong','hot','cold']);
 });

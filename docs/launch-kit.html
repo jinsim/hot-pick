@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Hot Pick launch kit</title><style>body{font:16px/1.6 system-ui;max-width:58rem;margin:3rem auto;padding:1rem}pre{white-space:pre-wrap;background:#f3f3f3;padding:1rem}td,th{padding:.6rem;border-bottom:1px solid #ddd;text-align:left}</style><main><h1>Hot Pick: launch kit</h1><p>Prepared 2026-11-11. External posts below are drafts, not submitted. No advertising spend, tracking pixel or paid service.</p><h2>Positioning</h2><p>Find trending GitHub open source for the task you already have. Read its pinned source, apply what fits, and verify the result.</p><p>Start with developers using coding agents who are tired of browsing tool lists. Lead with a concrete result and source attribution. Do not claim to be the fastest, best, zero-overhead, automatically compatible with every MCP, or proven to save tokens.</p><h2>English announcement</h2><pre>I built hot-pick because keeping up with GitHub tools and agent skills was becoming another job.
+
+It gives a coding agent one workflow: find relevant open source, inspect a pinned version, apply it to your task, and verify the output.
+
+The catalog is collected without LLM calls. Your existing agent handles intent and selection. It supports libraries and CLI tools as well as skills; it does not automatically provision every MCP.
+
+There are reproducible extraction and keyboard-accessibility examples. The honest tradeoff: cold catalog loading can be slow, and we have not established universal speed, token or quality gains.
+
+Try: npx skills add jinsim/hot-pick --skill hot-pick
+https://github.com/jinsim/hot-pick
+
+I'd especially like examples where it selects the wrong tool or adds unnecessary work.</pre><h2>Korean announcement</h2><pre>새로운 GitHub 도구와 스킬을 계속 찾아보는 일이 번거로워 hot-pick을 만들었습니다.
+
+지금 하려는 작업을 기준으로 오픈소스를 찾고, 실제 소스를 확인하고, 작업에 적용한 뒤 결과까지 검사하는 에이전트 스킬입니다. 라이브러리·CLI·스킬을 함께 다룹니다.
+
+수집기는 LLM을 호출하지 않고, 의도 파악은 현재 쓰는 에이전트가 담당합니다. 추출 작업과 키보드 접근성 수정 예제도 공개했습니다.
+
+아직 초기 버전입니다. 첫 카탈로그 로딩 비용이 있고, 일반 작업보다 항상 빠르거나 토큰이 적게 든다는 주장은 하지 않습니다.
+
+npx skills add jinsim/hot-pick --skill hot-pick
+https://github.com/jinsim/hot-pick
+
+실제 요청 하나에 써보고, 엉뚱한 추천이나 불필요한 작업이 생긴 사례를 알려주시면 개선에 도움이 됩니다.</pre><h2>60-second demo script</h2><ol><li>Show the task and original keyboard-button fixture, including failed Tab navigation.</li><li>Run the catalog route using examples/quickstart/task.json. Show elapsed time without cutting it out or implying a cold run is warm.</li><li>Show the selected project's name, source commit and license. Open the relevant pinned instructions.</li><li>Apply the native button, focus and status-region changes.</li><li>Run examples/keyboard-button/verify.mjs. Show six browser checks.</li><li>Close with the installation command and the limitation: this is application evidence, not a blind comparison against a no-skill agent.</li></ol><h2>Distribution order</h2><table><tr><th>Channel</th><th>Submission and purpose</th></tr><tr><td>GitHub</td><td>Clear README, searchable topics, installation path, contribution and task-result forms; preview release draft.</td></tr><tr><td>skills.sh</td><td>Normal user installation via Skills CLI. Directory appearance is not guaranteed by adding a README link. Never manufacture installs.</td></tr><tr><td>Show HN</td><td>Draft title: “Show HN: Hot Pick – apply task-relevant GitHub tools from your coding agent”. Lead with working code and honest limitations; check current submission rules before posting.</td></tr><tr><td>GeekNews Show</td><td>Use the Korean draft and a reproducible small task. Check current rules before posting.</td></tr><tr><td>Relevant agent communities</td><td>Share only where project promotion is permitted; tailor one example to the community. Do not mass-post, DM users, or repeat links.</td></tr></table><h2>First feedback cycle</h2><p>Seek ten voluntarily shared real task results across focused UI fixes, data extraction and developer tooling. Record task completion, unsuitable-selection rate, cold/warm overhead, and voluntary reuse. This is a target, not an achieved user count. Compare GitHub stars, repository traffic and Skills installs separately; none proves active use or task success. Use the repository task-result form instead of adding telemetry.</p><p>After failures are understood, publish a second example-led update. Retain negative results. External posting and outreach remain pending explicit posting instructions.</p><p>References: <a href="https://www.skills.sh/docs/faq">Skills directory and telemetry FAQ</a>; <a href="https://github.com/vercel-labs/skills/blob/main/docs/commands.md">Skills CLI commands</a>.</p></main></html>

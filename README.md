@@ -6,6 +6,22 @@ hot-pick is one agent skill with a dependency-free Node.js CLI. The host agent u
 
 Node.js 22+ and Git are required. Applying a selected project may need its own runtime and dependencies. No LLM API key is required by hot-pick.
 
+## Try it in your agent
+
+```sh
+npx skills add jinsim/hot-pick --skill hot-pick
+```
+
+Select your agent in the installer, then start a new session. This uses the third-party [Skills CLI](https://github.com/vercel-labs/skills); its telemetry is separate from hot-pick, which sends no telemetry. Manual Codex setup is below.
+
+**Try a focused task:**
+
+> Use hot-pick to fix this page’s keyboard accessibility. Find suitable open-source guidance, read its pinned source, apply only what fits, and verify Tab, Enter, Space and visible focus. Keep the existing design.
+
+**What makes this useful:** one entrypoint for discovering and applying libraries, tools and skills; source pins and selection evidence; cached catalog matching; checks attached to actual work. It is an early preview, not a guarantee of better output, lower tokens or faster work.
+
+[Working extraction example](examples/product-extraction) · [Keyboard fix and measurements](docs/request-validation.html) · [Report your task result](https://github.com/jinsim/hot-pick/issues/new?template=task-result.yml)
+
 ## Quick start
 
 Requires **Node.js 22+ and Git**. The CLI has no npm dependencies and needs no LLM API key. Your coding agent supplies the reasoning; hot-pick supplies discovery, source evidence and execution receipts.
@@ -61,10 +77,10 @@ Users connect the skill to the published catalog:
 
 ```sh
 npm run hot-pick -- catalog-connect --catalog-url https://jinsim-hot-pick.web.app/catalog.json
-npm run hot-pick -- catalog-route --file task.json
+npm run hot-pick -- catalog-route --file examples/quickstart/task.json
 ```
 
-Use the URL for your deployment. The client downloads metadata, reuses it with TTL/ETag caching and matches task operations locally. The current agent summarizes the task once, checks fit and selects candidates. User prompts and selection traces stay local.
+The URL above is the public operator catalog; self-hosters can substitute their own URL. The client downloads metadata, reuses it with TTL/ETag caching and matches task operations locally. The current agent summarizes the task once, checks fit and selects candidates. User prompts and selection traces stay local.
 
 The public catalog is served by Firebase Hosting and updated by a [cloud collector](.github/workflows/catalog.yml) on standard GitHub Actions runners. It is scheduled at minutes 7 and 37 of each hour and works while the operator's computer is off. It restores cached GitHub data, checks commit changes, fetches missing blobs and publishes a validated snapshot. Neither collection nor publication calls an LLM. Google access uses short-lived workload identity credentials, not a saved service-account key.
 
@@ -154,3 +170,7 @@ npm test
 - [REA evidence summary](docs/rea-summary.json)
 
 The historical benchmark measures the earlier skill-only implementation, not v0.2 GitHub discovery or task execution. Research downloads, task virtual environments and pinned checkouts are ignored by Git. [MIT license](LICENSE).
+
+## Help improve hot-pick
+
+Try one real task and [share the result](https://github.com/jinsim/hot-pick/issues/new?template=task-result.yml), including unsuitable recommendations. See [contributing](CONTRIBUTING.md). If it helps your work, a GitHub star helps others find it.

@@ -1,0 +1,20 @@
+name: Report a bug
+description: A reproducible discovery, catalog, installation or application problem.
+body:
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps, expected result, and actual result
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: OS, Node version, agent, and Hot Pick commit
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized output
+      description: Do not attach credentials, private prompts, or complete private traces.

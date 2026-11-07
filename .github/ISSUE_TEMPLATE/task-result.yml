@@ -1,0 +1,30 @@
+name: Share a real task result
+description: Tell us what Hot Pick selected, what you used, and what actually happened.
+title: "[Task result] "
+body:
+  - type: textarea
+    id: task
+    attributes:
+      label: Task and constraints
+      description: Remove private code, credentials and personal data.
+    validations:
+      required: true
+  - type: textarea
+    id: selection
+    attributes:
+      label: Selected project and why it fit (or did not)
+      description: Include a public repository URL and commit if available.
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Actual application and verification
+      description: What changed? Which checks passed or failed? Recommendation alone is not application.
+    validations:
+      required: true
+  - type: textarea
+    id: cost
+    attributes:
+      label: Time, friction, and comparison
+      description: Report cold/warm state and how you measured. Leave unknown token counts unknown.

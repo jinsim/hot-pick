@@ -1,0 +1,1 @@
+{"operations":[{"intent":"Fix keyboard accessibility in an existing page without redesigning it","keywords":["accessibility","keyboard","focus","button"],"constraints":["Keep the existing framework and visual design","Prefer native HTML; avoid new runtime dependencies"]}]}

@@ -1,0 +1,101 @@
+{
+  "meaning": "Git display dates normalized at owner request; actual execution timestamps are unchanged. Mapping preserves source trees, identities and messages.",
+  "recorded_at": "2026-11-11T13:07:45.812739+09:00",
+  "mapping": [
+    {
+      "old": "3257d50fa1689cd08cb515ae6e0dddb9ac5479f5",
+      "new": "4bb3227561bea2454cf635b7434019367dd9c15c",
+      "display_date": "2026-10-24T14:03:23+09:00"
+    },
+    {
+      "old": "80b9cc1a57f7d8b2d82221b9bc28420094282553",
+      "new": "18e990a5062e82d37a69402752e74896151543b0",
+      "display_date": "2026-10-31T10:24:13+09:00"
+    },
+    {
+      "old": "9105403c800bb82177d0215356b3912198690753",
+      "new": "a73dcfc7a1da4119d4efb103b3e0a5848ef0b0d5",
+      "display_date": "2026-10-31T12:20:32+09:00"
+    },
+    {
+      "old": "6dd6aea624ff2b7e0e91411fcae214e544f0d72a",
+      "new": "72b144640e19384b0f2373482f14759f020ce595",
+      "display_date": "2026-10-31T14:12:36+09:00"
+    },
+    {
+      "old": "50b63e27393d3a7aa80d72d91eead7640b04a7d7",
+      "new": "e1ae5b298cf91ffc9ca1be711fd26d4b07a328ac",
+      "display_date": "2026-10-31T15:46:14+09:00"
+    },
+    {
+      "old": "832315b0feebab1c71217e4881e368c918250307",
+      "new": "ed28f3eddcd2989b8bf72d525dc79e88aef4fe43",
+      "display_date": "2026-10-31T17:29:03+09:00"
+    },
+    {
+      "old": "c3a40bd4782b2098b5c85cf72b7077b1e071fa85",
+      "new": "b40a5ddf3d25378c93a8073578d707106712ef51",
+      "display_date": "2026-10-31T19:26:10+09:00"
+    },
+    {
+      "old": "949061ca8495eb043b51b1c583f7fde4d3ec348b",
+      "new": "625084b6407cf1426ec4bc95314d65f5cd450c13",
+      "display_date": "2026-11-01T10:05:22+09:00"
+    },
+    {
+      "old": "2e756a7c4bc003b86b18ac0662f5d715e4234549",
+      "new": "768deeba647b6800a2e0819c615a2b87e53f4938",
+      "display_date": "2026-11-01T12:13:25+09:00"
+    },
+    {
+      "old": "7a3b59439f619fac74078c3566922e5329d4192a",
+      "new": "85706f1897c123298714bde6967de7e0ffb8a5f6",
+      "display_date": "2026-11-01T14:28:21+09:00"
+    },
+    {
+      "old": "5b2397d0d30a253ed5578ca8446881904062edbb",
+      "new": "6a82301325b612dd6598838a0f55067692d4d362",
+      "display_date": "2026-11-01T15:38:37+09:00"
+    },
+    {
+      "old": "ea4aec662c02119428d762161c26d9c2c6327112",
+      "new": "fe4a6eef5dac7dc5e4ded6b55bd0313845dd2eba",
+      "display_date": "2026-11-01T17:52:59+09:00"
+    },
+    {
+      "old": "e7a01be8317ab9cd2a82f77b51ebd3ac5923f853",
+      "new": "8465b26f8146a71eca1b54a779742a688b6de2d5",
+      "display_date": "2026-11-01T19:11:40+09:00"
+    },
+    {
+      "old": "51b84f12fadb742143f18ea1bfc736113494935b",
+      "new": "5d002636d1ecbfb17eb0838a48c72a07411ff757",
+      "display_date": "2026-11-07T11:44:25+09:00"
+    },
+    {
+      "old": "16e54d80548686d11f29d0e8ac22c09255a79173",
+      "new": "7ac59209cf4232c5e646c495c46a12e61c3c38a0",
+      "display_date": "2026-11-07T15:04:23+09:00"
+    },
+    {
+      "old": "c214bc2fc79d3db30c1213086cf389b7e108f609",
+      "new": "21ecbf1b6012b81e2bedcb5781ef01b63a21ee1f",
+      "display_date": "2026-11-07T17:55:20+09:00"
+    },
+    {
+      "old": "bde35232da852c79055d7f1a1228e44e390b8fe9",
+      "new": "bc1d92d3298884dbe298aea018730c189a886a63",
+      "display_date": "2026-11-08T10:15:32+09:00"
+    },
+    {
+      "old": "58464d80690891ccb836812b687c7036cc4b57a8",
+      "new": "b2641aa3907051b938c15b3f282efda353ff2c1c",
+      "display_date": "2026-11-08T15:10:28+09:00"
+    },
+    {
+      "old": "1f4a47f19e215ab8d766079a021b117364b43d96",
+      "new": "6bc6ad6cdae94786c3dbfe92cc398ebf6a99311e",
+      "display_date": "2026-11-08T19:05:09+09:00"
+    }
+  ]
+}

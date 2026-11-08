@@ -19,7 +19,8 @@
     "hot_pick_source_commit": "58464d8",
     "codex_cli_version": "codex-cli 0.167.0-alpha.3.2",
     "grader_python_version": "3.11.6",
-    "grader_node_version": "v23.6.1"
+    "grader_node_version": "v23.6.1",
+    "normalized_equivalent_source_commit": "b2641aa3907051b938c15b3f282efda353ff2c1c"
   },
   "method": {
     "independent_sessions": true,

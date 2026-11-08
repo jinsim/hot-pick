@@ -61,3 +61,9 @@ The host may supply `required_keywords` (all normalized terms must appear), `exc
 ```json
 {"operations":[{"intent":"Find statistical ranking guidance","keywords":["ranking","scoring","statistics"],"required_keywords":["statistics"],"exclude_repos":[],"min_coverage":0.6,"max_per_repo":1}]}
 ```
+
+### Lazy public catalog
+
+Use `catalog-connect --catalog-url https://jinsim-hot-pick.web.app/index.json` for the compact search index. Existing `/catalog.json` URLs remain supported. The index retains the exact normalized search vocabulary and source pins, but omits full profile excerpts. `catalog-detail` downloads only the selected content-addressed profile files, verifies SHA-256 and source pins, and caches them for offline reuse. `catalog-route --details` explicitly loads the shortlisted details. An uncached detail needs network access; old trace details removed by a later publication fail explicitly and require a new route. Cached details remain usable. No request or intent is sent to the static catalog server.
+
+The public collector publishes the full compatibility snapshot, index and individual details in one Firebase release. Publication validates the full allowlisted snapshot before deriving these assets. Search-index transfer reduction is separate from LLM token savings: compact route output was already small before this change.

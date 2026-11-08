@@ -219,7 +219,8 @@ export class Catalog {
       if(!/^[a-f0-9]{64}$/.test(item.detail_hash))throw Error('Invalid detail hash');
       const url=new URL(`details/${item.detail_hash}.json`,catalogURL(item.detail_origin)).href;
       const client=new OSS({...this.client,cache:this.client.dir,fetch:(url,init)=>{const headers={...init.headers};delete headers.Authorization;return this.client.fetch(url,{...init,headers});}});
-      const raw=await client.cached(url,{json:false,immutable:true,max:2*1024*1024});
+      let raw;
+      try{raw=await client.cached(url,{json:false,immutable:true,max:2*1024*1024});}finally{for(const k of Object.keys(client.stats))this.client.stats[k]+=client.stats[k];for(const warning of client.warnings)this.client.warn(warning);}
       if(hash(raw)!==item.detail_hash)throw Error('Detail checksum mismatch; reroute to refresh evidence');
       const full=publicSnapshot(JSON.parse(raw)).cards[id];
       if(!full || full.commit!==item.commit || full.blob_sha!==item.blob_sha)throw Error('Detail source pin mismatch');
@@ -269,7 +270,7 @@ export async function catalogCommand(command,args,opts) {
     const snapshot=raw.format==='hot-pick-index-v1'?validateIndex(raw):publicSnapshot(raw);
     c.client.stats=client.stats;c.client.warnings=client.warnings;
     const result=await c.route(task,snapshot,url,false);
-    if(opts.details){for(const op of result.operations)op.candidates=await Promise.all(op.candidates.map(async candidate=>({...candidate,...(await c.detail(result.trace_id,candidate.id)).candidate})));}
+    if(opts.details){for(const op of result.operations)op.candidates=await Promise.all(op.candidates.map(async candidate=>({...candidate,...(await c.detail(result.trace_id,candidate.id)).candidate})));result.requests=c.client.stats.requests;result.warnings=c.client.warnings;}
     return result;
   }
   if(command==='catalog-review-queue') {

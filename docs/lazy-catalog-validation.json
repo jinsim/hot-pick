@@ -1,0 +1,344 @@
+{
+  "snapshot": {
+    "updated_at": "2026-11-11T03:15:56.053Z",
+    "cards": 1843,
+    "sha256": "58cd3a68882f1920b003d045c8c33948f236e4624cdce4a0e1cdebf8f6e4c420"
+  },
+  "payload": {
+    "full_bytes": 9555622,
+    "index_bytes": 4120764,
+    "full_gzip": 2151587,
+    "index_gzip": 1020194
+  },
+  "tokenizer": "js-tiktoken o200k_base",
+  "scope": "CLI JSON only, volatile trace/time/origin fields omitted; excludes model reasoning, billing, source reads and tool wrappers. Same ranking and selected full detail required.",
+  "cases": [
+    {
+      "keywords": [
+        "keyboard",
+        "focus",
+        "accessibility"
+      ],
+      "candidates": [
+        [
+          "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+          7.070048174943289
+        ],
+        [
+          "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+          7.070048174943289
+        ],
+        [
+          "microsoft/vscode:.github/skills/accessibility/SKILL.md",
+          7.070048174943289
+        ]
+      ],
+      "selected": "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+      "detail_bytes": 5452,
+      "route_tokens": {
+        "full": 627,
+        "index": 627
+      },
+      "route_and_selected_detail_tokens": {
+        "full": 1922,
+        "index": 1922
+      }
+    },
+    {
+      "keywords": [
+        "python",
+        "scraping",
+        "html"
+      ],
+      "candidates": [
+        [
+          "github/awesome-copilot:skills/latchshot-page-capture/SKILL.md",
+          5.125456644672143
+        ],
+        [
+          "D4Vinci/Scrapling:agent-skill/Scrapling-Skill/SKILL.md",
+          3.314963565224204
+        ],
+        [
+          "anthropics/claude-plugins-official:plugins/skill-creator/skills/skill-creator/SKILL.md",
+          3.314963565224204
+        ]
+      ],
+      "selected": "github/awesome-copilot:skills/latchshot-page-capture/SKILL.md",
+      "detail_bytes": 9014,
+      "route_tokens": {
+        "full": 738,
+        "index": 738
+      },
+      "route_and_selected_detail_tokens": {
+        "full": 2811,
+        "index": 2811
+      }
+    },
+    {
+      "keywords": [
+        "react",
+        "performance",
+        "render"
+      ],
+      "candidates": [
+        [
+          "ruvnet/RuView:.claude/skills/skill-builder/SKILL.md",
+          5.0717958682951645
+        ],
+        [
+          "calesthio/OpenMontage:.agents/skills/vercel-react-best-practices/SKILL.md",
+          5.0717958682951645
+        ],
+        [
+          "calesthio/OpenMontage:.agents/skills/remotion-to-hyperframes/SKILL.md",
+          3.523591097318215
+        ]
+      ],
+      "selected": "ruvnet/RuView:.claude/skills/skill-builder/SKILL.md",
+      "detail_bytes": 8297,
+      "route_tokens": {
+        "full": 648,
+        "index": 648
+      },
+      "route_and_selected_detail_tokens": {
+        "full": 2642,
+        "index": 2642
+      }
+    },
+    {
+      "keywords": [
+        "ranking",
+        "scoring",
+        "statistics"
+      ],
+      "candidates": [
+        [
+          "anthropics/knowledge-work-plugins:small-business/skills/hiring-screener/SKILL.md",
+          5.309186575316793
+        ],
+        [
+          "anthropics/knowledge-work-plugins:small-business/skills/call-list/SKILL.md",
+          5.309186575316793
+        ],
+        [
+          "anthropics/knowledge-work-plugins:enterprise-search/skills/search-strategy/SKILL.md",
+          5.309186575316793
+        ]
+      ],
+      "selected": "anthropics/knowledge-work-plugins:small-business/skills/hiring-screener/SKILL.md",
+      "detail_bytes": 10379,
+      "route_tokens": {
+        "full": 703,
+        "index": 703
+      },
+      "route_and_selected_detail_tokens": {
+        "full": 3186,
+        "index": 3186
+      }
+    }
+  ],
+  "cold": {
+    "checked_at": "2026-11-11T03:22:26.856Z",
+    "method": "Three alternating pairs, fresh client cache each time, real Firebase HTTPS. Includes Node startup. CDN/OS caches uncontrolled; single machine, no universal speed claim.",
+    "results": [
+      {
+        "round": 0,
+        "kind": "catalog",
+        "elapsed_ms": 578.100584,
+        "detail_ms": 56.34400000000005,
+        "total_ms": 634.4445840000001,
+        "requests": 1,
+        "snapshot": "2026-11-11T03:15:56.053Z",
+        "ids": [
+          "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+          "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+          "microsoft/vscode:.github/skills/accessibility/SKILL.md"
+        ]
+      },
+      {
+        "round": 0,
+        "kind": "index",
+        "elapsed_ms": 431.5841660000001,
+        "detail_ms": 191.59583399999997,
+        "total_ms": 623.1800000000001,
+        "requests": 1,
+        "snapshot": "2026-11-11T03:15:56.053Z",
+        "ids": [
+          "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+          "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+          "microsoft/vscode:.github/skills/accessibility/SKILL.md"
+        ]
+      },
+      {
+        "round": 1,
+        "kind": "index",
+        "elapsed_ms": 359.61095899999987,
+        "detail_ms": 191.86479200000008,
+        "total_ms": 551.475751,
+        "requests": 1,
+        "snapshot": "2026-11-11T03:15:56.053Z",
+        "ids": [
+          "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+          "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+          "microsoft/vscode:.github/skills/accessibility/SKILL.md"
+        ]
+      },
+      {
+        "round": 1,
+        "kind": "catalog",
+        "elapsed_ms": 559.320541,
+        "detail_ms": 59.139624999999796,
+        "total_ms": 618.4601659999998,
+        "requests": 1,
+        "snapshot": "2026-11-11T03:15:56.053Z",
+        "ids": [
+          "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+          "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+          "microsoft/vscode:.github/skills/accessibility/SKILL.md"
+        ]
+      },
+      {
+        "round": 2,
+        "kind": "catalog",
+        "elapsed_ms": 548.7617500000001,
+        "detail_ms": 58.05687500000022,
+        "total_ms": 606.8186250000003,
+        "requests": 1,
+        "snapshot": "2026-11-11T03:15:56.053Z",
+        "ids": [
+          "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+          "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+          "microsoft/vscode:.github/skills/accessibility/SKILL.md"
+        ]
+      },
+      {
+        "round": 2,
+        "kind": "index",
+        "elapsed_ms": 330.18383300000005,
+        "detail_ms": 213.37533299999996,
+        "total_ms": 543.559166,
+        "requests": 1,
+        "snapshot": "2026-11-11T03:15:56.053Z",
+        "ids": [
+          "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+          "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+          "microsoft/vscode:.github/skills/accessibility/SKILL.md"
+        ]
+      }
+    ]
+  },
+  "summary": {
+    "catalog": {
+      "route_median_ms": 559.320541,
+      "route_plus_detail_median_ms": 618.4601659999998
+    },
+    "index": {
+      "route_median_ms": 359.61095899999987,
+      "route_plus_detail_median_ms": 551.475751
+    }
+  },
+  "initial_exploratory_run": {
+    "checked_at": "2026-11-11T03:22:12.337Z",
+    "method": "Three alternating pairs, fresh client cache each time, real Firebase HTTPS. Includes Node startup. CDN/OS caches uncontrolled; single machine, no universal speed claim.",
+    "results": [
+      {
+        "round": 0,
+        "kind": "catalog",
+        "elapsed_ms": 1323.9046250000001,
+        "detail_ms": 59.40366700000004,
+        "total_ms": 1383.3082920000002,
+        "requests": 1,
+        "snapshot": "2026-11-11T03:15:56.053Z",
+        "ids": [
+          "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+          "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+          "microsoft/vscode:.github/skills/accessibility/SKILL.md"
+        ]
+      },
+      {
+        "round": 0,
+        "kind": "index",
+        "elapsed_ms": 1429.1348750000002,
+        "detail_ms": 532.1699170000002,
+        "total_ms": 1961.3047920000004,
+        "requests": 1,
+        "snapshot": "2026-11-11T03:15:56.053Z",
+        "ids": [
+          "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+          "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+          "microsoft/vscode:.github/skills/accessibility/SKILL.md"
+        ]
+      },
+      {
+        "round": 1,
+        "kind": "index",
+        "elapsed_ms": 392.531708,
+        "detail_ms": 196.0722499999997,
+        "total_ms": 588.6039579999997,
+        "requests": 1,
+        "snapshot": "2026-11-11T03:15:56.053Z",
+        "ids": [
+          "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+          "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+          "microsoft/vscode:.github/skills/accessibility/SKILL.md"
+        ]
+      },
+      {
+        "round": 1,
+        "kind": "catalog",
+        "elapsed_ms": 705.5264999999999,
+        "detail_ms": 59.13941700000032,
+        "total_ms": 764.6659170000003,
+        "requests": 1,
+        "snapshot": "2026-11-11T03:15:56.053Z",
+        "ids": [
+          "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+          "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+          "microsoft/vscode:.github/skills/accessibility/SKILL.md"
+        ]
+      },
+      {
+        "round": 2,
+        "kind": "catalog",
+        "elapsed_ms": 559.5950840000005,
+        "detail_ms": 54.440582999999606,
+        "total_ms": 614.0356670000001,
+        "requests": 1,
+        "snapshot": "2026-11-11T03:15:56.053Z",
+        "ids": [
+          "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+          "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+          "microsoft/vscode:.github/skills/accessibility/SKILL.md"
+        ]
+      },
+      {
+        "round": 2,
+        "kind": "index",
+        "elapsed_ms": 326.2729590000008,
+        "detail_ms": 194.92225000000053,
+        "total_ms": 521.1952090000013,
+        "requests": 1,
+        "snapshot": "2026-11-11T03:15:56.053Z",
+        "ids": [
+          "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+          "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+          "microsoft/vscode:.github/skills/accessibility/SKILL.md"
+        ]
+      }
+    ],
+    "excluded_reason": "Separate snapshot download overlapped with initial timing. Retained for transparency; isolated rerun is reported. CDN was not cold for isolated run."
+  },
+  "verification": {
+    "verified": true,
+    "url": "https://jinsim-hot-pick.web.app/catalog.json",
+    "sha256": "58cd3a68882f1920b003d045c8c33948f236e4624cdce4a0e1cdebf8f6e4c420",
+    "cards": 1843,
+    "updated_at": "2026-11-11T03:15:56.053Z",
+    "conditional_status": 304,
+    "index_verified": true,
+    "detail_verified": true
+  },
+  "cloud_run": "https://github.com/jinsim/hot-pick/actions/runs/42951538718",
+  "billing_enabled": false
+}

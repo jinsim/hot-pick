@@ -80,7 +80,7 @@ npm run hot-pick -- catalog-connect --catalog-url https://jinsim-hot-pick.web.ap
 npm run hot-pick -- catalog-route --file examples/quickstart/task.json
 ```
 
-The URL above is the public operator catalog; self-hosters can substitute their own URL. The client downloads metadata, reuses it with TTL/ETag caching and matches task operations locally. The current agent summarizes the task once, checks fit and selects candidates. User prompts and selection traces stay local.
+The URL above is the public operator catalog; self-hosters can substitute their own URL. The client downloads a compact search index, reuses it with TTL/ETag caching and matches task operations locally. Full evidence is fetched only for selected candidates by `catalog-detail`, checked against its content hash, and cached for offline reuse. Existing `/catalog.json` connections remain supported. See [lazy catalog implementation and measurements](docs/lazy-catalog.html). The current agent summarizes the task once, checks fit and selects candidates. User prompts and selection traces stay local.
 
 The public catalog is served by Firebase Hosting and updated by a [cloud collector](.github/workflows/catalog.yml) on standard GitHub Actions runners. It is scheduled at minutes 7 and 37 of each hour and works while the operator's computer is off. It restores cached GitHub data, checks commit changes, fetches missing blobs and publishes a validated snapshot. Neither collection nor publication calls an LLM. Google access uses short-lived workload identity credentials, not a saved service-account key.
 

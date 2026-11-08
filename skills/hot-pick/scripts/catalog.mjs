@@ -1,3 +1,4 @@
+import {validateIndex,hash} from './catalog-index.mjs';
 import {popularity} from './popularity.mjs';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
@@ -143,7 +144,7 @@ export class Catalog {
     if(!Array.isArray(task?.operations)||!task.operations.length||task.operations.length>12) throw Error('Provide 1–12 operations with public keywords');
     const unique=new Map();for(const c of Object.values(state.cards)) {const key=c.repo+':'+c.name;if(!unique.has(key)||(!unique.get(key).ready&&c.ready)) unique.set(key,c);}
     const cards=[...unique.values()];
-    const docs=cards.map(c=>{const p=c.profile.semantic_review;return {c,terms:words([c.name,c.profile.description,...(p?.situations||[]),...(p?.outputs||[]),...c.profile.situations.map(x=>x.text),...c.profile.outputs.map(x=>x.text),...c.profile.headings.map(x=>x.text)].join(' '))};});
+    const docs=cards.map(c=>{const p=c.profile.semantic_review;return {c,terms:c.search_terms || words([c.name,c.profile.description,...(p?.situations||[]),...(p?.outputs||[]),...c.profile.situations.map(x=>x.text),...c.profile.outputs.map(x=>x.text),...c.profile.headings.map(x=>x.text)].join(' '))};});
     const df=new Map();for(const d of docs) for(const term of new Set(d.terms)) df.set(term,(df.get(term)||0)+1);
     const rankingNow=Date.now();
     const evidence = new Map();
@@ -173,13 +174,13 @@ export class Catalog {
           evidence.set(c.id, {
             id:c.id, name:c.name, repo:c.repo, commit:c.commit, path:c.skill_path, blob_sha:c.blob_sha,
             license:c.license, ready:c.ready, entrypoint:c.entrypoint, profile:c.profile, source:c.source,
-            stars:c.stars, trending, checked_at:c.checked_at
+            stars:c.stars, trending, checked_at:c.checked_at, ...(c.detail_hash?{detail_hash:c.detail_hash,detail_origin:origin}:{})
           });
           const description = String(c.profile.description || '').replace(/\s+/g,' ').trim();
           const characters = [...description];
           const summary = {id:c.id, name:c.name, commit:c.commit, license:c.license, ready:c.ready};
           if (description) summary.description = characters.slice(0,240).join('');
-          if (characters.length > 240) summary.description_truncated = true;
+          if (characters.length > 240 || c.description_truncated) summary.description_truncated = true;
           if (c.profile.semantic_review && c.profile.semantic_review.blob_sha === c.blob_sha) summary.reviewed = true;
           if (trending.length) {
             const latest = trending.reduce((a,b)=>(b.checked_at || '') > (a.checked_at || '') ? b : a);
@@ -211,10 +212,20 @@ export class Catalog {
     const evidence = saved.evidence ?? Object.fromEntries(
       saved.operations.flatMap(op => op.candidates).filter(c => c.profile).reverse().map(c => [c.id, c])
     );
-    const candidates = [...new Set(ids)].map(id => {
+    const candidates = await Promise.all([...new Set(ids)].map(async id => {
       if (!Object.hasOwn(evidence,id)) throw Error(`Candidate not found in this catalog trace: ${id}`);
-      return evidence[id];
-    });
+      const item=evidence[id];
+      if(!item.detail_hash)return item;
+      if(!/^[a-f0-9]{64}$/.test(item.detail_hash))throw Error('Invalid detail hash');
+      const url=new URL(`details/${item.detail_hash}.json`,catalogURL(item.detail_origin)).href;
+      const client=new OSS({...this.client,cache:this.client.dir,fetch:(url,init)=>{const headers={...init.headers};delete headers.Authorization;return this.client.fetch(url,{...init,headers});}});
+      const raw=await client.cached(url,{json:false,immutable:true,max:2*1024*1024});
+      if(hash(raw)!==item.detail_hash)throw Error('Detail checksum mismatch; reroute to refresh evidence');
+      const full=publicSnapshot(JSON.parse(raw)).cards[id];
+      if(!full || full.commit!==item.commit || full.blob_sha!==item.blob_sha)throw Error('Detail source pin mismatch');
+      const {detail_hash,detail_origin,...rest}=item;
+      return {...rest,profile:full.profile};
+    }));
     if (ids.length === 1) return {trace_id:trace, candidate:candidates[0]};
     return {
       trace_id:trace, profile_format:'indexed_excerpts',
@@ -254,9 +265,12 @@ export async function catalogCommand(command,args,opts) {
     const client=new OSS({...opts,github:'https://catalog.invalid'});
     const originalFetch=client.fetch;
     client.fetch=(url,init)=>{const headers={...init.headers};delete headers.Authorization;return originalFetch(url,{...init,headers});};
-    const snapshot=publicSnapshot(await client.cached(url,{stale:true,max:32*1024*1024}));
+    const raw=await client.cached(url,{stale:true,max:32*1024*1024});
+    const snapshot=raw.format==='hot-pick-index-v1'?validateIndex(raw):publicSnapshot(raw);
     c.client.stats=client.stats;c.client.warnings=client.warnings;
-    return c.route(task,snapshot,url,opts.details);
+    const result=await c.route(task,snapshot,url,false);
+    if(opts.details){for(const op of result.operations)op.candidates=await Promise.all(op.candidates.map(async candidate=>({...candidate,...(await c.detail(result.trace_id,candidate.id)).candidate})));}
+    return result;
   }
   if(command==='catalog-review-queue') {
     const state=await c.state();return {items:Object.values(state.cards).filter(x=>x.profile.semantic_review?.blob_sha!==x.blob_sha).slice(0,opts.limit||20).map(x=>({id:x.id,blob_sha:x.blob_sha,commit:x.commit,source:x.source,instructions:x.instructions,overview:x.overview})),note:'One-shot local host review only; no LLM daemon or API call. Apply validated profiles with catalog-label.'};

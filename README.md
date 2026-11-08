@@ -76,7 +76,7 @@ The operator's scheduled pipeline collects changed GitHub metadata and source fi
 Users connect the skill to the published catalog:
 
 ```sh
-npm run hot-pick -- catalog-connect --catalog-url https://jinsim-hot-pick.web.app/catalog.json
+npm run hot-pick -- catalog-connect --catalog-url https://jinsim-hot-pick.web.app/index.json
 npm run hot-pick -- catalog-route --file examples/quickstart/task.json
 ```
 

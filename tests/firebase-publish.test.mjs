@@ -17,7 +17,7 @@ async function fixture(t) {
   await fs.writeFile(file,body);
   return {file,body,hash};
 }
-function transport({hash,body,unchanged=false,badUpload=false,failFinalize=false}) {
+function transport({hash,body,unchanged=false,badUpload=false,failFinalize=false,split=false}) {
   const calls=[],version='sites/test-project/versions/version1';
   const fetchImpl=async(url,options)=>{
     calls.push({url,method:options.method});
@@ -29,7 +29,7 @@ function transport({hash,body,unchanged=false,badUpload=false,failFinalize=false
     if(url.includes('updateMask=retainedReleaseCount')) {assert.deepEqual(JSON.parse(options.body),{retainedReleaseCount:10});return json({retainedReleaseCount:10});}
     if(url.endsWith('/files?pageSize=100')) return json({files:[{path:'/__/firebase/init.js',hash:'firebase-added'},{path:'/catalog.json',hash}]});
     if(url.endsWith('/versions')) return json({name:version});
-    if(url.endsWith(':populateFiles')) {assert.deepEqual(JSON.parse(options.body).files,{'/catalog.json':hash});return json({uploadRequiredHashes:[hash],uploadUrl:badUpload?'https://attacker.example/files':`https://upload-firebasehosting.googleapis.com/upload/${version}/files`});}
+    if(url.endsWith(':populateFiles')) {if(!split)assert.deepEqual(JSON.parse(options.body).files,{'/catalog.json':hash});else {const f=JSON.parse(options.body).files;assert.ok(f['/index.json']);assert.ok(Object.keys(f).some(k=>k.startsWith('/details/')));}return json({uploadRequiredHashes:[hash],uploadUrl:badUpload?'https://attacker.example/files':`https://upload-firebasehosting.googleapis.com/upload/${version}/files`});}
     if(url.startsWith('https://upload-firebasehosting.googleapis.com/')) {assert.equal(gunzipSync(options.body).toString(),body);return new Response('');}
     if(url.includes('update_mask')) return failFinalize ? new Response('',{status:503}) : json({status:'FINALIZED'});
     if(url.includes('/releases?')) return json({version:{name:version}});
@@ -65,3 +65,5 @@ test('private or empty snapshots fail before credentials or network',async t=>{
     await assert.rejects(publishCatalog({file:f.file,project:'test-project',getToken:()=>assert.fail('credential requested'),fetchImpl:()=>assert.fail('network requested')}));
   }
 });
+
+test('split publisher includes index and detail files in the same atomic release',async t=>{const f=await fixture(t),mock=transport({...f,split:true});const r=await publishCatalog({...f,split:true,project:'test-project',getToken:()=> 'fixture-token',fetchImpl:mock.fetchImpl});assert.equal(r.status,'published');assert.ok(mock.calls.at(-1).url.includes('/releases?'));});

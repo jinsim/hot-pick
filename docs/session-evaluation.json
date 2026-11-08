@@ -1,0 +1,1877 @@
+{
+  "environment": {
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "high",
+    "model_source": "Existing user config scalar fields observed; no command-line override",
+    "cli_flags": [
+      "--ephemeral",
+      "--json",
+      "--skip-git-repo-check",
+      "-s danger-full-access",
+      "-c project_doc_max_bytes=0"
+    ],
+    "isolation": "Fresh Codex process and task directory per run; sibling access explicitly prohibited, not OS-isolated. Existing global tool/skill catalog may be visible; baseline instructed not to use skill files.",
+    "source_sha256": {
+      "skills/hot-pick/SKILL.md": "68a591d44549fa6b640045ac27251ab3dbe2e95e63f1fa9d7e065e51c76b75dd",
+      "skills/hot-pick/scripts/catalog.mjs": "e3a30043a51033b6b6d5b1c15d49eb5f959a19a53d9bfee4c27e6cf85e6aff22",
+      "skills/hot-pick/scripts/hot-pick.mjs": "7b114acc414ffb8a58b412f0282344dbe8361e22351961c20d672608f431fca6"
+    },
+    "hot_pick_source_commit": "58464d8",
+    "codex_cli_version": "codex-cli 0.167.0-alpha.3.2",
+    "grader_python_version": "3.11.6",
+    "grader_node_version": "v23.6.1"
+  },
+  "method": {
+    "independent_sessions": true,
+    "repetitions_per_arm_per_task": 1,
+    "grader": "Predeclared deterministic held-out behavior checks; real Chrome keyboard checks for form. Not an aesthetic or subjective maintainability score.",
+    "time": "Wall clock from codex process launch through exit, including startup/discovery/verification. Harness setup and external post-run grading excluded.",
+    "tokens": "Raw Codex turn.completed usage. cached_input_tokens is a subset of input_tokens; output_tokens and reasoning_output_tokens reported separately, not double counted or converted to cost.",
+    "limitations": [
+      "Small constructed realistic fixtures, not production-user experiment",
+      "Task set emphasizes focused fixes with no runtime dependencies",
+      "Same configured agent/tool environment but independent process/context per arm",
+      "Filesystem isolation by directory and instruction, not OS access control",
+      "Network and server prompt caching uncontrolled",
+      "No statistical generalization from one run per arm"
+    ]
+  },
+  "revision_disposition": {
+    "first_revision": "Retained: explicit direct-work gate, bounded source reads and description parsing. Gate was not selected in these sessions; pagination improved against original treatment but remained slower than baseline.",
+    "second_revision": "Experimental verification-batching guidance was rolled back after no overall measured benefit. Its source hashes and all results remain preserved; this arm does not describe the final shipping policy."
+  },
+  "runs": [
+    {
+      "case": "money-csv",
+      "arm": "baseline",
+      "wall_seconds": 78.20958089828491,
+      "exit_code": 0,
+      "timed_out": false,
+      "usage": {
+        "output_tokens": 2483,
+        "cache_write_input_tokens": 0,
+        "reasoning_output_tokens": 315,
+        "cached_input_tokens": 83712,
+        "input_tokens": 93325
+      },
+      "completed_turns": 1,
+      "started_at": "2026-11-11T03:27:20.216558+00:00",
+      "external_grader_seconds": 0.037738416984211653,
+      "checks": [
+        {
+          "name": "quoted names aggregation",
+          "passed": true
+        },
+        {
+          "name": "decimal exactness and sorting",
+          "passed": true
+        },
+        {
+          "name": "zero and unicode",
+          "passed": true
+        },
+        {
+          "name": "missing columns",
+          "passed": true
+        },
+        {
+          "name": "blank SKU",
+          "passed": true
+        },
+        {
+          "name": "fractional quantity",
+          "passed": true
+        },
+        {
+          "name": "negative quantity",
+          "passed": true
+        },
+        {
+          "name": "negative price",
+          "passed": true
+        },
+        {
+          "name": "NaN",
+          "passed": true
+        },
+        {
+          "name": "Infinity",
+          "passed": true
+        },
+        {
+          "name": "excess decimals",
+          "passed": true
+        },
+        {
+          "name": "CLI JSON",
+          "passed": true
+        }
+      ],
+      "passed": 12,
+      "total": 12,
+      "completed_item_types": {
+        "agent_message": 2,
+        "command_execution": 2,
+        "file_change": 1
+      },
+      "hot_pick_command_counts": {
+        "catalog-route": 0,
+        "catalog-detail": 0,
+        "read": 0,
+        "discover": 0,
+        "repo": 0,
+        "catalog-record": 0
+      },
+      "catalog_traces": [],
+      "direct_work_selected": false,
+      "completed_shell_calls": 2,
+      "bounded_source_read_calls": 0,
+      "source_read_output_bytes": 0,
+      "hot_pick_tool_output_bytes": 0,
+      "artifact_sha256": {
+        "summarize.py": "fc22a6428756e2fc0d237089fa87a001ccf0b4fd4f9c1e90ca6b592dd1507fb0"
+      },
+      "uncached_input_tokens": 9613,
+      "session_log_sha256": "9b1fd944b03ed407874bae57381e3ae7fcba1b943b011b5757ffc639210892b6"
+    },
+    {
+      "case": "money-csv",
+      "arm": "hot-pick",
+      "wall_seconds": 184.12489414215088,
+      "exit_code": 0,
+      "timed_out": false,
+      "usage": {
+        "output_tokens": 6148,
+        "cache_write_input_tokens": 0,
+        "reasoning_output_tokens": 1157,
+        "cached_input_tokens": 320384,
+        "input_tokens": 358856
+      },
+      "completed_turns": 1,
+      "started_at": "2026-11-11T03:28:38.428316+00:00",
+      "external_grader_seconds": 0.03899720899062231,
+      "checks": [
+        {
+          "name": "quoted names aggregation",
+          "passed": true
+        },
+        {
+          "name": "decimal exactness and sorting",
+          "passed": true
+        },
+        {
+          "name": "zero and unicode",
+          "passed": true
+        },
+        {
+          "name": "missing columns",
+          "passed": true
+        },
+        {
+          "name": "blank SKU",
+          "passed": true
+        },
+        {
+          "name": "fractional quantity",
+          "passed": true
+        },
+        {
+          "name": "negative quantity",
+          "passed": true
+        },
+        {
+          "name": "negative price",
+          "passed": true
+        },
+        {
+          "name": "NaN",
+          "passed": true
+        },
+        {
+          "name": "Infinity",
+          "passed": true
+        },
+        {
+          "name": "excess decimals",
+          "passed": true
+        },
+        {
+          "name": "CLI JSON",
+          "passed": true
+        }
+      ],
+      "passed": 12,
+      "total": 12,
+      "completed_item_types": {
+        "command_execution": 14,
+        "agent_message": 2
+      },
+      "hot_pick_command_counts": {
+        "catalog-route": 1,
+        "catalog-detail": 1,
+        "read": 2,
+        "discover": 1,
+        "repo": 1,
+        "catalog-record": 1
+      },
+      "catalog_traces": [
+        {
+          "status": "candidates_only",
+          "catalog_updated_at": "2026-11-11T03:15:56.053Z",
+          "host_reported_outcome": {
+            "trace_id": "f1a971d9-3334-4a6b-8a64-5f5a4cd55be8",
+            "decisions": [
+              {
+                "id": "google/skills:skills/cloud/cloud-monitoring-promql-query/SKILL.md",
+                "status": "rejected",
+                "reason": "Pinned evidence generates Cloud Monitoring PromQL queries, not local CSV monetary summaries; requires unrelated cloud metric discovery.",
+                "artifacts": [
+                  "hot-pick-selection.json",
+                  "summarize.py",
+                  "test_summarize.py"
+                ],
+                "checks": [
+                  "Inspected pinned catalog detail; Python stdlib alternative implemented and all 10 local tests passed"
+                ]
+              },
+              {
+                "id": "anthropics/knowledge-work-plugins:bio-research/skills/nextflow-development/SKILL.md",
+                "status": "rejected",
+                "reason": "Pinned evidence concerns sequencing pipelines and samplesheets; Nextflow, Java and Docker are unrelated dependencies.",
+                "artifacts": [
+                  "hot-pick-selection.json"
+                ],
+                "checks": [
+                  "Inspected pinned catalog inputs, outputs and prerequisites against stdlib-only constraints"
+                ]
+              },
+              {
+                "id": "github/awesome-copilot:skills/sql-server-table-reconciliation/SKILL.md",
+                "status": "rejected",
+                "reason": "Pinned evidence reconciles remote SQL Server tables using mssql-python and Apache Arrow; neither operation nor dependency stack fits.",
+                "artifacts": [
+                  "hot-pick-selection.json"
+                ],
+                "checks": [
+                  "Inspected pinned catalog inputs, outputs and dependencies against the local CSV task"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "direct_work_selected": false,
+      "completed_shell_calls": 14,
+      "bounded_source_read_calls": 0,
+      "source_read_output_bytes": 47450,
+      "hot_pick_tool_output_bytes": 88150,
+      "artifact_sha256": {
+        "summarize.py": "1a6ca1e66f6e6d4de172765104ba75550c7f1aa04b0ade2d3fc12fe43fdaa012"
+      },
+      "uncached_input_tokens": 38472,
+      "session_log_sha256": "981e968d94d569d570411e0c16cde584f7a378d7918e39ddfa1507114f8508f9",
+      "oss_application": {
+        "kind": "standard-library documentation guidance",
+        "repo": "python/cpython",
+        "commit": "acab53212d89b298ba0dd299e8e55c62bf71db80",
+        "application": "Host reports applying CSV parsing and exact monetary representation guidance; no added runtime package. Same acceptance behavior achieved by baseline."
+      }
+    },
+    {
+      "case": "pagination",
+      "arm": "hot-pick",
+      "wall_seconds": 147.98221898078918,
+      "exit_code": 0,
+      "timed_out": false,
+      "usage": {
+        "output_tokens": 4459,
+        "cache_write_input_tokens": 0,
+        "reasoning_output_tokens": 512,
+        "cached_input_tokens": 353280,
+        "input_tokens": 393390
+      },
+      "completed_turns": 1,
+      "started_at": "2026-11-11T03:31:42.555913+00:00",
+      "external_grader_seconds": 0.04500266700051725,
+      "checks": [
+        {
+          "name": "first page",
+          "passed": true
+        },
+        {
+          "name": "last page",
+          "passed": true
+        },
+        {
+          "name": "beyond end",
+          "passed": true
+        },
+        {
+          "name": "empty",
+          "passed": true
+        },
+        {
+          "name": "not array",
+          "passed": true
+        },
+        {
+          "name": "zero page",
+          "passed": true
+        },
+        {
+          "name": "fractional size",
+          "passed": true
+        },
+        {
+          "name": "unsafe page",
+          "passed": true
+        },
+        {
+          "name": "string page",
+          "passed": true
+        },
+        {
+          "name": "negative size",
+          "passed": true
+        },
+        {
+          "name": "NaN",
+          "passed": true
+        },
+        {
+          "name": "no mutation",
+          "passed": true
+        }
+      ],
+      "passed": 12,
+      "total": 12,
+      "completed_item_types": {
+        "agent_message": 2,
+        "command_execution": 15,
+        "file_change": 4
+      },
+      "hot_pick_command_counts": {
+        "catalog-route": 2,
+        "catalog-detail": 1,
+        "read": 1,
+        "discover": 1,
+        "repo": 1,
+        "catalog-record": 2
+      },
+      "catalog_traces": [
+        {
+          "status": "candidates_only",
+          "catalog_updated_at": "2026-11-11T03:15:56.053Z",
+          "host_reported_outcome": {
+            "trace_id": "be263402-8052-43a8-ba2d-0836f51b63ce",
+            "decisions": [
+              {
+                "id": "github/awesome-copilot:skills/unit-test-vue-pinia/SKILL.md",
+                "status": "rejected",
+                "reason": "Vue, Pinia and Vitest stack guidance is unsuitable for a dependency-free Node utility."
+              },
+              {
+                "id": "Donchitos/Claude-Code-Game-Studios:.claude/skills/test-helpers/SKILL.md",
+                "status": "rejected",
+                "reason": "Engine-specific game test helpers add irrelevant infrastructure."
+              },
+              {
+                "id": "calesthio/OpenMontage:.agents/skills/gsap-utils/SKILL.md",
+                "status": "rejected",
+                "reason": "GSAP animation helpers do not address this pagination contract."
+              }
+            ]
+          }
+        },
+        {
+          "status": "candidates_only",
+          "catalog_updated_at": "2026-11-11T03:15:56.053Z",
+          "host_reported_outcome": {
+            "trace_id": "d8386700-40ef-4d5b-89eb-4dda96c909a1",
+            "decisions": [
+              {
+                "id": "addyosmani/agent-skills:skills/browser-testing-with-devtools/SKILL.md",
+                "status": "rejected",
+                "reason": "Requires browser DevTools and excludes code that does not run in a browser; this is a standalone pure utility."
+              },
+              {
+                "id": "microsoft/vscode:.github/skills/component-fixtures/SKILL.md",
+                "status": "rejected",
+                "reason": "VS Code screenshot fixture infrastructure does not fit an array pagination function."
+              },
+              {
+                "id": "github/awesome-copilot:skills/msgraph-sdk/SKILL.md",
+                "status": "rejected",
+                "reason": "Microsoft Graph API pagination and SDK integration are unrelated to local array slicing."
+              }
+            ]
+          }
+        }
+      ],
+      "direct_work_selected": false,
+      "completed_shell_calls": 15,
+      "bounded_source_read_calls": 0,
+      "source_read_output_bytes": 1484,
+      "hot_pick_tool_output_bytes": 43650,
+      "artifact_sha256": {
+        "pagination.mjs": "22014bc2c0b640da18eb42eca90923921709c705b5775a78094dd15e8f3c8005"
+      },
+      "uncached_input_tokens": 40110,
+      "session_log_sha256": "5de70ebd6f8cd57d06158d1097ba6c286bb2d65944b9c7026eb087cb7eab27de",
+      "oss_application": {
+        "kind": "implementation reference, dependency rejected",
+        "repo": "ReApptor/ReApptor.TypeScript.PagedList",
+        "commit": "0ba2dbc247bb8271c0016adc6304f998b17feec7",
+        "application": "Host reports applying one-based slice and navigation concepts; rejected library runtime because its edge-case semantics differ."
+      }
+    },
+    {
+      "case": "pagination",
+      "arm": "baseline",
+      "wall_seconds": 58.09561014175415,
+      "exit_code": 0,
+      "timed_out": false,
+      "usage": {
+        "output_tokens": 1465,
+        "cache_write_input_tokens": 0,
+        "reasoning_output_tokens": 0,
+        "cached_input_tokens": 81536,
+        "input_tokens": 91096
+      },
+      "completed_turns": 1,
+      "started_at": "2026-11-11T03:34:10.540445+00:00",
+      "external_grader_seconds": 0.042148749984335154,
+      "checks": [
+        {
+          "name": "first page",
+          "passed": true
+        },
+        {
+          "name": "last page",
+          "passed": true
+        },
+        {
+          "name": "beyond end",
+          "passed": true
+        },
+        {
+          "name": "empty",
+          "passed": true
+        },
+        {
+          "name": "not array",
+          "passed": true
+        },
+        {
+          "name": "zero page",
+          "passed": true
+        },
+        {
+          "name": "fractional size",
+          "passed": true
+        },
+        {
+          "name": "unsafe page",
+          "passed": true
+        },
+        {
+          "name": "string page",
+          "passed": true
+        },
+        {
+          "name": "negative size",
+          "passed": true
+        },
+        {
+          "name": "NaN",
+          "passed": true
+        },
+        {
+          "name": "no mutation",
+          "passed": true
+        }
+      ],
+      "passed": 12,
+      "total": 12,
+      "completed_item_types": {
+        "agent_message": 2,
+        "command_execution": 3,
+        "file_change": 1
+      },
+      "hot_pick_command_counts": {
+        "catalog-route": 0,
+        "catalog-detail": 0,
+        "read": 0,
+        "discover": 0,
+        "repo": 0,
+        "catalog-record": 0
+      },
+      "catalog_traces": [],
+      "direct_work_selected": false,
+      "completed_shell_calls": 3,
+      "bounded_source_read_calls": 0,
+      "source_read_output_bytes": 0,
+      "hot_pick_tool_output_bytes": 0,
+      "artifact_sha256": {
+        "pagination.mjs": "0730205fa963f6c9bf6872737ce08dc6fd1464a9a047ca1f761c5ec024b62af9"
+      },
+      "uncached_input_tokens": 9560,
+      "session_log_sha256": "061b269b10f2c45b4dbf33155dcd3e4a85fcc0092940aae9a537d5d8ebb58228"
+    },
+    {
+      "case": "keyboard-form",
+      "arm": "baseline",
+      "wall_seconds": 65.71364212036133,
+      "exit_code": 0,
+      "timed_out": false,
+      "usage": {
+        "output_tokens": 1836,
+        "cache_write_input_tokens": 0,
+        "reasoning_output_tokens": 242,
+        "cached_input_tokens": 137216,
+        "input_tokens": 166028
+      },
+      "completed_turns": 1,
+      "started_at": "2026-11-11T03:35:08.637829+00:00",
+      "external_grader_seconds": 1.0496540419990197,
+      "checks": [
+        {
+          "name": "input label",
+          "passed": true
+        },
+        {
+          "name": "native button",
+          "passed": true
+        },
+        {
+          "name": "focus visible",
+          "passed": true
+        },
+        {
+          "name": "Enter saves",
+          "passed": true
+        },
+        {
+          "name": "Space saves",
+          "passed": true
+        },
+        {
+          "name": "input Enter saves without reload",
+          "passed": true
+        },
+        {
+          "name": "polite status",
+          "passed": true
+        },
+        {
+          "name": "style preserved",
+          "passed": true
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "completed_item_types": {
+        "agent_message": 2,
+        "command_execution": 5,
+        "file_change": 1,
+        "mcp_tool_call": 2
+      },
+      "hot_pick_command_counts": {
+        "catalog-route": 0,
+        "catalog-detail": 0,
+        "read": 0,
+        "discover": 0,
+        "repo": 0,
+        "catalog-record": 0
+      },
+      "catalog_traces": [],
+      "direct_work_selected": false,
+      "completed_shell_calls": 5,
+      "bounded_source_read_calls": 0,
+      "source_read_output_bytes": 0,
+      "hot_pick_tool_output_bytes": 0,
+      "artifact_sha256": {
+        "index.html": "0adec6d0ce26252c51d7fc1ffe8456245cbe2b3b50fddf38761c9b65922e1273"
+      },
+      "uncached_input_tokens": 28812,
+      "session_log_sha256": "b364d8b2d255eca9848d5b83d7ef7a26d7974e09634f50767787c51fa16ce6c8"
+    },
+    {
+      "case": "keyboard-form",
+      "arm": "hot-pick",
+      "wall_seconds": 193.33570098876953,
+      "exit_code": 0,
+      "timed_out": false,
+      "usage": {
+        "output_tokens": 5866,
+        "cache_write_input_tokens": 0,
+        "reasoning_output_tokens": 761,
+        "cached_input_tokens": 376960,
+        "input_tokens": 417610
+      },
+      "completed_turns": 1,
+      "started_at": "2026-11-11T03:36:14.354481+00:00",
+      "external_grader_seconds": 0.9048135420016479,
+      "checks": [
+        {
+          "name": "input label",
+          "passed": true
+        },
+        {
+          "name": "native button",
+          "passed": true
+        },
+        {
+          "name": "focus visible",
+          "passed": true
+        },
+        {
+          "name": "Enter saves",
+          "passed": true
+        },
+        {
+          "name": "Space saves",
+          "passed": true
+        },
+        {
+          "name": "input Enter saves without reload",
+          "passed": true
+        },
+        {
+          "name": "polite status",
+          "passed": true
+        },
+        {
+          "name": "style preserved",
+          "passed": true
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "completed_item_types": {
+        "command_execution": 15,
+        "file_change": 4,
+        "agent_message": 1
+      },
+      "hot_pick_command_counts": {
+        "catalog-route": 1,
+        "catalog-detail": 1,
+        "read": 5,
+        "discover": 0,
+        "repo": 0,
+        "catalog-record": 1
+      },
+      "catalog_traces": [
+        {
+          "status": "candidates_only",
+          "catalog_updated_at": "2026-11-11T03:15:56.053Z",
+          "host_reported_outcome": {
+            "trace_id": "0cdcdbfa-3835-4580-853b-0018ab169039",
+            "decisions": [
+              {
+                "id": "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+                "status": "used",
+                "reason": "MIT-licensed framework-independent guidance directly covers native button activation, associated input labels, browser focus indicators and stable polite live regions. Read the entrypoint and relevant supporting files at commit 659cc4e5b6df90cfe1f306f5ae1c83fa549e075c. Applied guidance without introducing dependencies; used a visually hidden native label to preserve existing spacing and text.",
+                "artifacts": [
+                  "index.html",
+                  "checks/keyboard.mjs",
+                  "checks/results.json"
+                ],
+                "checks": [
+                  "node checks/keyboard.mjs passed in isolated local headless Chrome",
+                  "Rendered colors, font, spacing and element bounds match the original page at 800px and 320px",
+                  "Chrome accessibility tree exposes textbox Display name, native button Save settings and polite atomic status",
+                  "Real Tab and Shift+Tab traverse input and button; browser focus outline remains visible",
+                  "Real button Enter and Space and input Enter each save exactly once without navigation or reload",
+                  "Pointer save, empty name, Unicode and literal markup preserved; status element persists; no JavaScript exceptions",
+                  "Actual screen-reader speech not verified"
+                ]
+              },
+              {
+                "id": "microsoft/vscode:.github/skills/accessibility/SKILL.md",
+                "status": "rejected",
+                "reason": "Pinned catalog evidence targets VS Code services, accessibility help dialogs and accessible-view providers. Those integration requirements do not fit this standalone HTML form. Higher retrieval score does not establish task fit."
+              },
+              {
+                "id": "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+                "status": "rejected",
+                "reason": "Pinned catalog evidence covers broad UI architecture, design systems and layout work. The narrowly scoped keyboard/form guidance selected above fits better; visual redesign and framework architecture are outside this task despite this candidate's Trending observation."
+              }
+            ]
+          }
+        }
+      ],
+      "direct_work_selected": false,
+      "completed_shell_calls": 15,
+      "bounded_source_read_calls": 0,
+      "source_read_output_bytes": 30201,
+      "hot_pick_tool_output_bytes": 52804,
+      "artifact_sha256": {
+        "index.html": "68ff07b401bb9ed7c7c314fdbfc3d02ddbbc46c4a96b2e02dc23ae89e176aabb"
+      },
+      "uncached_input_tokens": 40650,
+      "session_log_sha256": "6c8ba7fb2d9cb576a0bb00d8af1db0d105b457e6fd2633086559f399d03b2895",
+      "oss_application": {
+        "kind": "skill guidance",
+        "repo": "jakubkrehel/skills",
+        "commit": "659cc4e5b6df90cfe1f306f5ae1c83fa549e075c",
+        "application": "Host reports applying better-accessibility native controls, labels, visible focus and persistent status guidance. Browser grader verifies resulting behavior, not causality."
+      }
+    },
+    {
+      "case": "html-extraction",
+      "arm": "hot-pick",
+      "wall_seconds": 248.65142393112183,
+      "exit_code": 0,
+      "timed_out": false,
+      "usage": {
+        "reasoning_output_tokens": 1027,
+        "cache_write_input_tokens": 0,
+        "input_tokens": 668826,
+        "output_tokens": 7923,
+        "cached_input_tokens": 620032
+      },
+      "completed_turns": 1,
+      "started_at": "2026-11-11T03:39:29.538769+00:00",
+      "skill_source": "git archive 58464d8 skills/hot-pick",
+      "external_grader_seconds": 0.30938616700586863,
+      "checks": [
+        {
+          "name": "nested text/entities/class order",
+          "passed": true
+        },
+        {
+          "name": "unicode and cents",
+          "passed": true
+        },
+        {
+          "name": "ignore unrelated",
+          "passed": true
+        },
+        {
+          "name": "deduplicate first",
+          "passed": true
+        },
+        {
+          "name": "table layout",
+          "passed": true
+        },
+        {
+          "name": "missing field",
+          "passed": true
+        },
+        {
+          "name": "negative price",
+          "passed": true
+        },
+        {
+          "name": "invalid amount",
+          "passed": true
+        },
+        {
+          "name": "negative stock",
+          "passed": true
+        },
+        {
+          "name": "fractional stock",
+          "passed": true
+        },
+        {
+          "name": "CLI merge dedup",
+          "passed": true
+        }
+      ],
+      "passed": 11,
+      "total": 11,
+      "completed_item_types": {
+        "agent_message": 3,
+        "command_execution": 21,
+        "file_change": 3
+      },
+      "hot_pick_command_counts": {
+        "catalog-route": 1,
+        "catalog-detail": 2,
+        "read": 4,
+        "discover": 0,
+        "repo": 0,
+        "catalog-record": 1
+      },
+      "catalog_traces": [
+        {
+          "status": "candidates_only",
+          "catalog_updated_at": "2026-11-11T03:15:56.053Z",
+          "host_reported_outcome": {
+            "trace_id": "ae92d67c-ef7e-43d0-a215-6b4a533243f6",
+            "decisions": [
+              {
+                "id": "D4Vinci/Scrapling:agent-skill/Scrapling-Skill/SKILL.md",
+                "status": "used",
+                "reason": "Inspected the commit-pinned entrypoint, migration reference, dependency metadata and parser source. Applied direct offline Selector(html), scoped class-token CSS selection, missing-element validation and descendant text extraction using free Scrapling 0.5.1 without fetcher/browser extras.",
+                "artifacts": [
+                  "extract.py",
+                  "test_extract.py",
+                  "requirements.txt",
+                  "README.md"
+                ],
+                "checks": [
+                  ".venv/bin/python -m unittest -v: 13 tests passed, with invalid numeric/missing-field subcases and CLI success/failure checks",
+                  ".venv/bin/python -m pip check: passed",
+                  "Provided fixtures: A, B, C in order; duplicate A removed across files; UTF-8 preserved"
+                ]
+              },
+              {
+                "id": "anthropics/claude-plugins-official:plugins/skill-creator/skills/skill-creator/SKILL.md",
+                "status": "rejected",
+                "reason": "Catalog details describe creating and evaluating skills, not parsing local HTML products."
+              },
+              {
+                "id": "microsoft/vscode:.github/skills/cpu-profile-analysis/SKILL.md",
+                "status": "rejected",
+                "reason": "Catalog details concern V8/Chrome profiler JSON, not HTML extraction."
+              }
+            ]
+          }
+        }
+      ],
+      "direct_work_selected": false,
+      "completed_shell_calls": 21,
+      "bounded_source_read_calls": 0,
+      "source_read_output_bytes": 103298,
+      "hot_pick_tool_output_bytes": 137059,
+      "artifact_sha256": {
+        "extract.py": "5d3f9ebf30f6e0b3b8f45d3e45e1da485fc549aa0b68b038f4738c5d1328534f"
+      },
+      "uncached_input_tokens": 48794,
+      "session_log_sha256": "a84922b672ed2c5abc4f696f0588a7a0e6d9db7407e4d1c48dbb5e92a7bd6280",
+      "oss_application": {
+        "kind": "runtime library and skill guidance",
+        "repo": "D4Vinci/Scrapling",
+        "commit": "c5121c7c06a8595ed3a0a9b7b7dcd6802b5ebfc5",
+        "runtime_package": "scrapling==0.5.1",
+        "application": "Produced extractor imports and calls Scrapling Selector; independently executed in its task-local virtual environment. PyPI wheel is version-pinned, not claimed byte-identical to Git commit."
+      }
+    },
+    {
+      "case": "html-extraction",
+      "arm": "baseline",
+      "wall_seconds": 105.48016595840454,
+      "exit_code": 0,
+      "timed_out": false,
+      "usage": {
+        "reasoning_output_tokens": 343,
+        "cache_write_input_tokens": 0,
+        "input_tokens": 121400,
+        "output_tokens": 3676,
+        "cached_input_tokens": 101888
+      },
+      "completed_turns": 1,
+      "started_at": "2026-11-11T03:43:38.193024+00:00",
+      "skill_source": "git archive 58464d8 skills/hot-pick",
+      "external_grader_seconds": 0.11242925000260584,
+      "checks": [
+        {
+          "name": "nested text/entities/class order",
+          "passed": true
+        },
+        {
+          "name": "unicode and cents",
+          "passed": true
+        },
+        {
+          "name": "ignore unrelated",
+          "passed": true
+        },
+        {
+          "name": "deduplicate first",
+          "passed": true
+        },
+        {
+          "name": "table layout",
+          "passed": true
+        },
+        {
+          "name": "missing field",
+          "passed": true
+        },
+        {
+          "name": "negative price",
+          "passed": true
+        },
+        {
+          "name": "invalid amount",
+          "passed": true
+        },
+        {
+          "name": "negative stock",
+          "passed": true
+        },
+        {
+          "name": "fractional stock",
+          "passed": true
+        },
+        {
+          "name": "CLI merge dedup",
+          "passed": true
+        }
+      ],
+      "passed": 11,
+      "total": 11,
+      "completed_item_types": {
+        "command_execution": 6,
+        "agent_message": 2,
+        "file_change": 1
+      },
+      "hot_pick_command_counts": {
+        "catalog-route": 0,
+        "catalog-detail": 0,
+        "read": 0,
+        "discover": 0,
+        "repo": 0,
+        "catalog-record": 0
+      },
+      "catalog_traces": [],
+      "direct_work_selected": false,
+      "completed_shell_calls": 6,
+      "bounded_source_read_calls": 0,
+      "source_read_output_bytes": 0,
+      "hot_pick_tool_output_bytes": 0,
+      "artifact_sha256": {
+        "extract.py": "3630e854fe78edb1b591b96e9c7f2846100799b1af12d89dbb8ccd3c06238144"
+      },
+      "uncached_input_tokens": 19512,
+      "session_log_sha256": "fb7bc205a8bcf5e5ef77d5807a090bece88b6cb056a34c14d14740a8e53844a0"
+    },
+    {
+      "case": "money-csv",
+      "arm": "hot-pick-improved",
+      "wall_seconds": 191.04955315589905,
+      "exit_code": 0,
+      "timed_out": false,
+      "usage": {
+        "output_tokens": 6583,
+        "cached_input_tokens": 260736,
+        "reasoning_output_tokens": 905,
+        "cache_write_input_tokens": 0,
+        "input_tokens": 300039
+      },
+      "completed_turns": 1,
+      "started_at": "2026-11-11T03:45:24.130054+00:00",
+      "phase_source_sha256": {
+        "skills/hot-pick/SKILL.md": "d92d9f8bf6f65c0620819483f525cbe399cf2d88e257f454d2dbdfa702d25bd5",
+        "skills/hot-pick/scripts/catalog.mjs": "d57a312fc8d325447230749fe50f388755960d2bf7bba81ef32522419a94c1fc"
+      },
+      "prompt_sha256": "0305d9af7b70b1dbe4d6f99e3dbdd8995a6bfd12472939d17f17409cdf694abc",
+      "external_grader_seconds": 0.040169207990402356,
+      "checks": [
+        {
+          "name": "quoted names aggregation",
+          "passed": true
+        },
+        {
+          "name": "decimal exactness and sorting",
+          "passed": true
+        },
+        {
+          "name": "zero and unicode",
+          "passed": true
+        },
+        {
+          "name": "missing columns",
+          "passed": true
+        },
+        {
+          "name": "blank SKU",
+          "passed": true
+        },
+        {
+          "name": "fractional quantity",
+          "passed": true
+        },
+        {
+          "name": "negative quantity",
+          "passed": true
+        },
+        {
+          "name": "negative price",
+          "passed": true
+        },
+        {
+          "name": "NaN",
+          "passed": true
+        },
+        {
+          "name": "Infinity",
+          "passed": true
+        },
+        {
+          "name": "excess decimals",
+          "passed": true
+        },
+        {
+          "name": "CLI JSON",
+          "passed": true
+        }
+      ],
+      "passed": 12,
+      "total": 12,
+      "completed_item_types": {
+        "agent_message": 3,
+        "command_execution": 12,
+        "file_change": 3
+      },
+      "hot_pick_command_counts": {
+        "catalog-route": 1,
+        "catalog-detail": 1,
+        "read": 3,
+        "discover": 0,
+        "repo": 1,
+        "catalog-record": 1
+      },
+      "catalog_traces": [
+        {
+          "status": "candidates_only",
+          "catalog_updated_at": "2026-11-11T03:15:56.053Z",
+          "host_reported_outcome": {
+            "trace_id": "e1c2b05e-df80-4dd2-88d8-91b2af1e44d8",
+            "decisions": [
+              {
+                "id": "anthropics/claude-plugins-official:plugins/skill-creator/skills/skill-creator/SKILL.md",
+                "status": "rejected",
+                "reason": "Creates and evaluates agent skills; does not address CSV monetary aggregation. No skill or model execution needed.",
+                "artifacts": [
+                  "summarize.py",
+                  "test_summarize.py",
+                  "HOT_PICK_SELECTION.md"
+                ],
+                "checks": [
+                  "python3 -m unittest -v test_summarize.py: 13 tests passed"
+                ]
+              },
+              {
+                "id": "anthropics/knowledge-work-plugins:bio-research/skills/nextflow-development/SKILL.md",
+                "status": "rejected",
+                "reason": "Bioinformatics pipeline guidance requires unrelated tools and inputs; unsuitable for a stdlib-only sales CSV function.",
+                "artifacts": [
+                  "HOT_PICK_SELECTION.md"
+                ],
+                "checks": [
+                  "Inspected commit-pinned catalog detail: sequencing pipeline and sample-sheet validation"
+                ]
+              },
+              {
+                "id": "github/awesome-copilot:skills/sql-server-table-reconciliation/SKILL.md",
+                "status": "rejected",
+                "reason": "SQL Server reconciliation requires mssql-python and Arrow, violating the stdlib-only constraint and addressing a different operation.",
+                "artifacts": [
+                  "HOT_PICK_SELECTION.md"
+                ],
+                "checks": [
+                  "Inspected commit-pinned catalog detail: external database drivers and table reconciliation"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "direct_work_selected": false,
+      "completed_shell_calls": 12,
+      "bounded_source_read_calls": 2,
+      "source_read_output_bytes": 32615,
+      "hot_pick_tool_output_bytes": 86372,
+      "artifact_sha256": {
+        "summarize.py": "4619fddf841bf4e10a7a9097e725a4baaddeb2fd60125db09a7fda10192569cd"
+      },
+      "uncached_input_tokens": 39303,
+      "session_log_sha256": "2d9f9243a27baf8650f595dab2d562501272da6cada4991b82927697a3e8e572",
+      "oss_application": {
+        "kind": "standard-library documentation guidance",
+        "repo": "python/cpython",
+        "commit": "acab53212d89b298ba0dd299e8e55c62bf71db80",
+        "application": "Host reports applying CSV parsing and exact monetary representation guidance; no added runtime package. Same acceptance behavior achieved by baseline."
+      }
+    },
+    {
+      "case": "pagination",
+      "arm": "hot-pick-improved",
+      "wall_seconds": 100.00017499923706,
+      "exit_code": 0,
+      "timed_out": false,
+      "usage": {
+        "output_tokens": 3200,
+        "cached_input_tokens": 184448,
+        "reasoning_output_tokens": 225,
+        "cache_write_input_tokens": 0,
+        "input_tokens": 205889
+      },
+      "completed_turns": 1,
+      "started_at": "2026-11-11T03:48:35.184448+00:00",
+      "phase_source_sha256": {
+        "skills/hot-pick/SKILL.md": "d92d9f8bf6f65c0620819483f525cbe399cf2d88e257f454d2dbdfa702d25bd5",
+        "skills/hot-pick/scripts/catalog.mjs": "d57a312fc8d325447230749fe50f388755960d2bf7bba81ef32522419a94c1fc"
+      },
+      "prompt_sha256": "5670cd58c8940cc8665a439882431fbda823bc387d3a0b36f22fdfa26c870472",
+      "external_grader_seconds": 0.04495037498418242,
+      "checks": [
+        {
+          "name": "first page",
+          "passed": true
+        },
+        {
+          "name": "last page",
+          "passed": true
+        },
+        {
+          "name": "beyond end",
+          "passed": true
+        },
+        {
+          "name": "empty",
+          "passed": true
+        },
+        {
+          "name": "not array",
+          "passed": true
+        },
+        {
+          "name": "zero page",
+          "passed": true
+        },
+        {
+          "name": "fractional size",
+          "passed": true
+        },
+        {
+          "name": "unsafe page",
+          "passed": true
+        },
+        {
+          "name": "string page",
+          "passed": true
+        },
+        {
+          "name": "negative size",
+          "passed": true
+        },
+        {
+          "name": "NaN",
+          "passed": true
+        },
+        {
+          "name": "no mutation",
+          "passed": true
+        }
+      ],
+      "passed": 12,
+      "total": 12,
+      "completed_item_types": {
+        "agent_message": 2,
+        "command_execution": 8,
+        "file_change": 3
+      },
+      "hot_pick_command_counts": {
+        "catalog-route": 1,
+        "catalog-detail": 1,
+        "read": 1,
+        "discover": 0,
+        "repo": 0,
+        "catalog-record": 1
+      },
+      "catalog_traces": [
+        {
+          "status": "candidates_only",
+          "catalog_updated_at": "2026-11-11T03:15:56.053Z",
+          "host_reported_outcome": {
+            "trace_id": "a76116f6-1445-4346-a364-1ddfbc2af85b",
+            "decisions": [
+              {
+                "id": "microsoft/vscode:.github/skills/component-fixtures/SKILL.md",
+                "status": "rejected",
+                "reason": "Pinned catalog evidence concerns VS Code component screenshot fixtures and service setup; this task is a pure array function without UI or dependencies.",
+                "artifacts": [
+                  "pagination.mjs",
+                  "pagination.test.mjs"
+                ],
+                "checks": [
+                  "node --test pagination.test.mjs: 8 tests passed",
+                  "node --check pagination.mjs: passed"
+                ]
+              },
+              {
+                "id": "github/awesome-copilot:skills/msgraph-sdk/SKILL.md",
+                "status": "rejected",
+                "reason": "Read complete entrypoint pinned to 797337f33f73e35d08d82f840e21c4b8c4932d88 (MIT). Pagination guidance uses Microsoft Graph nextLink/PageIterator and an SDK, which does not fit local one-based array pagination or the no-dependencies constraint. No external skill selected; implemented directly under hot-pick's reject-unsuitable-results guidance.",
+                "artifacts": [
+                  "pagination.mjs",
+                  "pagination.test.mjs"
+                ],
+                "checks": [
+                  "8 tests passed: first/middle/final/out-of-range pages, empty arrays, integer limits, invalid arguments, immutability, reconstruction across 1155 length/size combinations",
+                  "node --check pagination.mjs: passed"
+                ]
+              },
+              {
+                "id": "google/skills:skills/cloud/secops-cases/SKILL.md",
+                "status": "rejected",
+                "reason": "Pinned catalog evidence concerns Google SecOps case queues and requires a remote MCP server; token pagination does not address this dependency-free array function.",
+                "artifacts": [
+                  "pagination.mjs",
+                  "pagination.test.mjs"
+                ],
+                "checks": [
+                  "node --test pagination.test.mjs: 8 tests passed",
+                  "node --check pagination.mjs: passed"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "direct_work_selected": false,
+      "completed_shell_calls": 8,
+      "bounded_source_read_calls": 0,
+      "source_read_output_bytes": 8250,
+      "hot_pick_tool_output_bytes": 41748,
+      "artifact_sha256": {
+        "pagination.mjs": "0730205fa963f6c9bf6872737ce08dc6fd1464a9a047ca1f761c5ec024b62af9"
+      },
+      "uncached_input_tokens": 21441,
+      "session_log_sha256": "f6634f08ca2eef69c0e62c5d4c46f757ff9b5fd4857d0c8e89660cc2e34203c9",
+      "oss_application": {
+        "kind": "none",
+        "application": "Rejected all inspected skill candidates and implemented directly; no external source claimed applied."
+      }
+    },
+    {
+      "case": "keyboard-form",
+      "arm": "hot-pick-improved",
+      "wall_seconds": 174.57948517799377,
+      "exit_code": 0,
+      "timed_out": false,
+      "usage": {
+        "output_tokens": 4335,
+        "cached_input_tokens": 1006080,
+        "reasoning_output_tokens": 996,
+        "cache_write_input_tokens": 0,
+        "input_tokens": 1053752
+      },
+      "completed_turns": 1,
+      "started_at": "2026-11-11T03:50:15.189702+00:00",
+      "phase_source_sha256": {
+        "skills/hot-pick/SKILL.md": "d92d9f8bf6f65c0620819483f525cbe399cf2d88e257f454d2dbdfa702d25bd5",
+        "skills/hot-pick/scripts/catalog.mjs": "d57a312fc8d325447230749fe50f388755960d2bf7bba81ef32522419a94c1fc"
+      },
+      "prompt_sha256": "060612d4b459475c82eeef72d4f4d159e3fdbebf846730c6c5a4cb619aaf66da",
+      "external_grader_seconds": 0.940555166976992,
+      "checks": [
+        {
+          "name": "input label",
+          "passed": true
+        },
+        {
+          "name": "native button",
+          "passed": true
+        },
+        {
+          "name": "focus visible",
+          "passed": true
+        },
+        {
+          "name": "Enter saves",
+          "passed": true
+        },
+        {
+          "name": "Space saves",
+          "passed": true
+        },
+        {
+          "name": "input Enter saves without reload",
+          "passed": true
+        },
+        {
+          "name": "polite status",
+          "passed": true
+        },
+        {
+          "name": "style preserved",
+          "passed": true
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "completed_item_types": {
+        "agent_message": 2,
+        "command_execution": 11,
+        "file_change": 3,
+        "mcp_tool_call": 13
+      },
+      "hot_pick_command_counts": {
+        "catalog-route": 1,
+        "catalog-detail": 1,
+        "read": 1,
+        "discover": 0,
+        "repo": 0,
+        "catalog-record": 1
+      },
+      "catalog_traces": [
+        {
+          "status": "candidates_only",
+          "catalog_updated_at": "2026-11-11T03:15:56.053Z",
+          "host_reported_outcome": {
+            "trace_id": "23212b69-4fe0-4db9-b1e8-9653e9813867",
+            "decisions": [
+              {
+                "id": "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+                "status": "used",
+                "reason": "MIT guidance inspected in full at commit 659cc4e5b6df90cfe1f306f5ae1c83fa549e075c. Direct fit for a plain HTML form: native button semantics, bound label, browser focus indicators and a stable polite status region. Applied as guidance without third-party execution or runtime dependencies.",
+                "artifacts": [
+                  "index.html",
+                  "outcome.json"
+                ],
+                "checks": [
+                  "PASS: Local Chrome accessibility tree exposes Display name text field and Save settings button; Tab and Shift+Tab move between them.",
+                  "PASS: Chrome screenshots show visible keyboard focus on input and button; original colors, full-width action, padding and placement visually preserved.",
+                  "PASS: Enter from input produces Saved: Input Enter; Enter on button produces Saved: Button Enter; Space on button produces Saved: Button Space.",
+                  "PASS: Pointer activation with empty input preserves original Saved: behavior.",
+                  "PASS: URL and focus remain stable after saves. Local server received only initial load and deliberate refresh, with no requests from submission.",
+                  "PASS: Dependency-free Node assertions check bound label, native submit button, persistent empty polite atomic status markup, no focus suppression and unchanged original style declarations.",
+                  "PASS: Node VM executes actual submit listener: preventDefault is called; the same result node receives correct text for empty, ordinary, Unicode and HTML-like input.",
+                  "Not verified: audible screen-reader announcements and cross-browser behavior. Browser accessibility tree and live-region markup were checked."
+                ]
+              },
+              {
+                "id": "microsoft/vscode:.github/skills/accessibility/SKILL.md",
+                "status": "rejected",
+                "reason": "Pinned detail targets VS Code services, accessibility help dialogs and editor contributions; unsuitable for this standalone HTML page."
+              },
+              {
+                "id": "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+                "status": "rejected",
+                "reason": "Pinned detail covers broader component architecture, state management and UI design. Declined in favor of the focused accessibility guidance; no redesign or framework change is needed."
+              }
+            ]
+          }
+        }
+      ],
+      "direct_work_selected": false,
+      "completed_shell_calls": 11,
+      "bounded_source_read_calls": 0,
+      "source_read_output_bytes": 10949,
+      "hot_pick_tool_output_bytes": 33534,
+      "artifact_sha256": {
+        "index.html": "90ca4fed5e897fb0758dcca02b92edf0a4d6a9d5e73d943d5932c8b289b4d8f6"
+      },
+      "uncached_input_tokens": 47672,
+      "session_log_sha256": "ea87de2a097a07bb5c20035c874e8f0e632f650e52bd7117ed5b1010abf8b90d",
+      "oss_application": {
+        "kind": "skill guidance",
+        "repo": "jakubkrehel/skills",
+        "commit": "659cc4e5b6df90cfe1f306f5ae1c83fa549e075c",
+        "application": "Host reports applying better-accessibility native controls, labels, visible focus and persistent status guidance. Browser grader verifies resulting behavior, not causality."
+      }
+    },
+    {
+      "case": "keyboard-form",
+      "arm": "hot-pick-improved-batched",
+      "wall_seconds": 231.5953299999237,
+      "exit_code": 0,
+      "timed_out": false,
+      "usage": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 560512,
+        "reasoning_output_tokens": 2369,
+        "output_tokens": 7534,
+        "input_tokens": 593812
+      },
+      "completed_turns": 1,
+      "started_at": "2026-11-11T03:56:57.558774+00:00",
+      "phase_source_sha256": {
+        "skills/hot-pick/SKILL.md": "c13a410d0f3332bce89a0b7006f5bc39920679048c6a2a97891cadcb677d1406",
+        "skills/hot-pick/scripts/catalog.mjs": "d57a312fc8d325447230749fe50f388755960d2bf7bba81ef32522419a94c1fc"
+      },
+      "prompt_sha256": "060612d4b459475c82eeef72d4f4d159e3fdbebf846730c6c5a4cb619aaf66da",
+      "external_grader_seconds": 0.9034064159786794,
+      "checks": [
+        {
+          "name": "input label",
+          "passed": true
+        },
+        {
+          "name": "native button",
+          "passed": true
+        },
+        {
+          "name": "focus visible",
+          "passed": true
+        },
+        {
+          "name": "Enter saves",
+          "passed": true
+        },
+        {
+          "name": "Space saves",
+          "passed": true
+        },
+        {
+          "name": "input Enter saves without reload",
+          "passed": true
+        },
+        {
+          "name": "polite status",
+          "passed": true
+        },
+        {
+          "name": "style preserved",
+          "passed": true
+        }
+      ],
+      "passed": 8,
+      "total": 8,
+      "completed_item_types": {
+        "agent_message": 3,
+        "command_execution": 21,
+        "file_change": 5
+      },
+      "hot_pick_command_counts": {
+        "catalog-route": 1,
+        "catalog-detail": 1,
+        "read": 1,
+        "discover": 0,
+        "repo": 0,
+        "catalog-record": 1
+      },
+      "catalog_traces": [
+        {
+          "status": "candidates_only",
+          "catalog_updated_at": "2026-11-11T03:15:56.053Z",
+          "host_reported_outcome": {
+            "trace_id": "06349ae3-7ec8-4e03-afff-e43371cf8dad",
+            "decisions": [
+              {
+                "id": "jakubkrehel/skills:skills/better-accessibility/SKILL.md",
+                "status": "used",
+                "reason": "Read full entrypoint at 659cc4e5b6df90cfe1f306f5ae1c83fa549e075c (MIT). Applied native action/submit semantics, an associated hidden label to preserve layout, browser focus indicators, and a persistent initially empty polite status region. Guidance only; no runtime dependencies.",
+                "artifacts": [
+                  "index.html",
+                  ".local-checks/verify.mjs",
+                  ".local-checks/results.json"
+                ],
+                "checks": [
+                  "Executed node .local-checks/verify.mjs with local Chrome 157.0.8103.39",
+                  "Identical initial rendering, colors and geometry at 1280px",
+                  "Identical initial rendering, colors and geometry at 375px",
+                  "Associated label, native submit button and polite status exposed in accessibility tree",
+                  "Tab order and visible keyboard focus on input and button",
+                  "Button Enter saves once, preserves focus and prevents navigation/reload",
+                  "Button Space saves once and preserves focus without navigation/reload",
+                  "Input Enter saves once and preserves focus without navigation/reload",
+                  "Pointer saves, empty values and literal text preserved; status node persists",
+                  "axe WCAG A/AA audit: one target-size finding on retained 21px input; no JavaScript errors",
+                  "Actual screen-reader speech not verified. axe target-size finding remains because the input retains its original 21px height and spacing, as requested."
+                ]
+              },
+              {
+                "id": "addyosmani/agent-skills:skills/frontend-ui-engineering/SKILL.md",
+                "status": "rejected",
+                "reason": "Broader component architecture and visual design guidance is unnecessary for this constrained plain HTML keyboard fix; the focused accessibility source directly covers every requested change."
+              },
+              {
+                "id": "microsoft/vscode:.github/skills/accessibility/SKILL.md",
+                "status": "rejected",
+                "reason": "VS Code feature services, accessibility help dialogs and accessible views do not fit a standalone native HTML settings form."
+              }
+            ]
+          }
+        }
+      ],
+      "direct_work_selected": false,
+      "completed_shell_calls": 21,
+      "bounded_source_read_calls": 0,
+      "source_read_output_bytes": 10949,
+      "hot_pick_tool_output_bytes": 33441,
+      "artifact_sha256": {
+        "index.html": "df75ca2a39da0cb98383cca04cfa9d01785409e9bfe68d70590c182cf610bfe3"
+      },
+      "uncached_input_tokens": 33300,
+      "session_log_sha256": "74a3d170029b51ec9bef878dc138eb712e314bd6edbb051002172d52c2c03da1",
+      "oss_application": {
+        "kind": "skill guidance",
+        "repo": "jakubkrehel/skills",
+        "commit": "659cc4e5b6df90cfe1f306f5ae1c83fa549e075c",
+        "application": "Host reports applying better-accessibility native controls, labels, visible focus and persistent status guidance. Browser grader verifies resulting behavior, not causality."
+      }
+    }
+  ],
+  "post_hoc_geometry": {
+    "method": "Post-hoc exploratory geometry audit approved after inspecting richer agent verification claims. Same local Chrome, widths800/320, input/button bounding boxes before interaction. No pass threshold and no alteration to original8 acceptance checks. Layout deltas can be legitimate consequences of adding labels; not a subjective quality ranking.",
+    "measurements": [
+      {
+        "viewport_width": 800,
+        "arm": "baseline",
+        "original": {
+          "#name": {
+            "x": 8,
+            "y": 80.875,
+            "width": 153,
+            "height": 21
+          },
+          ".action": {
+            "x": 8,
+            "y": 101.875,
+            "width": 784,
+            "height": 42
+          }
+        },
+        "measured": {
+          "#name": {
+            "x": 8,
+            "y": 80.875,
+            "width": 153,
+            "height": 21
+          },
+          ".action": {
+            "x": 8,
+            "y": 101.875,
+            "width": 784,
+            "height": 42
+          }
+        },
+        "deltas": {
+          "#name": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          ".action": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        }
+      },
+      {
+        "viewport_width": 800,
+        "arm": "hot-pick",
+        "original": {
+          "#name": {
+            "x": 8,
+            "y": 80.875,
+            "width": 153,
+            "height": 21
+          },
+          ".action": {
+            "x": 8,
+            "y": 101.875,
+            "width": 784,
+            "height": 42
+          }
+        },
+        "measured": {
+          "#name": {
+            "x": 8,
+            "y": 80.875,
+            "width": 153,
+            "height": 21
+          },
+          ".action": {
+            "x": 8,
+            "y": 101.875,
+            "width": 784,
+            "height": 42
+          }
+        },
+        "deltas": {
+          "#name": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          ".action": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        }
+      },
+      {
+        "viewport_width": 800,
+        "arm": "hot-pick-improved",
+        "original": {
+          "#name": {
+            "x": 8,
+            "y": 80.875,
+            "width": 153,
+            "height": 21
+          },
+          ".action": {
+            "x": 8,
+            "y": 101.875,
+            "width": 784,
+            "height": 42
+          }
+        },
+        "measured": {
+          "#name": {
+            "x": 8,
+            "y": 80.875,
+            "width": 153,
+            "height": 21
+          },
+          ".action": {
+            "x": 8,
+            "y": 101.875,
+            "width": 784,
+            "height": 42
+          }
+        },
+        "deltas": {
+          "#name": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          ".action": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        }
+      },
+      {
+        "viewport_width": 800,
+        "arm": "hot-pick-improved-batched",
+        "original": {
+          "#name": {
+            "x": 8,
+            "y": 80.875,
+            "width": 153,
+            "height": 21
+          },
+          ".action": {
+            "x": 8,
+            "y": 101.875,
+            "width": 784,
+            "height": 42
+          }
+        },
+        "measured": {
+          "#name": {
+            "x": 8,
+            "y": 80.875,
+            "width": 153,
+            "height": 21
+          },
+          ".action": {
+            "x": 8,
+            "y": 101.875,
+            "width": 784,
+            "height": 42
+          }
+        },
+        "deltas": {
+          "#name": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          ".action": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        }
+      },
+      {
+        "viewport_width": 320,
+        "arm": "baseline",
+        "original": {
+          "#name": {
+            "x": 8,
+            "y": 80.875,
+            "width": 153,
+            "height": 21
+          },
+          ".action": {
+            "x": 8,
+            "y": 101.875,
+            "width": 304,
+            "height": 42
+          }
+        },
+        "measured": {
+          "#name": {
+            "x": 8,
+            "y": 80.875,
+            "width": 153,
+            "height": 21
+          },
+          ".action": {
+            "x": 8,
+            "y": 101.875,
+            "width": 304,
+            "height": 42
+          }
+        },
+        "deltas": {
+          "#name": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          ".action": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        }
+      },
+      {
+        "viewport_width": 320,
+        "arm": "hot-pick",
+        "original": {
+          "#name": {
+            "x": 8,
+            "y": 80.875,
+            "width": 153,
+            "height": 21
+          },
+          ".action": {
+            "x": 8,
+            "y": 101.875,
+            "width": 304,
+            "height": 42
+          }
+        },
+        "measured": {
+          "#name": {
+            "x": 8,
+            "y": 80.875,
+            "width": 153,
+            "height": 21
+          },
+          ".action": {
+            "x": 8,
+            "y": 101.875,
+            "width": 304,
+            "height": 42
+          }
+        },
+        "deltas": {
+          "#name": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          ".action": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        }
+      },
+      {
+        "viewport_width": 320,
+        "arm": "hot-pick-improved",
+        "original": {
+          "#name": {
+            "x": 8,
+            "y": 80.875,
+            "width": 153,
+            "height": 21
+          },
+          ".action": {
+            "x": 8,
+            "y": 101.875,
+            "width": 304,
+            "height": 42
+          }
+        },
+        "measured": {
+          "#name": {
+            "x": 8,
+            "y": 80.875,
+            "width": 153,
+            "height": 21
+          },
+          ".action": {
+            "x": 8,
+            "y": 101.875,
+            "width": 304,
+            "height": 42
+          }
+        },
+        "deltas": {
+          "#name": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          ".action": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        }
+      },
+      {
+        "viewport_width": 320,
+        "arm": "hot-pick-improved-batched",
+        "original": {
+          "#name": {
+            "x": 8,
+            "y": 80.875,
+            "width": 153,
+            "height": 21
+          },
+          ".action": {
+            "x": 8,
+            "y": 101.875,
+            "width": 304,
+            "height": 42
+          }
+        },
+        "measured": {
+          "#name": {
+            "x": 8,
+            "y": 80.875,
+            "width": 153,
+            "height": 21
+          },
+          ".action": {
+            "x": 8,
+            "y": 101.875,
+            "width": 304,
+            "height": 42
+          }
+        },
+        "deltas": {
+          "#name": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          ".action": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        }
+      }
+    ]
+  }
+}

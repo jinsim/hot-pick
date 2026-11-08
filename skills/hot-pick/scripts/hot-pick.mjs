@@ -11,7 +11,7 @@ export async function main(argv = process.argv.slice(2)) {
   const command = argv.shift();
   const opts = {}, positional = [];
   const flags = new Set(['offline', 'refresh', 'content', 'details', 'text']);
-  const values = new Set(['cache', 'ttl', 'timeout', 'limit', 'owner', 'path', 'ref', 'api', 'since', 'language', 'file', 'workspace', 'plan', 'config', 'catalog-url', 'trace']);
+  const values = new Set(['cache', 'ttl', 'timeout', 'limit', 'owner', 'path', 'ref', 'api', 'since', 'language', 'file', 'workspace', 'plan', 'config', 'catalog-url', 'trace', 'find', 'context']);
   while (argv.length) {
     const x = argv.shift();
     if (!x.startsWith('--')) { positional.push(x); continue; }
@@ -20,10 +20,11 @@ export async function main(argv = process.argv.slice(2)) {
     else if (values.has(name) && argv.length && !argv[0].startsWith('--')) opts[name] = argv.shift();
     else fail('invalid_option', `Unknown or missing option: ${x}`);
   }
-  for (const key of ['ttl', 'timeout', 'limit']) if (opts[key] !== undefined) {
+  for (const key of ['ttl', 'timeout', 'limit', 'context']) if (opts[key] !== undefined) {
     opts[key] = Number(opts[key]);
-    if (!Number.isInteger(opts[key]) || opts[key] < (key === 'ttl' ? 0 : 1)) fail('invalid_option', `Invalid ${key}`);
+    if (!Number.isInteger(opts[key]) || opts[key] < (['ttl','context'].includes(key) ? 0 : 1)) fail('invalid_option', `Invalid ${key}`);
   }
+  if(opts.text&&opts.find!==undefined)fail('invalid_option','Use --find without --text so source ranges and omission flags remain visible');
   if (opts.api) {
     const u = new URL(opts.api);
     if (u.protocol !== 'https:' && !(u.protocol === 'http:' && ['127.0.0.1', 'localhost', '[::1]'].includes(u.hostname))) fail('invalid_api', 'Registry must use HTTPS (loopback HTTP is allowed for benchmarks).');

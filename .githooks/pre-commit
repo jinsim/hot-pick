@@ -1,0 +1,3 @@
+#!/bin/sh
+# Repository-specific, explicit display-date policy; see docs/git-date-policy.html.
+exec python3 scripts/weekend-git.py check

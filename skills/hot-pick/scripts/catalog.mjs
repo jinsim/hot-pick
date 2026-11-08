@@ -1,3 +1,5 @@
+import {directDecision} from './task-decision.mjs';
+import {skillDescription} from './frontmatter-description.mjs';
 import {validateIndex,hash} from './catalog-index.mjs';
 import {popularity} from './popularity.mjs';
 import { promises as fs } from 'node:fs';
@@ -13,12 +15,12 @@ const load = async (p, fallback) => { try { return JSON.parse(await fs.readFile(
 async function save(p, data) { await fs.mkdir(path.dirname(p), {recursive:true,mode:0o700}); const tmp = `${p}.${crypto.randomUUID()}.tmp`; await fs.writeFile(tmp, JSON.stringify(data,null,2),{mode:0o600}); await fs.rename(tmp,p); }
 export function describe(text) {
   const lines = text.split('\n');
-  const description = /^description:\s*(.*)$/m.exec(text)?.[1] || '';
+  const description = skillDescription(text);
   // Extract source passages, not invented semantic classifications or success probabilities.
   const excerpts = regex => lines.flatMap((line,i) => regex.test(line) ? [{line:i+1,text:line.slice(0,800)}] : []).slice(0,20);
   return {description, situations:excerpts(/when|use for|use this|trigger|appropriate/i),
     inputs:excerpts(/input|require|prerequisite|dependenc/i), outputs:excerpts(/output|produce|deliver|generat/i),
-    constraints:excerpts(/do not|don't|never|avoid|only|not use/i), headings:excerpts(/^#{1,4} /), method:'source_excerpts', semantic_review:null};
+    constraints:excerpts(/do not|don't|never|avoid|only|not use/i), headings:excerpts(/^#{1,4} /), method:'source_excerpts', extractor_version:2, semantic_review:null};
 }
 
 function indexExcerpts(profile) {
@@ -76,6 +78,7 @@ export class Catalog {
           if(previous?.inventory_complete && previous.commit===meta.commit) {
             for(const c of Object.values(state.cards)) if(c.repo===repo) {
               c.stars=meta.stars;c.license=meta.license;c.checked_at=new Date().toISOString();
+              if(c.profile?.extractor_version!==2&&typeof c.instructions==='string'){const review=c.profile?.semantic_review;c.profile=describe(c.instructions);if(review?.blob_sha===c.blob_sha)c.profile.semantic_review=review;}
             }
             state.repositories[repo]={...previous,...meta,checked_at:new Date().toISOString(),last_attempt_at:new Date().toISOString()};
             unchangedRepositories++;
@@ -100,7 +103,7 @@ export class Catalog {
             let card={...old,id,repo,commit:meta.commit,skill_path:entry.path,blob_sha:entry.sha,fingerprint,
               name:/^name:\s*["']?([\w.-]+)/m.exec(text)?.[1] || path.posix.basename(parent),
               license:meta.license,stars:meta.stars,instructions:text,overview:overview.slice(0,16000),
-              profile:old?.blob_sha===entry.sha ? old.profile : describe(text),checked_at:new Date().toISOString(),
+              profile:old?.blob_sha===entry.sha && old.profile?.extractor_version===2 ? old.profile : {...describe(text),...(old?.blob_sha===entry.sha&&old.profile?.semantic_review?.blob_sha===entry.sha?{semantic_review:old.profile.semantic_review}:{})},checked_at:new Date().toISOString(),
               source:`https://github.com/${repo}/blob/${meta.commit}/${entry.path}`};
             if (old?.fingerprint!==fingerprint) {card.ready=false;delete card.entrypoint; changed.push(id);}
             if(config.prewarm && !card.ready) {
@@ -259,7 +262,13 @@ export async function catalogCommand(command,args,opts) {
   }
   if(command==='catalog-detail') return c.detail(opts.trace,...args);
   if(command==='catalog-route') {
-    const task=await load(opts.file,null), remote=opts['catalog-url']||process.env.HOT_PICK_CATALOG_URL||(await load(path.join(c.root,'connection.json'),{})).url;
+    const task=await load(opts.file,null),decision=directDecision(task);
+    if(decision){
+      if(!Array.isArray(task.operations)||!task.operations.length||task.operations.length>12||task.operations.some(op=>typeof op.intent!=='string'||!op.intent.trim()))throw Error('Direct work requires 1–12 task operations with intent');
+      const result={schema:1,trace_id:crypto.randomUUID(),created_at:new Date().toISOString(),status:'direct_work',catalog_origin:null,decision,operations:task.operations.map(op=>({intent:op.intent,constraints:op.constraints||[],candidates:[]})),requests:0,warnings:[]};
+      await save(path.join(c.root,'traces',result.trace_id+'.json'),{...result,evidence:{}});return result;
+    }
+    const remote=opts['catalog-url']||process.env.HOT_PICK_CATALOG_URL||(await load(path.join(c.root,'connection.json'),{})).url;
     if(!remote) return c.route(task,null,null,opts.details);
     const url=catalogURL(remote);
     // Dedicated client never forwards GitHub credentials to a catalog endpoint.

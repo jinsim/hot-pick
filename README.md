@@ -69,6 +69,12 @@ npm run hot-pick -- apply --plan examples/product-extraction/plan.json
 
 This downloads the pinned project, installs it into the example's local `.venv`, extracts the products and runs assertions. See the live example below for the public catalog.
 
+## Independent session results (2026-11-11)
+
+Four tasks were run in fresh sessions with and without hot-pick. Both arms passed **43/43** predeclared checks; original hot-pick took **774.1 seconds** in total versus **307.5 seconds** without it and consumed more input/output tokens. These focused fixtures do **not** establish a quality, speed or token advantage.
+
+Follow-up changes reduced unnecessary discovery on a pagination task, but other retests had mixed or worse time/token results. Read the [complete independent-session report](docs/session-evaluation.html), including all negative retests and the [implemented changes](docs/session-improvements.html). Every condition has one sample; network, provider caching and tool choices are uncontrolled. Use external expertise when it adds value rather than forcing it into a known local fix.
+
 ## Central catalog, no always-on LLM
 
 The operator's scheduled pipeline collects changed GitHub metadata and source files. A separate local agent session reviews newly added or changed skills in finite batches. The published snapshot contains source-backed profiles; the collector and read service make **no LLM API calls**.
@@ -174,3 +180,5 @@ The historical benchmark measures the earlier skill-only implementation, not v0.
 ## Help improve hot-pick
 
 Try one real task and [share the result](https://github.com/jinsim/hot-pick/issues/new?template=task-result.yml), including unsuitable recommendations. See [contributing](CONTRIBUTING.md). If it helps your work, a GitHub star helps others find it.
+
+Git author/committer dates follow the owner-requested [weekend display-date policy](docs/git-date-policy.html); evaluation and deployment timestamps remain actual observations.

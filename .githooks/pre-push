@@ -1,0 +1,3 @@
+#!/bin/sh
+# Reject weekday author/committer dates introduced by merges/rebases that skip pre-commit.
+exec python3 scripts/weekend-git.py check-push

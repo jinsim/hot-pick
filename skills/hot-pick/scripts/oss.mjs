@@ -1,3 +1,4 @@
+import {sourceSnippets} from './source-snippets.mjs';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -116,11 +117,12 @@ export class OSS extends HotPick {
       relevant_paths: tree.filter(f => /(^|\/)(docs?|examples?|src)(\/|$)|SKILL\.md$|mcp/i.test(f.path)).slice(0, 80).map(f => f.path),
       file_count: tree.length, next_step: 'Read needed files at this commit; choose based on operation, stack, dependencies and license. Type hints are not verified capabilities.' };
   }
-  async readSource(source, filePath, ref, full = false) {
+  async readSource(source, filePath, ref, full = false, options = {}) {
     const repo = repoID(source), commit = pinned(ref), file = safePath(filePath || '');
     const entry = (await this.tree(repo, commit)).find(f => f.path === file);
     if (!entry) fail('file_not_found', file);
     const body = (await this.blob(repo, commit, entry)).toString('utf8');
+    if(options.find!==undefined)return {repo,commit,path:file,blob_sha:entry.sha,...sourceSnippets(body,options.find,{context:options.context,limit:options.limit})};
     return { repo, commit, path: file, blob_sha: entry.sha, text: full ? body : body.slice(0, 48000), truncated: !full && body.length > 48000 };
   }
   async acquire(source, ref, workspace) {
@@ -208,7 +210,7 @@ export async function ossCommand(command, args, options) {
   if (command === 'discover') result = await c.discover(args.join(' '), options);
   if (command === 'trending') result = await c.trending(options);
   if (command === 'repo') result = await c.repository(args[0], options);
-  if (command === 'read') result = await c.readSource(args[0], options.file, options.ref, options.text);
+  if (command === 'read') result = await c.readSource(args[0], options.file, options.ref, options.text, options);
   if (command === 'acquire') result = await c.acquire(args[0], options.ref, options.workspace);
   if (command === 'apply') result = await c.apply(options.plan);
   return { ...result, warnings: c.warnings, metrics: c.stats };

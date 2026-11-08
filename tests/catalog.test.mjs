@@ -132,3 +132,12 @@ test('explicit task filters reject domain mismatch and diversify repositories',a
  task.operations[0].required_keywords=['nonexistent'];assert.equal((await c.route(task)).status,'no_matches');
 });
 test('invalid routing controls fail explicitly',async t=>{const c=await fixture(t);for(const bad of [{min_coverage:2},{min_coverage:'1'},{max_per_repo:0},{required_keywords:'python'},{exclude_repos:[null]}])await assert.rejects(c.route({operations:[{intent:'x',keywords:['x'],...bad}]}));});
+test('unchanged source refreshes legacy folded descriptions without fetching inventory',async t=>{
+ const c=await fixture(t),commit='a'.repeat(40),blob_sha='b'.repeat(40),id='a/b:SKILL.md';
+ const instructions='---\nname: test\ndescription: >-\n  Exact decimal CSV\n  validation\n---';
+ const review={blob_sha,evidence:['Exact decimal CSV'],situations:['money'],inputs:[],outputs:[],constraints:[]};
+ await c.publish({schema:1,updated_at:null,cards:{[id]:{id,repo:'a/b',name:'test',commit,blob_sha,instructions,profile:{...describe(instructions),description:'>-',extractor_version:1,semantic_review:review}}},repositories:{'a/b':{commit,inventory_complete:true}},trends:{}});
+ Object.assign(c.client,{resolve:async()=>({commit,license:'MIT',stars:100}),tree:()=>assert.fail('unchanged source should use cached instructions')});
+ await c.sync({interval_seconds:600,repositories:['a/b'],trending:[],include_observed:false});
+ const profile=(await c.state()).cards[id].profile;assert.equal(profile.description,'Exact decimal CSV validation');assert.equal(profile.extractor_version,2);assert.deepEqual(profile.semantic_review,review);
+});

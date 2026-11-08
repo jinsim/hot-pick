@@ -37,3 +37,7 @@ See docs/product-purpose.html for the canonical product definition.
 - User requirement (2026-11-08): operate the collector and public catalog without charges. Keep standard GitHub-hosted runners in this public repository and Firebase billing disabled.
 - Do not link billing, enable paid fallback services, add larger runners, or increase paid storage allowances without explicit new authorization. Accept free-quota interruption rather than automatically upgrading.
 - Distinguish a configured schedule from observed execution. Verify actual `schedule` events, cache restoration, and live publication; manual dispatch does not establish automatic refresh. GitHub cron does not guarantee the configured interval.
+
+## Git display-date policy
+
+Owner instruction (2026-11-11): future author and committer dates use the weekend preceding the actual work week in Asia/Seoul, with daytime jitter. These are explicitly normalized display dates, not execution timestamps. Use `git weekend-commit` (repository-local alias for `python3 scripts/weekend-git.py commit`) after staging. The local `.githooks/pre-commit` requires the date policy; do not silently disable it. Preserve actual dates in evaluations, deployment evidence, and third-party records. See `docs/git-date-policy.html`. Never re-run history normalization on already-normalized commits.

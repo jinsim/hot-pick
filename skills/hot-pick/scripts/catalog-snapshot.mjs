@@ -1,4 +1,5 @@
 import {parseSource,safePath} from './core.mjs';
+const localPath = /file:\/\/|\/(?:Users|home)\/|[a-z]:\\Users\\/i;
 const excerpts=value=>Array.isArray(value)?value.slice(0,40).map(x=>({line:Number(x.line)||0,text:String(x.text||'').slice(0,2000)})):[];
 const strings=value=>Array.isArray(value)?value.slice(0,40).map(x=>String(x).slice(0,2000)):[];
 export function publicSnapshot(state) {
@@ -11,9 +12,9 @@ export function publicSnapshot(state) {
     const profile={description:String(p.description||'').slice(0,12000),method:'source_excerpts',semantic_review:null};
     for(const key of ['situations','inputs','outputs','constraints','headings']) profile[key]=excerpts(p[key]);
     if(r && r.blob_sha===c.blob_sha) {profile.semantic_review={blob_sha:r.blob_sha,evidence:strings(r.evidence)};for(const key of ['situations','inputs','outputs','constraints']) profile.semantic_review[key]=strings(r[key]);}
-    for(const key of ['situations','inputs','outputs','constraints','headings']) profile[key]=profile[key].filter(x=>!/(?:\/Users\/|\/home\/|file:\/\/)/.test(x.text));
-    if(/(?:\/Users\/|\/home\/|file:\/\/)/.test(profile.description)) profile.description='Description contains a local path; read pinned source.';
-    if(profile.semantic_review && /(?:\/Users\/|\/home\/|file:\/\/)/.test(JSON.stringify(profile.semantic_review))) profile.semantic_review=null;
+    for(const key of ['situations','inputs','outputs','constraints','headings']) profile[key]=profile[key].filter(x=>!localPath.test(x.text));
+    if(localPath.test(profile.description)) profile.description='Description contains a local path; read pinned source.';
+    if(profile.semantic_review && ['evidence','situations','inputs','outputs','constraints'].some(key=>profile.semantic_review[key].some(text=>localPath.test(text)))) profile.semantic_review=null;
     const id=`${repo}:${skill_path}`;
     cards[id]={id,repo,name:String(c.name||''),commit:c.commit,skill_path,blob_sha:c.blob_sha,license:c.license||null,stars:Number.isFinite(c.stars)?c.stars:null,profile,source:`https://github.com/${repo}/blob/${c.commit}/${skill_path}`,checked_at:c.checked_at||null};
   }

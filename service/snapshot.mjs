@@ -83,9 +83,12 @@ export async function readPublicSnapshot(file, expectedIdentity) {
       throw Error('Invalid public snapshot');
     }
     const cards = Object.entries(snapshot.cards);
-    if (cards.length > 10000 || !cards.every(([id, card]) => validCard(id, card)) ||
-        !Object.entries(snapshot.trends).every(([source, trend]) => validTrend(source, trend))) {
-      throw Error('Invalid public snapshot');
+    if (cards.length > 10000) throw Error('Invalid public snapshot: too many cards');
+    for (const [id, card] of cards) {
+      if (!validCard(id, card)) throw Error(`Invalid public snapshot: card ${JSON.stringify(id)}`);
+    }
+    for (const [source, trend] of Object.entries(snapshot.trends)) {
+      if (!validTrend(source, trend)) throw Error(`Invalid public snapshot: trend ${JSON.stringify(source)}`);
     }
     // Never send unparsed input: duplicate JSON keys can hide unvalidated bytes.
     return Buffer.from(JSON.stringify(snapshot));

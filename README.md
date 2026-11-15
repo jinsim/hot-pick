@@ -182,3 +182,9 @@ The historical benchmark measures the earlier skill-only implementation, not v0.
 Try one real task and [share the result](https://github.com/jinsim/hot-pick/issues/new?template=task-result.yml), including unsuitable recommendations. See [contributing](CONTRIBUTING.md). If it helps your work, a GitHub star helps others find it.
 
 Git author/committer dates follow the owner-requested [weekend display-date policy](docs/git-date-policy.html); evaluation and deployment timestamps remain actual observations.
+
+### Monitoring and voluntary outcomes
+
+The free [monitor](docs/monitoring.html) checks collector completion and catalog freshness, opens assigned GitHub incident issues, and records an operational/usage dashboard with daily snapshots. GitHub cron is best-effort; notification latency is not guaranteed. No telemetry is automatic.
+
+Run `npm run hot-pick -- feedback --outcome completed --helpfulness improved` to preview an optional public report and review URL. Add `--file RECEIPT.json` for check totals; add `--test` for internal trials. Owner, bot, test and duplicate reports are excluded from external-report counts. Self-reports are not independent quality proof; raw clones are never treated as users.

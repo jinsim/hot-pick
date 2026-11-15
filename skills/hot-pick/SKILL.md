@@ -30,3 +30,7 @@ For each chosen skill, read the pinned entrypoint with `read REPO --ref COMMIT -
 Use `discover "public keywords"` for task-related GitHub search and observed Trending. Inspect `repo owner/repo` and read the relevant docs or source at the returned commit. Check the actual operation, output, stack, dependencies and license. Use observed recent momentum as a preference among compatible projects. Report unavailable Trending data.
 
 [General GitHub workflow](references/oss-workflow.md) covers pinned checkout, integration and verification receipts. [Community-skill operations](references/operations.md) covers `search`, `inspect` and `prepare`. Inspect before running third-party code and follow the task's permissions. Apply the selected project and check the result before reporting it as used.
+
+## Optional public outcome reporting
+
+Keep ordinary traces local. Only when the user wants to contribute usage evidence, use `feedback --outcome completed|failed|abandoned --helpfulness improved|same|worse|unknown` (optionally `--file` an apply receipt). This prepares a local public-field preview and GitHub review URL; publishing requires the user’s explicit consent. Do not repeatedly prompt after tasks. Internal evaluations use `--test` and never count as external adoption. See [monitoring documentation](../../docs/monitoring.html).

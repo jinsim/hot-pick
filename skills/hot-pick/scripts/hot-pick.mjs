@@ -10,8 +10,8 @@ function fail(code, message) { throw new HotPickError(code, message); }
 export async function main(argv = process.argv.slice(2)) {
   const command = argv.shift();
   const opts = {}, positional = [];
-  const flags = new Set(['offline', 'refresh', 'content', 'details', 'text']);
-  const values = new Set(['cache', 'ttl', 'timeout', 'limit', 'owner', 'path', 'ref', 'api', 'since', 'language', 'file', 'workspace', 'plan', 'config', 'catalog-url', 'trace', 'find', 'context']);
+  const flags = new Set(['offline', 'refresh', 'content', 'details', 'text', 'test']);
+  const values = new Set(['cache', 'ttl', 'timeout', 'limit', 'owner', 'path', 'ref', 'api', 'since', 'language', 'file', 'workspace', 'plan', 'config', 'catalog-url', 'trace', 'find', 'context', 'helpfulness', 'outcome']);
   while (argv.length) {
     const x = argv.shift();
     if (!x.startsWith('--')) { positional.push(x); continue; }
@@ -31,6 +31,7 @@ export async function main(argv = process.argv.slice(2)) {
     if (u.username || u.password || u.search || u.hash) fail('invalid_api', 'Registry URL cannot contain credentials, query, or fragment.');
     opts.api = opts.api.replace(/\/$/, '');
   }
+  if(command==='feedback'){const {feedback}=await import('./feedback.mjs');console.log(JSON.stringify({ok:true,...await feedback(opts)}));return;}
   const c = new HotPick(opts); let result;
   const start = performance.now();
   if (['catalog-sync','catalog-watch','catalog-route','catalog-detail','catalog-label','catalog-record','catalog-status','catalog-review-queue','catalog-connect'].includes(command)) {

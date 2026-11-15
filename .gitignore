@@ -11,3 +11,5 @@ gha-creds-*.json
 .venv/
 __pycache__/
 examples/product-extraction/books.html
+
+.cloudflare/

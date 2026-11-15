@@ -7,7 +7,7 @@ export async function feedback(options={}) {
  if(options.file){
  const stat=await fs.stat(options.file);if(!stat.isFile()||stat.size>2*1024*1024)throw Error('Receipt must be a regular file under 2 MiB');
  const receipt=JSON.parse(await fs.readFile(options.file,'utf8'));
- if(receipt.schema!==1||!['checks_passed','failed'].includes(receipt.status)||!Array.isArray(receipt.checks)||!receipt.checks.length||!/^\w{64}$/.test(receipt.plan_sha256))throw Error('Expected an apply receipt with completed checks and plan hash');
+ if(receipt.schema!==1||!['checks_passed','failed'].includes(receipt.status)||!Array.isArray(receipt.checks)||!receipt.checks.length||!/^[a-f0-9]{64}$/.test(receipt.plan_sha256))throw Error('Expected an apply receipt with completed checks and plan hash');
  packet.task_id=receipt.plan_sha256.slice(0,8)+'-'+receipt.plan_sha256.slice(8,12)+'-'+receipt.plan_sha256.slice(12,16)+'-'+receipt.plan_sha256.slice(16,20)+'-'+receipt.plan_sha256.slice(20,32);
  packet.evidence='local_receipt';packet.checks_total=receipt.checks.length;packet.checks_passed=receipt.checks.filter(c=>c.exit_code===0&&!c.stopped).length;
  }

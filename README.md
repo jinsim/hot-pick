@@ -188,3 +188,5 @@ Git author/committer dates follow the owner-requested [weekend display-date poli
 The free [monitor](docs/monitoring.html) checks collector completion and catalog freshness, opens assigned GitHub incident issues, and records an operational/usage dashboard with daily snapshots. GitHub cron is best-effort; notification latency is not guaranteed. No telemetry is automatic.
 
 Run `npm run hot-pick -- feedback --outcome completed --helpfulness improved` to preview an optional public report and review URL. Add `--file RECEIPT.json` for check totals; add `--test` for internal trials. Owner, bot, test and duplicate reports are excluded from external-report counts. Self-reports are not independent quality proof; raw clones are never treated as users.
+
+Live [operational and usage dashboard](https://github.com/jinsim/hot-pick/issues/2). GitHub failure/recovery and internal-report exclusion were verified on 2026-11-21. Independent external email monitoring is pending owner login; see the evidence and connection status in [monitoring documentation](docs/monitoring.html).

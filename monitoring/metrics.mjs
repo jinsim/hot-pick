@@ -5,6 +5,7 @@ export function health(index, runs, now=Date.now(), maxAgeMinutes=120) {
  else if(age>maxAgeMinutes) problems.push(`Catalog is ${Math.round(age)} minutes old (limit ${maxAgeMinutes})`);
  if(!index?.cards||!Object.keys(index.cards).length) problems.push('Catalog is empty');
  const latest=runs.find(r=>r.status==='completed');
+ if(!latest)problems.push('No completed collector run observed');
  if(latest&&latest.conclusion!=='success') problems.push(`Latest completed collector ${latest.id}: ${latest.conclusion}`);
  return {healthy:!problems.length,problems,updated_at:index?.updated_at??null,age_minutes:Number.isFinite(age)?Math.round(age):null,cards:Object.keys(index?.cards||{}).length};
 }

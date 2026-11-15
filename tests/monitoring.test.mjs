@@ -22,3 +22,13 @@ test('feedback is local, opt-in and excludes private receipt fields; equivalent 
  assert.equal(a.packet.task_id,b.packet.task_id);assert.equal(a.packet.checks_passed,1);assert.equal(a.submitted,false);assert.doesNotMatch(a.body,/SECRET|private task|private path|\/Users/);
  await assert.rejects(feedback({helpfulness:'yes',outcome:'completed'}));
 });
+
+import worker,{check} from '../monitoring/health/worker.mjs';
+test('independent endpoint returns stale/unavailable failure and explicit drill status',async()=>{
+ const fresh=()=>Promise.resolve(Response.json(good));
+ assert.equal((await check(fresh,now)).healthy,true);
+ assert.equal((await check(fresh,now+3*3600000)).healthy,false);
+ assert.equal((await check(async()=>{throw Error('offline');},now)).healthy,false);
+ assert.equal((await worker.fetch(new Request('https://health.example/test-failure'))).status,503);
+ assert.equal((await worker.fetch(new Request('https://health.example/unknown'))).status,404);
+});

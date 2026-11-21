@@ -1,6 +1,6 @@
 import {execFileSync} from 'node:child_process';
 import {promises as fs} from 'node:fs';
-import {health,usage} from './metrics.mjs';
+import {health,usage,credentialWarning} from './metrics.mjs';
 const repository='jinsim/hot-pick';
 function api(endpoint,method='GET',data){return JSON.parse(execFileSync('gh',['api',endpoint,'--method',method,...(data?['--input','-']:[])],{input:data?JSON.stringify(data):undefined,encoding:'utf8',maxBuffer:8*1024*1024}));}
 async function pages(endpoint,key){let all=[];for(let page=1;page<=20;page++){const r=api(endpoint+(endpoint.includes('?')?'&':'?')+`per_page=100&page=${page}`);const list=key?r[key]:r;all.push(...list);if(list.length<100)return all;}throw Error('Pagination bound exceeded; refusing incomplete metrics');}
@@ -9,6 +9,9 @@ const runs=api(`repos/${repository}/actions/workflows/catalog.yml/runs?per_page=
 let index,availability_error;
 try{const r=await fetch('https://jinsim-hot-pick.web.app/index.json',{signal:AbortSignal.timeout(20000),cache:'no-store'});if(!r.ok)throw Error(`HTTP ${r.status}`);index=await r.json();}catch(e){availability_error=e.message;}
 const report={checked_at:new Date().toISOString(),health:health(index,runs),usage:usage(issues)};
+report.external_scheduler=JSON.parse(await fs.readFile(new URL('./scheduler.json',import.meta.url),'utf8'));
+const expiryWarning=credentialWarning(report.external_scheduler.credential_expires_on);
+if(expiryWarning)report.health.problems.push(expiryWarning);
 if(availability_error)report.health.problems.push('Public index unavailable: '+availability_error);
 report.health.healthy=!report.health.problems.length;
 // workflow_run can catch a just-failed run even when another run has already succeeded.

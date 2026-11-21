@@ -29,3 +29,10 @@ export function usage(issues, excluded=['jinsim']) {
  }
  return {...counts,external_reporting_accounts:users.size,qualification:'Opt-in self-reports, not all users or independently verified people/quality. Receipt-backed means client-reported checks, not remote attestation.'};
 }
+export function credentialWarning(expiresOn, now=Date.now()) {
+ const expiry=Date.parse(expiresOn+'T00:00:00Z');
+ if(!/^\d{4}-\d\d-\d\d$/.test(expiresOn||'')||!Number.isFinite(expiry))return 'External scheduler credential expiry metadata is invalid';
+ const days=Math.floor((expiry-now)/86400000);
+ if(days>14)return null;
+ return days<0?`External scheduler credential expired on ${expiresOn}; rotate it`:`External scheduler credential expires on ${expiresOn} (in ${days} days); rotate it before expiry`;
+}

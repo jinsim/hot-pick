@@ -40,3 +40,11 @@ test('external cron submits only a main collector dispatch, never claims publica
  await assert.rejects(dispatch({},()=>{throw Error('must not call');}),/Missing/);
  await assert.rejects(dispatch({HOT_PICK_DISPATCH_TOKEN:'test-secret'},async()=>new Response('',{status:401})),/401/);
 });
+
+import {credentialWarning} from '../monitoring/metrics.mjs';
+test('credential expiry warns before the scheduler silently stops',()=>{
+ assert.equal(credentialWarning('2027-02-25',Date.parse('2026-11-27T00:00:00Z')),null);
+ assert.match(credentialWarning('2027-02-25',Date.parse('2027-02-11T00:00:00Z')),/in 14 days/);
+ assert.match(credentialWarning('2027-02-25',Date.parse('2027-02-26T00:00:00Z')),/expired/);
+ assert.match(credentialWarning('unknown',Date.now()),/invalid/);
+});

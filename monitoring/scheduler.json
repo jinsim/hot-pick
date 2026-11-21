@@ -1,0 +1,5 @@
+{
+  "provider": "Cloudflare Workers Free",
+  "cron": "0,30 * * * *",
+  "credential_expires_on": "2027-02-25"
+}

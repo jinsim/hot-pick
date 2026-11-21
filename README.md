@@ -190,3 +190,5 @@ The free [monitor](docs/monitoring.html) checks collector completion and catalog
 Run `npm run hot-pick -- feedback --outcome completed --helpfulness improved` to preview an optional public report and review URL. Add `--file RECEIPT.json` for check totals; add `--test` for internal trials. Owner, bot, test and duplicate reports are excluded from external-report counts. Self-reports are not independent quality proof; raw clones are never treated as users.
 
 Live [operational and usage dashboard](https://github.com/jinsim/hot-pick/issues/2). GitHub failure/recovery and internal-report exclusion were verified on 2026-11-21. Independent external email monitoring is pending owner login; see the evidence and connection status in [monitoring documentation](docs/monitoring.html).
+
+External half-hour scheduling is prepared using the existing Cloudflare account; no cron-job.org signup is required. Production activation and scheduled-run verification are pending free-plan confirmation and a repository-restricted dispatch credential. See [external scheduler status](docs/external-scheduler.html).

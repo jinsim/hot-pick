@@ -1,8 +1,15 @@
 name: Collect and publish catalog
+run-name: "Collect catalog (${{ github.event_name == 'schedule' && 'github-cron' || inputs.trigger_source || 'manual' }})"
 on:
   schedule:
     - cron: '7,37 * * * *'
   workflow_dispatch:
+    inputs:
+      trigger_source:
+        description: 'Dispatch origin for audit; external history is required as evidence'
+        type: choice
+        options: [manual, cloudflare-cron]
+        default: manual
 
 permissions:
   contents: read

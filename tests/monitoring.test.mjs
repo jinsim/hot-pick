@@ -32,3 +32,11 @@ test('independent endpoint returns stale/unavailable failure and explicit drill 
  assert.equal((await worker.fetch(new Request('https://health.example/test-failure'))).status,503);
  assert.equal((await worker.fetch(new Request('https://health.example/unknown'))).status,404);
 });
+
+import {dispatch} from '../monitoring/health/scheduler.mjs';
+test('external cron submits only a main collector dispatch, never claims publication',async()=>{
+ let calls=0;const result=await dispatch({HOT_PICK_DISPATCH_TOKEN:'test-secret'},async(url,init)=>{calls++;assert.equal(url,'https://api.github.com/repos/jinsim/hot-pick/actions/workflows/catalog.yml/dispatches');assert.equal(init.headers.Authorization,'Bearer test-secret');assert.deepEqual(JSON.parse(init.body),{ref:'main',inputs:{trigger_source:'cloudflare-cron'}});return new Response(null,{status:204});});
+ assert.equal(calls,1);assert.equal(result.accepted,true);assert.match(result.meaning,/not proof/);
+ await assert.rejects(dispatch({},()=>{throw Error('must not call');}),/Missing/);
+ await assert.rejects(dispatch({HOT_PICK_DISPATCH_TOKEN:'test-secret'},async()=>new Response('',{status:401})),/401/);
+});

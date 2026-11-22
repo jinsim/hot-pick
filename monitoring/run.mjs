@@ -16,7 +16,8 @@ if(availability_error)report.health.problems.push('Public index unavailable: '+a
 report.health.healthy=!report.health.problems.length;
 // workflow_run can catch a just-failed run even when another run has already succeeded.
 if(process.env.FAILED_RUN_URL){report.health.healthy=false;report.health.problems.push('Collector failed: '+process.env.FAILED_RUN_URL);}
-if(process.env.MONITOR_DRILL==='true'){report.health.healthy=false;report.health.problems.push('TEST ONLY: simulated failed publication and stale catalog');}
+if(process.env.EXTERNAL_SCHEDULER_FAILURE==='true'){report.health.healthy=false;report.health.problems.push('External scheduler could not dispatch the collector; inspect Cloudflare invocation logs');}
+if(process.env.MONITOR_DRILL==='true'){report.simulation=true;report.health.healthy=process.env.MONITOR_DRILL_RECOVERY==='true';report.health.problems=report.health.healthy?[]:['TEST ONLY: simulated scheduler/publication failure and stale catalog'];}
 for(const kind of ['views','clones']){try{report[kind]=api(`repos/${repository}/traffic/${kind}`);}catch{report[kind]={available:false,reason:'GitHub token lacks traffic permission; not zero usage'};}}
 const drill=process.env.MONITOR_DRILL==='true';const title=drill?'[Monitor test] alert delivery drill':'[Monitor] catalog unhealthy';
 const trusted=i=>['jinsim','github-actions[bot]'].includes(i.user?.login)&&!i.pull_request;

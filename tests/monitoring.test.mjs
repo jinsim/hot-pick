@@ -35,10 +35,11 @@ test('independent endpoint returns stale/unavailable failure and explicit drill 
 
 import {dispatch} from '../monitoring/health/scheduler.mjs';
 test('external cron submits only a main collector dispatch, never claims publication',async()=>{
- let calls=0;const result=await dispatch({HOT_PICK_DISPATCH_TOKEN:'test-secret'},async(url,init)=>{calls++;assert.equal(url,'https://api.github.com/repos/jinsim/hot-pick/actions/workflows/catalog.yml/dispatches');assert.equal(init.headers.Authorization,'Bearer test-secret');assert.deepEqual(JSON.parse(init.body),{ref:'main',inputs:{trigger_source:'cloudflare-cron'}});return new Response(null,{status:204});});
+ let calls=0;const result=await dispatch({HOT_PICK_DISPATCH_TOKEN:'test-secret'},async(url,init)=>{calls++;assert.equal(url,'https://api.github.com/repos/jinsim/hot-pick/actions/workflows/catalog.yml/dispatches');assert.equal(init.headers.Authorization,'Bearer test-secret');assert.equal(init.redirect,'manual');assert.deepEqual(JSON.parse(init.body),{ref:'main',inputs:{trigger_source:'cloudflare-cron'}});return new Response(null,{status:204});});
  assert.equal(calls,1);assert.equal(result.accepted,true);assert.match(result.meaning,/not proof/);
  await assert.rejects(dispatch({},()=>{throw Error('must not call');}),/Missing/);
  await assert.rejects(dispatch({HOT_PICK_DISPATCH_TOKEN:'test-secret'},async()=>new Response('',{status:401})),/401/);
+ await assert.rejects(dispatch({HOT_PICK_DISPATCH_TOKEN:'test-secret'},async()=>new Response('',{status:302,headers:{location:'https://untrusted.example'}})),/302/);
 });
 
 import {credentialWarning} from '../monitoring/metrics.mjs';
@@ -47,4 +48,17 @@ test('credential expiry warns before the scheduler silently stops',()=>{
  assert.match(credentialWarning('2027-02-25',Date.parse('2027-02-11T00:00:00Z')),/in 14 days/);
  assert.match(credentialWarning('2027-02-25',Date.parse('2027-02-26T00:00:00Z')),/expired/);
  assert.match(credentialWarning('unknown',Date.now()),/invalid/);
+});
+
+import {notifyDispatchFailure} from '../monitoring/health/scheduler.mjs';
+test('scheduler failure notification requests only the main monitor, without publishing secrets',async()=>{
+ const out=await notifyDispatchFailure({HOT_PICK_DISPATCH_TOKEN:'not-a-real-secret'},async(url,init)=>{assert.equal(url,'https://api.github.com/repos/jinsim/hot-pick/actions/workflows/monitor.yml/dispatches');assert.equal(init.redirect,'manual');assert.deepEqual(JSON.parse(init.body),{ref:'main',inputs:{external_failure:true}});return new Response(null,{status:204});});
+ assert.deepEqual(out,{notification_requested:true});
+ await assert.rejects(notifyDispatchFailure({HOT_PICK_DISPATCH_TOKEN:'not-a-real-secret'},async()=>new Response('',{status:401})),/401/);
+});
+
+test('scheduled handler requests an alert after dispatch failure and keeps the invocation failed',async t=>{
+ const urls=[];t.mock.method(globalThis,'fetch',async(url)=>{urls.push(url);return new Response(null,{status:urls.length===1?503:204});});t.mock.method(console,'error',()=>{});
+ let pending;await worker.scheduled({scheduledTime:0},{HOT_PICK_DISPATCH_TOKEN:'fixture'},{waitUntil(p){pending=p;}});
+ await assert.rejects(pending,/503/);assert.deepEqual(urls,['https://api.github.com/repos/jinsim/hot-pick/actions/workflows/catalog.yml/dispatches','https://api.github.com/repos/jinsim/hot-pick/actions/workflows/monitor.yml/dispatches']);
 });

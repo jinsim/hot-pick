@@ -13,6 +13,14 @@ on:
         description: 'Create a clearly marked synthetic alert to verify delivery'
         type: boolean
         default: false
+      drill_recovery:
+        description: 'Close the synthetic drill incident with simulated recovery'
+        type: boolean
+        default: false
+      external_failure:
+        description: 'External scheduler could not dispatch the collector'
+        type: boolean
+        default: false
 permissions:
   contents: read
   actions: read
@@ -38,6 +46,8 @@ jobs:
       - name: Check publication, reconcile alerts and aggregate opt-in reports
         env:
           GH_TOKEN: ${{ github.token }}
+          EXTERNAL_SCHEDULER_FAILURE: ${{ inputs.external_failure == true && 'true' || 'false' }}
+          MONITOR_DRILL_RECOVERY: ${{ inputs.drill_recovery == true && 'true' || 'false' }}
           MONITOR_DRILL: ${{ inputs.drill == true && 'true' || 'false' }}
           FAILED_RUN_URL: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'success' && github.event.workflow_run.html_url || '' }}
         run: node monitoring/run.mjs

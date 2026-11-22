@@ -141,3 +141,25 @@ test('unchanged source refreshes legacy folded descriptions without fetching inv
  await c.sync({interval_seconds:600,repositories:['a/b'],trending:[],include_observed:false});
  const profile=(await c.state()).cards[id].profile;assert.equal(profile.description,'Exact decimal CSV validation');assert.equal(profile.extractor_version,2);assert.deepEqual(profile.semantic_review,review);
 });
+
+test('missing domain terms explain abstention and fallback searches only explicit public queries',async t=>{
+ const c=await fixture(t);await c.publish({cards:{ui:card('ui','description: keyboard focus')},trends:{}});
+ const task={operations:[{intent:'private original request',keywords:['phoneme'],required_keywords:['phoneme'],discovery_queries:['phonological features']},{intent:'second need',keywords:['articulatory'],required_keywords:['articulatory'],discovery_queries:['phonological features']},{intent:'covered',keywords:['keyboard'],discovery_queries:['must never search']}]};
+ const r=await c.route(task);assert.deepEqual(r.operations[0].diagnostic.missing_required_terms,['phoneme']);assert.deepEqual(r.operations[0].keywords,['phoneme']);
+ const calls=[];c.client.discover=async q=>{calls.push(q);return {candidates:[{repo:'dmort27/panphon',license:'MIT',trending:null}],trending_source:'https://github.com/trending?since=weekly'};};
+ await c.discoverMissing(r,task);assert.deepEqual(calls,['phonological features']);assert.equal(r.operations[0].candidates.length,0);assert.equal(r.operations[0].discovery.candidates[0].id,'dmort27/panphon');assert.equal(r.operations[0].discovery.catalog_filters_relaxed,false);assert.deepEqual(r.coverage,{catalog_matched:1,discovery_leads:2,unresolved:0});
+ const saved=JSON.parse(await fs.readFile(path.join(c.root,'traces',r.trace_id+'.json')));assert.equal(saved.operations[0].discovery.status,'inspection_required');
+ const f=path.join(c.root,'outcome.json');const decision={id:'dmort27/panphon',status:'used',reason:'Applied verified data',artifacts:['result.json'],checks:['comparison verified']};await fs.writeFile(f,JSON.stringify({trace_id:r.trace_id,decisions:[decision]}));await assert.rejects(c.record(f),/source.commit/);
+ decision.source={repo:'dmort27/panphon',commit:'a'.repeat(40)};await fs.writeFile(f,JSON.stringify({trace_id:r.trace_id,decisions:[decision]}));assert.equal((await c.record(f)).recorded,true);
+});
+test('fallback without public queries does not transmit intent; failures and exclusions stay explicit',async t=>{
+ const c=await fixture(t);await c.publish({cards:{ui:card('ui','description: keyboard')},trends:{}});
+ const task={operations:[{intent:'private',keywords:['phoneme']}]};const r=await c.route(task);c.client.discover=()=>{throw Error('must not search');};await c.discoverMissing(r,task);assert.equal(r.operations[0].discovery.status,'needs_public_queries');
+ task.operations[0].discovery_queries=['phonetics'];const failing=await c.route(task);await c.discoverMissing(failing,task);assert.equal(failing.operations[0].discovery.searches[0].error,'discovery_failed');assert.equal(failing.status,'no_matches');
+ task.operations[0].exclude_repos=['DMORT27/PANPHON'];const filtered=await c.route(task);c.client.discover=async()=>({candidates:[{repo:'dmort27/panphon',license:'MIT'},{repo:'x/y',license:null}]});await c.discoverMissing(filtered,task);assert.equal(filtered.operations[0].discovery.candidates.length,0);
+});
+test('fallback is bounded before any search and rejects malformed public queries',async t=>{
+ const c=await fixture(t);let calls=0;c.client.discover=async()=>{calls++;};
+ for(const queries of [['a','b','c'],[null],['x'.repeat(201)]]){const task={operations:[{intent:'x',keywords:['absent'],discovery_queries:queries}]};await assert.rejects(c.discoverMissing(await c.route(task),task),/discovery_queries/);}
+ const task={operations:Array.from({length:5},(_,i)=>({intent:'x',keywords:['absent'],discovery_queries:['q'+i]}))};await assert.rejects(c.discoverMissing(await c.route(task),task),/four/);assert.equal(calls,0);
+});

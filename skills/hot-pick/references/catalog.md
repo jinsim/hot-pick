@@ -73,3 +73,15 @@ The public collector publishes the full compatibility snapshot, index and indivi
 Before downloading a catalog, the host may provide top-level `external_help: {needed: false, reason: "...", checks: ["..."]}` with 1–12 task operations containing an `intent`. This returns `direct_work`, zero HTTP requests, and a local trace recording caller assessment and planned checks. It is not a hidden intent classifier or an executed-test receipt. No external project is represented as used. Complete and verify the local task independently; preserve explicit user requests to inspect or compare external projects.
 
 Descriptions now decode common folded/literal/quoted frontmatter scalars. Collector refreshes legacy profiles from cached instructions even when the commit is unchanged, retaining only pin-matched semantic review. The scheduled operator updates coverage in bounded batches; client lookup does not start collection.
+
+### Missing coverage and general open-source fallback
+
+Use `catalog-route --file task.json --discover` with caller-authored `discovery_queries` on each operation. Each operation permits two queries; a task permits four distinct queries. Only operations without catalog candidates are searched. Duplicate queries share one cached GitHub/weekly-Trending discovery. Private intent and constraints are never converted into remote queries by the CLI. Without explicit public queries the operation returns `needs_public_queries`. Without `--discover`, routing remains local after catalog synchronization.
+
+```json
+{"operations":[{"intent":"Compare explicit IPA features","keywords":["phoneme"],"required_keywords":["phoneme"],"discovery_queries":["phonological features"]}]}
+```
+
+Every operation now retains keywords. Missing matches include catalog size, absent required terms and a next action. Hard filters are preserved: a discovery lead is a separate, unverified GitHub candidate, not a match that secretly relaxed those filters. Missing/unknown licenses and explicitly excluded repositories are removed from fallback leads. Offline mode uses cached discovery only; unavailable queries remain explicit errors. Results preserve dated Trending evidence when present and never invent momentum. A lead is neither application success nor proof of compatibility. The caller must inspect pinned source and determine semantic fit against all constraints, then acquire/apply/verify. Refine a poor query with `discover` only when useful; do not endlessly search to force an irrelevant dependency.
+
+Fallback output and the original shortlist share one local trace. Use `repo`/`read` for general GitHub candidates (not `catalog-detail`, which resolves indexed skill evidence). After actual use, `catalog-record` accepts the discovered repository ID with `source: {repo, commit}`, requiring a full 40-character pin, artifacts and checks. This remains host-reported evidence; an `apply` receipt supplies actual command exits and artifact hashes. No telemetry is uploaded. See the reproducible `examples/phoneme-features/` application and `docs/no-match-recovery.html` for the observed limitation and correction.

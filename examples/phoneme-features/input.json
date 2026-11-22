@@ -1,0 +1,57 @@
+[
+  {
+    "name": "Affricate / velar contrast (explicit IPA, not inferred from recording)",
+    "target": [
+      "t͡ɕ",
+      "i",
+      "n"
+    ],
+    "observed": [
+      "k",
+      "i",
+      "n"
+    ]
+  },
+  {
+    "name": "Sibilant / dental fricative contrast (explicit IPA)",
+    "target": [
+      "s"
+    ],
+    "observed": [
+      "θ"
+    ]
+  },
+  {
+    "name": "Aspiration contrast (ㅍ / ㅂ teaching context)",
+    "target": [
+      "pʰ",
+      "a"
+    ],
+    "observed": [
+      "p",
+      "a"
+    ]
+  },
+  {
+    "name": "Place contrast (ㄷ / ㄱ teaching context)",
+    "target": [
+      "t",
+      "a"
+    ],
+    "observed": [
+      "k",
+      "a"
+    ]
+  },
+  {
+    "name": "Identical transcribed segments",
+    "target": [
+      "pʰ",
+      "a"
+    ],
+    "observed": [
+      "pʰ",
+      "a"
+    ]
+  }
+]

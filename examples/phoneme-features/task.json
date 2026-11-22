@@ -1,0 +1,31 @@
+{
+  "operations": [
+    {
+      "intent": "Korean phoneme assessment",
+      "keywords": [
+        "korean",
+        "phoneme",
+        "alignment"
+      ],
+      "required_keywords": [
+        "phoneme"
+      ],
+      "discovery_queries": [
+        "phonological features"
+      ]
+    },
+    {
+      "intent": "Articulatory visualization",
+      "keywords": [
+        "articulatory",
+        "vocal tract"
+      ],
+      "required_keywords": [
+        "articulatory"
+      ],
+      "discovery_queries": [
+        "phonological features"
+      ]
+    }
+  ]
+}

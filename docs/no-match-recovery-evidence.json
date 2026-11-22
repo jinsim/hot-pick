@@ -1,0 +1,77 @@
+{
+  "observed_at": "2026-11-27T05:11:24.276Z",
+  "original_observation": {
+    "created_at": "2026-11-27T03:26:19.402Z",
+    "status": "no_matches",
+    "eligible_candidates": [
+      0,
+      0
+    ],
+    "qualification": "Original chat continued GitHub discovery and built a prototype; missing outcome linkage does not mean no open source was used."
+  },
+  "reproduction": {
+    "catalog_updated_at": "2026-11-27T05:01:28.233Z",
+    "input": "examples/phoneme-features/task.json",
+    "baseline_status": "no_matches",
+    "baseline_ms": 196.751333,
+    "enhanced_status": "discovery_candidates_only",
+    "enhanced_warm_ms": 219.281792,
+    "coverage": {
+      "catalog_matched": 0,
+      "discovery_leads": 2,
+      "unresolved": 0
+    },
+    "requests": 0,
+    "metrics": {
+      "requests": 0,
+      "bytes": 0,
+      "cache_hits": 3,
+      "revalidated": 0
+    },
+    "offline_status": "discovery_candidates_only",
+    "offline_requests": 0,
+    "offline_ms": 212.43866699999998,
+    "timing_qualification": "Single cached observations, not a controlled benchmark or total caller-token/time improvement."
+  },
+  "selection": {
+    "repo": "dmort27/panphon",
+    "commit": "a49c242d3307864312a2701055faefa4e548501c",
+    "license": "MIT",
+    "stars_observed": 342,
+    "observed_weekly_trending": false,
+    "data_blob_sha": "6911103bb53223910949610a81f697849e0c7c64"
+  },
+  "execution": {
+    "plan_sha256": "6cd3b5a40af592e56174963e5f7ff0813e086b569e743e45a83912241ea83168",
+    "status": "checks_passed",
+    "started_at": "2026-11-27T05:11:24.138Z",
+    "finished_at": "2026-11-27T05:11:24.276Z",
+    "steps": [
+      {
+        "name": "Generate source-derived comparison and visualization",
+        "exit_code": 0,
+        "elapsed_ms": 72
+      }
+    ],
+    "checks": [
+      {
+        "name": "Check phonetic contrast values and reject unsupported inputs",
+        "exit_code": 0,
+        "stdout": "Verified affricate/velar, sibilant/dental, aspiration, place, identical vectors, HTML output and four invalid-input cases against pinned PanPhon data\n"
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "output/result.json",
+        "bytes": 4123,
+        "sha256": "712c7452fc65515c8c651948ed72c817c65e6e99fe3c3d1edad412c82fcc07c1"
+      },
+      {
+        "path": "output/comparison.html",
+        "bytes": 2104,
+        "sha256": "41a78df6b3d9cba13cda07f1bee3ba9c3a8d749f4ec688e7edb596ee6a594a39"
+      }
+    ]
+  },
+  "scope": "Source-derived feature comparison and HTML visualization from aligned IPA, not automatic audio diagnosis; original prototype is actively maintained in another chat and was not overwritten."
+}

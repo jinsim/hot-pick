@@ -1,0 +1,166 @@
+{
+  "source": {
+    "repo": "dmort27/panphon",
+    "commit": "a49c242d3307864312a2701055faefa4e548501c",
+    "data_blob_sha": "6911103bb53223910949610a81f697849e0c7c64"
+  },
+  "feature_count": 24,
+  "metric": "unweighted categorical feature mismatch, not pronunciation accuracy",
+  "input_contract": "caller-provided aligned IPA; no audio analysis or Korean G2P",
+  "cases": [
+    {
+      "name": "Affricate / velar contrast (explicit IPA, not inferred from recording)",
+      "segments": [
+        {
+          "target": "t͡ɕ",
+          "observed": "k",
+          "different_features": [
+            {
+              "feature": "delrel",
+              "target": "+",
+              "observed": "-"
+            },
+            {
+              "feature": "strid",
+              "target": "+",
+              "observed": "-"
+            },
+            {
+              "feature": "cor",
+              "target": "+",
+              "observed": "-"
+            },
+            {
+              "feature": "distr",
+              "target": "+",
+              "observed": "0"
+            },
+            {
+              "feature": "back",
+              "target": "-",
+              "observed": "+"
+            }
+          ],
+          "feature_mismatch_fraction": 0.20833333333333334
+        },
+        {
+          "target": "i",
+          "observed": "i",
+          "different_features": [],
+          "feature_mismatch_fraction": 0.0
+        },
+        {
+          "target": "n",
+          "observed": "n",
+          "different_features": [],
+          "feature_mismatch_fraction": 0.0
+        }
+      ]
+    },
+    {
+      "name": "Sibilant / dental fricative contrast (explicit IPA)",
+      "segments": [
+        {
+          "target": "s",
+          "observed": "θ",
+          "different_features": [
+            {
+              "feature": "strid",
+              "target": "+",
+              "observed": "-"
+            },
+            {
+              "feature": "distr",
+              "target": "-",
+              "observed": "+"
+            }
+          ],
+          "feature_mismatch_fraction": 0.08333333333333333
+        }
+      ]
+    },
+    {
+      "name": "Aspiration contrast (ㅍ / ㅂ teaching context)",
+      "segments": [
+        {
+          "target": "pʰ",
+          "observed": "p",
+          "different_features": [
+            {
+              "feature": "sg",
+              "target": "+",
+              "observed": "-"
+            }
+          ],
+          "feature_mismatch_fraction": 0.041666666666666664
+        },
+        {
+          "target": "a",
+          "observed": "a",
+          "different_features": [],
+          "feature_mismatch_fraction": 0.0
+        }
+      ]
+    },
+    {
+      "name": "Place contrast (ㄷ / ㄱ teaching context)",
+      "segments": [
+        {
+          "target": "t",
+          "observed": "k",
+          "different_features": [
+            {
+              "feature": "ant",
+              "target": "+",
+              "observed": "-"
+            },
+            {
+              "feature": "cor",
+              "target": "+",
+              "observed": "-"
+            },
+            {
+              "feature": "distr",
+              "target": "-",
+              "observed": "0"
+            },
+            {
+              "feature": "hi",
+              "target": "-",
+              "observed": "+"
+            },
+            {
+              "feature": "back",
+              "target": "-",
+              "observed": "+"
+            }
+          ],
+          "feature_mismatch_fraction": 0.20833333333333334
+        },
+        {
+          "target": "a",
+          "observed": "a",
+          "different_features": [],
+          "feature_mismatch_fraction": 0.0
+        }
+      ]
+    },
+    {
+      "name": "Identical transcribed segments",
+      "segments": [
+        {
+          "target": "pʰ",
+          "observed": "pʰ",
+          "different_features": [],
+          "feature_mismatch_fraction": 0.0
+        },
+        {
+          "target": "a",
+          "observed": "a",
+          "different_features": [],
+          "feature_mismatch_fraction": 0.0
+        }
+      ]
+    }
+  ]
+}

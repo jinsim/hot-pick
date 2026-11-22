@@ -162,6 +162,7 @@ export class Catalog {
       if(typeof coverage!=='number'||!Number.isFinite(coverage)||coverage<0||coverage>1) throw Error('min_coverage must be between 0 and 1');
       const maxPerRepo=op.max_per_repo??3;
       if(!Number.isInteger(maxPerRepo)||maxPerRepo<1||maxPerRepo>3) throw Error('max_per_repo must be 1, 2 or 3');
+      const missingRequired=required.filter(w=>!docs.some(d=>d.terms.includes(w)));
       const ranked=docs.flatMap(({c,terms})=>{
         if(c.license===null || c.license==='NOASSERTION' || excluded.has(c.repo.toLowerCase()) || required.some(w=>!terms.includes(w))) return [];
         const matches=query.filter(w=>terms.includes(w));if(matches.length < Math.min(2,query.length) || matches.length/query.length<coverage) return [];
@@ -194,7 +195,7 @@ export class Catalog {
         }
         return {...shortlist.get(c.id), ...match};
       });
-      return {intent:op.intent,constraints:op.constraints || [],candidates,...((required.length||excluded.size||coverage||maxPerRepo!==3)?{filters:{required_keywords:required,exclude_repos:[...excluded],min_coverage:coverage,max_per_repo:maxPerRepo},eligible_candidates:ranked.length}:{})};
+      return {intent:op.intent,keywords:op.keywords,constraints:op.constraints || [],candidates,...(!candidates.length?{diagnostic:{reason:!cards.length?'empty_catalog':missingRequired.length?'required_terms_absent':'no_eligible_match',missing_required_terms:missingRequired,catalog_cards:cards.length,next_action:'Inspect coverage; use explicit public discovery_queries with --discover. Do not relax required filters silently.'}}:{}),...((required.length||excluded.size||coverage||maxPerRepo!==3)?{filters:{required_keywords:required,exclude_repos:[...excluded],min_coverage:coverage,max_per_repo:maxPerRepo},eligible_candidates:ranked.length}:{})};
     });
     const status = !cards.length ? 'empty_catalog' : evidence.size ? 'candidates_only' : 'no_matches';
     const result={schema:1,trace_id:crypto.randomUUID(),created_at:new Date().toISOString(),catalog_updated_at:state.updated_at || null,status,catalog_origin:origin,operations,
@@ -204,6 +205,30 @@ export class Catalog {
     return {...result, operations:operations.map(op=>({...op,candidates:op.candidates.map(({id,matched_terms,retrieval_score,popularity}) =>
       ({...evidence.get(id),matched_terms,retrieval_score,popularity}))})),
       selection_required:'Host must check fit, constraints and expected output, then read full pinned instructions. Scores are retrieval, not success probabilities.'};
+  }
+  async discoverMissing(result, task, options={}) {
+    const started=performance.now();
+    // Only caller-authored public queries leave the machine; never derive one from private intent.
+    const pending=result.operations.map((op,i)=>({op,queries:task.operations[i].discovery_queries})).filter(x=>!x.op.candidates.length);
+    for(const {queries} of pending) if(queries!==undefined&&(!Array.isArray(queries)||queries.length>2||queries.some(q=>typeof q!=='string'||!q.trim()||q.length>200)))throw Error('discovery_queries needs at most two public strings of 1–200 characters');
+    const unique=[...new Set(pending.flatMap(x=>x.queries||[]))];
+    if(unique.length>4)throw Error('At most four distinct fallback queries per task; split a larger request');
+    const outcomes=new Map(await Promise.all(unique.map(async query=>{
+      try{return [query,{query,...await this.client.discover(query,{since:options.since||'weekly',limit:3})}];}
+      catch(error){return [query,{query,error:error.code||'discovery_failed'}];}
+    })));
+    for(const {op,queries} of pending){
+      const searches=(queries||[]).map(q=>outcomes.get(q));
+      const candidates=[...new Map(searches.flatMap(s=>s.candidates||[]).filter(c=>c.license&&c.license!=='NOASSERTION'&&!(op.filters?.exclude_repos||[]).includes(c.repo.toLowerCase())).map(c=>[c.repo,{id:c.repo,...c}])).values()].slice(0,3);
+      op.discovery={status:!queries?.length?'needs_public_queries':candidates.length?'inspection_required':'no_candidates',candidates,searches:searches.map(({candidates,...rest})=>rest),catalog_filters_relaxed:false,notice:'General GitHub candidates are unverified leads, not catalog matches. Inspect pinned source, language support, constraints and license; apply and verify before recording use.'};
+    }
+    result.coverage={catalog_matched:result.operations.filter(o=>o.candidates.length).length,discovery_leads:pending.filter(x=>x.op.discovery.candidates.length).length,unresolved:pending.filter(x=>!x.op.discovery.candidates.length).length};
+    if(result.status==='no_matches'||result.status==='empty_catalog')if(result.coverage.discovery_leads)result.status='discovery_candidates_only';
+    result.discovery_metrics={...this.client.stats};result.requests=this.client.stats.requests;
+    result.elapsed_ms+=performance.now()-started;result.warnings=this.client.warnings;
+    const file=path.join(this.root,'traces',result.trace_id+'.json');
+    const trace=await load(file,null);await save(file,{...trace,...result});
+    return result;
   }
   async detail(trace, ...ids) {
     if (!traceID.test(trace || '') || !ids.length || ids.some(id => !id)) {
@@ -240,9 +265,11 @@ export class Catalog {
     const event=await load(file,null);
     if(!traceID.test(event?.trace_id||'')) throw Error('Invalid trace_id');
     const p=path.join(this.root,'traces',event.trace_id+'.json'),trace=await load(p,null);
-    const ids=new Set(trace?.operations.flatMap(o=>o.candidates.map(c=>c.id)) || []);
+    const ids=new Set(trace?.operations.flatMap(o=>[...o.candidates,...(o.discovery?.candidates||[])].map(c=>c.id)) || []);
+    const discovered=new Set(trace?.operations.flatMap(o=>(o.discovery?.candidates||[]).map(c=>c.id))||[]);
     if(!Array.isArray(event.decisions)||!event.decisions.length) throw Error('Decisions required');
     for(const d of event.decisions) if(!ids.has(d.id)||!['used','rejected'].includes(d.status)||typeof d.reason!=='string'||(d.status==='used'&&(!d.artifacts?.length||!d.checks?.length))) throw Error('Each decision needs candidate id, status, reason; used needs artifacts and checks');
+    for(const d of event.decisions)if(d.status==='used'&&discovered.has(d.id)&&(!/^[a-f0-9]{40}$/.test(d.source?.commit||'')||d.source?.repo!==d.id))throw Error('Used discovery candidates require inspected source.repo and full source.commit pin');
     trace.host_reported_outcome=event;await save(p,trace);return {trace_id:event.trace_id,recorded:true,trust:'Host-reported outcome; not independently executed by this command'};
   }
 }
@@ -269,7 +296,7 @@ export async function catalogCommand(command,args,opts) {
       await save(path.join(c.root,'traces',result.trace_id+'.json'),{...result,evidence:{}});return result;
     }
     const remote=opts['catalog-url']||process.env.HOT_PICK_CATALOG_URL||(await load(path.join(c.root,'connection.json'),{})).url;
-    if(!remote) return c.route(task,null,null,opts.details);
+    if(!remote){const result=await c.route(task,null,null,opts.details);return opts.discover?c.discoverMissing(result,task,opts):result;}
     const url=catalogURL(remote);
     // Dedicated client never forwards GitHub credentials to a catalog endpoint.
     const client=new OSS({...opts,github:'https://catalog.invalid'});
@@ -280,7 +307,7 @@ export async function catalogCommand(command,args,opts) {
     c.client.stats=client.stats;c.client.warnings=client.warnings;
     const result=await c.route(task,snapshot,url,false);
     if(opts.details){for(const op of result.operations)op.candidates=await Promise.all(op.candidates.map(async candidate=>({...candidate,...(await c.detail(result.trace_id,candidate.id)).candidate})));result.requests=c.client.stats.requests;result.warnings=c.client.warnings;}
-    return result;
+    return opts.discover?c.discoverMissing(result,task,opts):result;
   }
   if(command==='catalog-review-queue') {
     const state=await c.state();return {items:Object.values(state.cards).filter(x=>x.profile.semantic_review?.blob_sha!==x.blob_sha).slice(0,opts.limit||20).map(x=>({id:x.id,blob_sha:x.blob_sha,commit:x.commit,source:x.source,instructions:x.instructions,overview:x.overview})),note:'One-shot local host review only; no LLM daemon or API call. Apply validated profiles with catalog-label.'};

@@ -1,0 +1,11 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Workers scheduler runtime regression</title><style>body{font:16px/1.6 system-ui;max-width:55rem;margin:3rem auto;padding:1rem}pre{white-space:pre-wrap}</style><main><h1>Reproduce the Workers fetch regression</h1><p>The first real scheduled invocation on 2026-11-27 failed because Workers does not support fetch redirect mode "error", although Node.js accepts it. The production code now uses "manual" and accepts only HTTP 204. Node tests cover the request and redirect rejection; this additional fixture checks the actual local Workers runtime.</p><p>Requires Node.js 22+ and two terminal windows. Wrangler 4.168.0 is a test-only tool from Cloudflare's npm package. It is not an application dependency. No real credential, GitHub request, Firebase publication or remote deployment is used.</p><pre># Terminal 1, from the repository root
+node benchmarks/edge-scheduler/upstream.mjs
+
+# Terminal 2
+npx --yes wrangler@4.168.0 dev --local --config benchmarks/edge-scheduler/wrangler.json --port 8840
+
+# In another terminal, once ready:
+curl -sS -w '\nHTTP %{http_code}\n' http://127.0.0.1:8840/ok
+# HTTP 200, accepted: true, with an explicit not-proof-of-publication qualification
+curl -sS -w '\nHTTP %{http_code}\n' http://127.0.0.1:8840/redirect
+# HTTP 502, rejected: true, containing HTTP 302; no redirect is followed</pre><p>Ports 8840 and 8841 must be unused. Stop both test processes afterward. The cf CLI's installed build delegate was unavailable in this environment, so this isolated Wrangler fixture was used for runtime verification; production upload uses the documented Workers API. This fixture is not included in the default dependency-free npm test command.</p></main></html>

@@ -1,0 +1,230 @@
+{
+  "status": "verified_two_real_scheduled_publications",
+  "activation": {
+    "schedules": {
+      "schedules": [
+        {
+          "cron": "0,30 * * * *",
+          "created_on": "2026-11-27T03:44:44.051326Z",
+          "modified_on": "2026-11-27T03:44:44.051326Z"
+        }
+      ]
+    },
+    "activated_at": "2026-11-27T03:44:44.115Z",
+    "free_plan": "Workers Free $0 observed in authenticated dashboard",
+    "secret_name": "HOT_PICK_DISPATCH_TOKEN",
+    "token_expires_at": "2027-02-25"
+  },
+  "first_real_scheduled_failure": [
+    {
+      "timestamp": "2026-11-27T04:00:51.516Z",
+      "event_type": "scheduled",
+      "outcome": "exception",
+      "cron": "0,30 * * * *",
+      "message": "0,30 * * * *"
+    },
+    {
+      "timestamp": "2026-11-27T04:00:51.516Z",
+      "event_type": "scheduled",
+      "outcome": null,
+      "cron": "0,30 * * * *",
+      "message": "Invalid redirect value, must be one of \"follow\" or \"manual\" (\"error\" won't be implemented since it does not make sense at the edge; use \"manual\" and check the response status code)."
+    }
+  ],
+  "runtime_fix": {
+    "deployed_at": "2026-11-27T04:06:53.851Z",
+    "source_sha256": {
+      "worker.mjs": "83601e5622c5197e851d63ab4dbaaa11fb4d990df9dfe61b352c18d63c7f671a",
+      "scheduler.mjs": "559726f6e09369cf90e10def65bf1b50da3fea1c7623c8cda47c941bb438e534"
+    },
+    "etag": "b9bfb5c148a36bb8e80731900b695ba67ab0f4ae989891745f186307b2bd04a7"
+  },
+  "local_workerd_test": {
+    "upstream_204": "accepted",
+    "upstream_302": "rejected_without_following",
+    "actual_github_publication": false
+  },
+  "simulated_alert_workflow": "https://github.com/jinsim/hot-pick/actions/runs/45938037385",
+  "simulated_recovery_workflow": "https://github.com/jinsim/hot-pick/actions/runs/45938136988",
+  "scheduled_publications": [
+    {
+      "id": 45940380866,
+      "created_at": "2026-11-27T04:30:51Z",
+      "updated_at": "2026-11-27T04:32:09Z",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/jinsim/hot-pick/actions/runs/45940380866",
+      "title": "Collect catalog (cloudflare-cron)",
+      "public_http": 200,
+      "catalog_updated_at": "2026-11-27T04:31:25.060Z",
+      "cards": 2879,
+      "observed_at": "2026-11-27T04:32:33.325Z"
+    },
+    {
+      "id": 45943235351,
+      "created_at": "2026-11-27T05:00:50Z",
+      "updated_at": "2026-11-27T05:02:12Z",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/jinsim/hot-pick/actions/runs/45943235351",
+      "title": "Collect catalog (cloudflare-cron)",
+      "public_http": 200,
+      "catalog_updated_at": "2026-11-27T05:01:28.233Z",
+      "cards": 2879,
+      "observed_at": "2026-11-27T05:02:35.756Z"
+    }
+  ],
+  "notification_delivery": {
+    "verified_in": "Existing Gmail session, focused hot-pick notification search",
+    "observed_at": "2026-11-27T04:10:46.119Z",
+    "test_failure_received_kst": "2026-11-27 13:07",
+    "test_recovery_received_kst": "2026-11-27 13:08",
+    "test_issue_closed": true,
+    "raw_mail_or_private_links_published": false
+  },
+  "successful_cloudflare_invocations": [
+    {
+      "timestamp": "2026-11-27T05:00:51.292Z",
+      "event": {
+        "cron": "0,30 * * * *",
+        "scheduledTime": 1795755649
+      },
+      "outcome": "ok",
+      "script_version": "8e626937-c6b7-4cdf-92ea-28777260bdd7",
+      "source": {
+        "level": "info",
+        "message": "0,30 * * * *"
+      }
+    },
+    {
+      "timestamp": "2026-11-27T05:00:51.292Z",
+      "event": {
+        "cron": "0,30 * * * *",
+        "scheduledTime": 1795755649
+      },
+      "outcome": null,
+      "script_version": "8e626937-c6b7-4cdf-92ea-28777260bdd7",
+      "source": {
+        "accepted": true,
+        "scheduled_at": "2026-11-27T05:00:49.000Z",
+        "meaning": "GitHub accepted the request; this is not proof of publication"
+      }
+    },
+    {
+      "timestamp": "2026-11-27T04:30:51.791Z",
+      "event": {
+        "cron": "0,30 * * * *",
+        "scheduledTime": 1795753849
+      },
+      "outcome": "ok",
+      "script_version": "8e626937-c6b7-4cdf-92ea-28777260bdd7",
+      "source": {
+        "level": "info",
+        "message": "0,30 * * * *"
+      }
+    },
+    {
+      "timestamp": "2026-11-27T04:30:51.791Z",
+      "event": {
+        "cron": "0,30 * * * *",
+        "scheduledTime": 1795753849
+      },
+      "outcome": null,
+      "script_version": "8e626937-c6b7-4cdf-92ea-28777260bdd7",
+      "source": {
+        "accepted": true,
+        "scheduled_at": "2026-11-27T04:30:49.000Z",
+        "meaning": "GitHub accepted the request; this is not proof of publication"
+      }
+    }
+  ],
+  "first_run_publication_verification": {
+    "sync": {
+      "updated_at": "2026-11-27T04:31:25.060Z",
+      "cards": 2879,
+      "processed": 113,
+      "repositories_synced": 8,
+      "changed_count": 13,
+      "errors_count": 0,
+      "metrics": {
+        "requests": 35,
+        "bytes": 19388613,
+        "cache_hits": 4,
+        "revalidated": 0
+      }
+    },
+    "publish": {
+      "version": "sites/jinsim-hot-pick/versions/8274d902d36372aa",
+      "sha256": "e6f0481c2cd4bc336b32ed44a81eff7703f244a489aca753f2885047b210c1c2",
+      "bytes": 14905784,
+      "upload_bytes": 5276539
+    },
+    "verify": {
+      "verified": true,
+      "url": "https://jinsim-hot-pick.web.app/catalog.json",
+      "sha256": "e6f0481c2cd4bc336b32ed44a81eff7703f244a489aca753f2885047b210c1c2",
+      "cards": 2879,
+      "updated_at": "2026-11-27T04:31:25.060Z",
+      "conditional_status": 304,
+      "index_verified": true,
+      "detail_verified": true
+    }
+  },
+  "verified_at": "2026-11-27T05:03:12.140Z",
+  "second_run_publication_verification": {
+    "sync": {
+      "updated_at": "2026-11-27T05:01:28.233Z",
+      "cards": 2879,
+      "processed": 133,
+      "repositories_synced": 8,
+      "changed_count": 52,
+      "errors_count": 0,
+      "metrics": {
+        "requests": 60,
+        "bytes": 12373613,
+        "cache_hits": 2,
+        "revalidated": 0
+      }
+    },
+    "publish": {
+      "version": "sites/jinsim-hot-pick/versions/b93fe2b3bcc28ffb",
+      "sha256": "a1f4cbc6659324de6e324473bcb71c92cc0043a7b94e960fbc259626cfba44e0",
+      "bytes": 14909899,
+      "upload_bytes": 5326608
+    },
+    "verify": {
+      "verified": true,
+      "url": "https://jinsim-hot-pick.web.app/catalog.json",
+      "sha256": "a1f4cbc6659324de6e324473bcb71c92cc0043a7b94e960fbc259626cfba44e0",
+      "cards": 2879,
+      "updated_at": "2026-11-27T05:01:28.233Z",
+      "conditional_status": 304,
+      "index_verified": true,
+      "detail_verified": true
+    }
+  },
+  "observed_intervals_seconds": {
+    "cloudflare_scheduled": 1800,
+    "github_run_created": 1799,
+    "catalog_updated_at": 1803.173
+  },
+  "final_health": {
+    "http": 200,
+    "healthy": true,
+    "checked_at": "2026-11-27T05:03:12.661Z",
+    "updated_at": "2026-11-27T05:01:28.233Z",
+    "age_minutes": 2,
+    "cards": 2879
+  },
+  "real_incident_recovery": {
+    "issue": "https://github.com/jinsim/hot-pick/issues/1",
+    "closed_at": "2026-11-27T04:32:22Z",
+    "automatic_monitor": "https://github.com/jinsim/hot-pick/actions/runs/45940513880",
+    "second_monitor": "https://github.com/jinsim/hot-pick/actions/runs/45943382294"
+  },
+  "local_tests": {
+    "passed": 97,
+    "failed": 0,
+    "command": "npm test"
+  }
+}
